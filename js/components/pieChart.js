@@ -77,7 +77,9 @@ define(['d3', 'helper'], function (d3, helper) {
                 .attr("class", (d, i) => "module-fill-" + (i + 1))
                 .attr("stroke", "#fff")
                 .style("stroke-width", pieChart.separatorStroke)
-                .on("mouseover", (d, i) => {
+                .on("mouseover", function(d,i){
+                    d3.select(this)
+                        .attr("opacity", 0.8);
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", 1.0);
@@ -89,7 +91,9 @@ define(['d3', 'helper'], function (d3, helper) {
                     tooltip.style("left", (d3.event.pageX - containerX) + "px")
                         .style("top", (d3.event.pageY - containerY + 280) + "px");
                 })
-                .on("mouseout", d => {
+                .on("mouseout", function(d){
+                    d3.select(this)
+                        .attr("opacity", 1.0);
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", 0);
