@@ -6,13 +6,19 @@ define(['barChart','pieChart','masonry'], function(barChart, pieChart, masonry){
 
     pieChart({ selector: "#module-general-community-d3", dataFile: "community"});
 
+    // lineChart({ selector: "#module-discipline-time-d3", dataFile: "disc-time"})
+
     // MASONRY LAYOUT
 
     setTimeout(function(){
-        var elem = document.querySelector('.container');
-        var msnry = new masonry(elem, {
-            itemSelector: '.module',
-            columnWidth: '.module'
-        });
+        var containers = document.querySelectorAll(".container");
+
+        for (i = 0; i < containers.length; i++){
+            new masonry(containers[i], {
+                itemSelector: ".module",
+                columnWidth: ".module"
+            });
+        }
+
     }, 200);
 });

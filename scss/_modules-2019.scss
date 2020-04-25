@@ -2,6 +2,7 @@ $main-width: 1500px;
 $module-margin: 24px;
 
 section{
+    padding: 48px 0;
     width: 100%;
 }
 
@@ -88,4 +89,8 @@ h1{
     .module-fill-4{
         fill: $general-7;
     }
+}
+
+#discipline{
+    background-color: $discipline-1;
 }
