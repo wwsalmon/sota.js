@@ -41,8 +41,6 @@ define(['d3','helper'], function(d3,helper){
 
             var values = data.map(d => d.value);
 
-            console.log(this.inputIsPercentage);
-
             if (!this.inputIsPercentage){
                 if (totalResp == null){
                     totalResp = values.reduce((a,b) => +a + +b, 0)
@@ -118,14 +116,12 @@ define(['d3','helper'], function(d3,helper){
             function yPos(index) {
                 return index * barspace;
             }
-
-            console.log(dataset, totalResp);
         
             svg.selectAll(".module-barchart-bar")
                 .data(dataset)
                 .join("rect")
                 .attr("class", "module-barchart-bar")
-                .attr("width", d => {console.log(d); return xScale(d)})
+                .attr("width", d => xScale(d))
                 .attr("height", this.barheight)
                 .attr("x", this.margin.left)
                 .attr("y", (d, i) => yPos(i));
