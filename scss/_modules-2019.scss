@@ -1,0 +1,49 @@
+$main-width: 1500px;
+$module-margin: 24px;
+
+section{
+    width: 100%;
+}
+
+h1{
+    font-size: 56px;
+    font-family: 'Gotham';
+    text-transform: uppercase;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+}
+
+.container{
+    max-width: $main-width;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 48px 24px;
+    margin: 0 auto;
+    background-color: #fff;
+
+    .module{
+        width: calc(33.3% - #{$module-margin * 2 / 3});
+        margin-right: $module-margin;
+
+        .highcharts-root{
+            color: inherit;
+            font-family: 'Gotham';
+        }
+
+        .highcharts-title, .highcharts-title tspan{
+            font-family: 'Gotham';
+            font-weight: 700;
+            color: inherit!important;
+        }
+
+        h3{
+            font-family: 'Gotham';
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+        }
+    }
+}
+
+#general{background-color: $general-1; color: $general-1;}

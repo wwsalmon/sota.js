@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel='stylesheet' type='text/css' href='../css/style-2019.min.css'>
+        <script src='../js/highcharts.js'></script>
+        <script src='../js/masonry.pkgd.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script>
+        <title>State of the Academy 2019</title>
+    </head>
+    <body>
+        <section id="general">
+            <h1>General</h1>
+            <div class="container">
+                <div class="module">
+                    <!-- HIGHCHARTS -->
+                    <div class="module-inner" id="module-general-ethnicity"></div>
+                </div>
+                <div class="module">
+                    <!-- D3.js -->
+                    <h3>What is your ethnicity?*</h3>
+                    <div class="module-inner" id="module-general-ethnicity-d3"></div>
+                </div>
+            </div>
+        </section>
+        <script src="index.js"></script>
+        <script>
+            var elem = document.querySelector('.container');
+            var msnry = new Masonry(elem, {
+                itemSelector: '.module',
+                columnWidth: '.module'
+            });
+        </script>
+    </body>
+</html>
