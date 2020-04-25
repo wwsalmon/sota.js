@@ -5,10 +5,9 @@ define(['d3', 'helper'], function (d3, helper) {
         selector,
         dataFile,
         inputIsPercentage = false,
-        legend = true,
-        labels = false,
-        pieRad = 180,
-        pieThick = 100,
+        legend = false,
+        pieRad = 150,
+        pieThick = 80,
         separatorStroke = 8,
         margin = {
             "top": 0,
@@ -43,7 +42,6 @@ define(['d3', 'helper'], function (d3, helper) {
 
         pieChart.inputIsPercentage = inputIsPercentage;
         pieChart.legend = legend;
-        pieChart.labels = labels;
         pieChart.pieRad = pieRad;
         pieChart.pieThick = pieThick;
         pieChart.separatorStroke = separatorStroke;
@@ -51,6 +49,7 @@ define(['d3', 'helper'], function (d3, helper) {
 
         d3.csv("data/" + dataFile + ".csv").then(data => {
             var hoverOpacity = 0.8;
+            var labels = data.map(d => d.label);
 
             if (!pieChart.inputIsPercentage) {
                 var values = data.map(d => d.value);
@@ -69,13 +68,32 @@ define(['d3', 'helper'], function (d3, helper) {
             var g = svg.append("g")
                 .attr("transform", "translate(" + (trueWidth / 2 + margin.left) + "," + (pieRad + margin.top) + ")");
 
-            g.selectAll("path")
+            // create subgroups for labels eventually
+
+            var slices = g.append("g")
+                .attr("class", "slices");
+
+            var arc = d3.arc()
+                .innerRadius(pieChart.pieRad * 0.8 - pieChart.pieThick * 0.8)
+                .outerRadius(pieChart.pieRad * 0.8)
+
+            var outerArc = d3.arc()
+                .innerRadius(pieChart.pieRad * 0.9)
+                .outerRadius(pieChart.pieRad * 0.9);
+
+            if (inputIsPercentage){
+                var labelset = percentages;
+                var tooltipAppend = "%";
+            }
+            else{
+                var labelset = values;
+                var tooltipAppend = "";
+            }
+
+            slices.selectAll("path")
                 .data(pieData)
                 .join("path")
-                .attr("d", d3.arc()
-                    .innerRadius(pieChart.pieRad - pieChart.pieThick)
-                    .outerRadius(pieChart.pieRad)
-                )
+                .attr("d", arc)
                 .attr("class", (d, i) => "module-fill-" + (i + 1))
                 .attr("stroke", "#fff")
                 .style("stroke-width", pieChart.separatorStroke)
@@ -83,7 +101,7 @@ define(['d3', 'helper'], function (d3, helper) {
                     d3.select(this)
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
-                        .html(data[i].label)
+                        .html(labels[i] + ": " + labelset[i] + tooltipAppend)
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY) + "px");
                 })
@@ -96,8 +114,48 @@ define(['d3', 'helper'], function (d3, helper) {
                         .attr("opacity", 1.0);
                     tooltip.style("opacity", 0);
                 });
+            
+            // following code, especially calculations part, taken more or less directly from https://www.d3-graph-gallery.com/graph/donut_label.html
 
-            // percentages always has percentages. Values only defined if !pieChart.inputIsPercentage
+            if (!pieChart.legend){
+                var labelElem = g.append("g")
+                    .attr("class", "labels");
+    
+                var lines = g.append("g")
+                    .attr("class", "lines");
+    
+                lines.selectAll("allPolylines")
+                    .data(pieData)
+                    .join("polyline")
+                    .attr("stroke","#222")
+                    .style("fill", "none")
+                    .attr("stroke-width", 1)
+                    .attr("points", d => {
+                        var posA = arc.centroid(d);
+                        var posB = outerArc.centroid(d);
+                        var posC = outerArc.centroid(d);
+                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                        posC[0] = pieChart.pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
+                        return [posA, posB, posC];
+                    })
+    
+                labelElem.selectAll("allLabels")
+                    .data(pieData)
+                    .join("text")
+                    .text((d, i) => labels[i] + ": " + percentages[i] + "%")
+                    .attr("alignment-baseline", "central")
+                    .attr("transform", d => {
+                        var pos = outerArc.centroid(d);
+                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                        pos[0] = pieChart.pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
+                        return 'translate(' + pos + ')';
+                    })
+                    .style("text-anchor", d => {
+                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                        return (midangle < Math.PI ? 'start' : 'end')
+                    })
+            }
+
         });
     }
 
