@@ -37,6 +37,10 @@ h1{
             color: inherit!important;
         }
 
+        svg{
+            width: 100%;
+        }
+
         h3{
             font-family: 'Gotham';
             font-weight: 700;
@@ -46,4 +50,11 @@ h1{
     }
 }
 
-#general{background-color: $general-1; color: $general-1;}
+#general{
+    background-color: $general-1;
+    color: $general-1;
+
+    .module-barchart-bar{
+        fill: $general-6;
+    }
+}
