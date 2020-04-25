@@ -2,7 +2,7 @@ define(['barChart','pieChart','masonry'], function(barChart, pieChart, masonry){
 
     // D3/sota.js
 
-    barChart({ selector: "#module-general-ethnicity-d3", dataFile: "ethnicity", totalResp: 1052, maxVal: "maxVal" });
+    barChart({ selector: "#module-general-ethnicity-d3", dataFile: "ethnicity", totalResp: 1052, maxVal: "maxVal", displayPercentage: false });
 
     pieChart({ selector: "#module-general-community-d3", dataFile: "community"});
 

@@ -42,22 +42,27 @@ h1{
             width: 100%;
         }
 
-        .tooltip{
-            background-color: #222;
-            color: #fff;
-            padding: 12px;
-            position: absolute;
-            pointer-events: none;
-            opacity: 0;
-        }
-
         h3{
             font-family: 'Gotham';
             font-weight: 700;
             text-align: center;
             text-transform: uppercase;
         }
+
+        text{
+            pointer-events: none;
+        }
     }
+}
+
+.tooltip{
+    background-color: #222;
+    color: #fff;
+    padding: 12px;
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -100%);
 }
 
 #general{

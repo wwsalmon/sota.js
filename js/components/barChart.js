@@ -21,9 +21,15 @@ define(['d3', 'helper'], function (d3, helper) {
             "right": 0
         } }) {
 
-        var svg = d3.select(selector).append("svg");
+        var container = d3.select(selector);
+        var svg = container.append("svg");
+        var tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip");
 
-        var width = document.querySelector(selector).offsetWidth;
+        var containerDOM = document.querySelector(selector);
+        var width = containerDOM.offsetWidth;
+        var containerX = containerDOM.getBoundingClientRect().left;
+        var containerY = containerDOM.getBoundingClientRect().top;
 
         barChart.maxVal = maxVal;
         barChart.minVal = minVal;
@@ -38,9 +44,11 @@ define(['d3', 'helper'], function (d3, helper) {
         barChart.margin = margin;
 
         d3.csv("data/" + dataFile + ".csv").then(data => {
-            var lineColor = "#dddddd"; // barChart is a really random place to define it lol
-
+            var lineColor = "#dddddd";
+            var hoverOpacity = 0.8;
             var values = data.map(d => d.value);
+            var barspace = barChart.barheight + barChart.barmargin;
+            var height = data.length * barspace + barChart.margin.bottom;
 
             if (!barChart.inputIsPercentage) {
                 if (totalResp == null) {
@@ -89,27 +97,28 @@ define(['d3', 'helper'], function (d3, helper) {
 
             // ekse minVal should be set to number so we can move on
 
-            if (!inputIsPercentage && displayPercentage) {
-                var dataset = percentages;
-                var append = "%";
-            }
-            else {
-                var dataset = values;
-                if (inputIsPercentage) {
-                    var append = "%";
-                }
-                else {
-                    var append = "";
-                }
-            }
-
-            var barspace = barChart.barheight + barChart.barmargin;
-
             var xScale = d3.scaleLinear()
                 .domain([barChart.minVal, barChart.maxVal])
                 .range([0, width]);
 
-            var height = data.length * barspace + barChart.margin.bottom;
+            if (!inputIsPercentage && displayPercentage) {
+                var dataset = percentages;
+                var labelset = values; // show values in tooltip
+                var append = "%";
+                var tooltipAppend = "";
+            }
+            else {
+                var dataset = values;
+                var tooltipAppend = "%";
+                if (inputIsPercentage) {
+                    var append = "%";
+                    var labelset = values; // will just have to show percentages in tooltip
+                }
+                else {
+                    var append = "";
+                    var labelset = percentages;
+                }
+            }
 
             svg.attr("width", width + barChart.margin.left)
                 .attr("height", height + barChart.margin.top + barChart.margin.bottom);
@@ -125,7 +134,24 @@ define(['d3', 'helper'], function (d3, helper) {
                 .attr("width", d => xScale(d))
                 .attr("height", barChart.barheight)
                 .attr("x", barChart.margin.left)
-                .attr("y", (d, i) => yPos(i));
+                .attr("y", (d, i) => yPos(i))
+                .on("mouseover", function (d, i) {
+                    d3.select(this)
+                        .attr("opacity", hoverOpacity);
+                    tooltip.style("opacity", 1.0)
+                        .html(data[i].label + ": " + labelset[i] + tooltipAppend)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY) + "px");
+                })
+                .on("mousemove", d => {
+                    tooltip.style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY) + "px");
+                })
+                .on("mouseout", function (d) {
+                    d3.select(this)
+                        .attr("opacity", 1.0);
+                    tooltip.style("opacity", 0);
+                });
 
             svg.selectAll(".module-barchart-labels")
                 .data(data)
