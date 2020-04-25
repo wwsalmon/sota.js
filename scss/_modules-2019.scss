@@ -55,7 +55,7 @@ h1{
     color: $general-1;
 
     .module-barchart-bar{
-        fill: $general-6;
+        fill: $general-5;
     }
 
     .module-fill-1{
@@ -63,10 +63,14 @@ h1{
     }
 
     .module-fill-2{
-        fill: $general-2;
+        fill: $general-3;
     }
 
     .module-fill-3{
-        fill: $general-3;
+        fill: $general-5;
+    }
+
+    .module-fill-4{
+        fill: $general-7;
     }
 }
