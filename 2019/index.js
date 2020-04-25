@@ -4,14 +4,7 @@ define(['barChart','pieChart','masonry'], function(barChart, pieChart, masonry){
 
     barChart({ selector: "#module-general-ethnicity-d3", dataFile: "ethnicity", totalResp: 1052, maxVal: "maxVal" });
 
-    margin = {
-        "top": 100,
-        "bottom": 0,
-        "left": 200,
-        "right": 100
-    }
-
-    pieChart({ selector: "#module-general-community-d3", dataFile: "community", margin: margin});
+    pieChart({ selector: "#module-general-community-d3", dataFile: "community"});
 
     // MASONRY LAYOUT
 

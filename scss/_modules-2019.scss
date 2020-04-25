@@ -23,6 +23,7 @@ h1{
     background-color: #fff;
 
     .module{
+        position: relative;
         width: calc(33.3% - #{$module-margin * 2 / 3});
         margin-right: $module-margin;
 
@@ -39,6 +40,14 @@ h1{
 
         svg{
             width: 100%;
+        }
+
+        .tooltip{
+            background-color: #222;
+            color: #fff;
+            padding: 12px;
+            position: absolute;
+            pointer-events: none;
         }
 
         h3{

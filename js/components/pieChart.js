@@ -17,9 +17,16 @@ define(['d3', 'helper'], function (d3, helper) {
             "right": 0
         } }) {
 
-        var svg = d3.select(selector).append("svg");
+        var container = d3.select(selector);
+        var containerDOM = document.querySelector(selector);
+        var svg = container.append("svg");
+        var tooltip = container.append("div")
+            .attr("class","tooltip");
 
-        var width = document.querySelector(selector).offsetWidth;
+        var width = containerDOM.offsetWidth;
+        var containerX = containerDOM.getBoundingClientRect().left;
+        var containerY = containerDOM.getBoundingClientRect().top;
+
         var trueWidth = width - margin.left - margin.right;
 
         if (trueWidth < pieRad * 2) {
@@ -29,8 +36,6 @@ define(['d3', 'helper'], function (d3, helper) {
         if (pieThick > pieRad){
             pieThick = 50;
         }
-
-        console.log(margin);
 
         var height = pieRad * 2 + margin.top + margin.bottom;
 
@@ -71,7 +76,24 @@ define(['d3', 'helper'], function (d3, helper) {
                 )
                 .attr("class", (d, i) => "module-fill-" + (i + 1))
                 .attr("stroke", "#fff")
-                .style("stroke-width", pieChart.separatorStroke);
+                .style("stroke-width", pieChart.separatorStroke)
+                .on("mouseover", (d, i) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 1.0);
+                    tooltip.html(data[i].label)
+                        .style("left", (d3.event.pageX - containerX) + "px")
+                        .style("top", (d3.event.pageY - containerY + 280) + "px");
+                })
+                .on("mousemove", d => {
+                    tooltip.style("left", (d3.event.pageX - containerX) + "px")
+                        .style("top", (d3.event.pageY - containerY + 280) + "px");
+                })
+                .on("mouseout", d => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0);
+                });
 
             // percentages always has percentages. Values only defined if !pieChart.inputIsPercentage
         });
