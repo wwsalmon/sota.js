@@ -64,6 +64,10 @@ h1{
             pointer-events: none;
         }
 
+        .module-lineGraph-label{
+            font-weight: 700;
+        }
+
         .module-lineGraph-axis{
 
             &.module-lineGraph-xAxis{
@@ -131,4 +135,5 @@ h1{
 
 #discipline{
     background-color: $discipline-1;
+    color: $discipline-1;
 }

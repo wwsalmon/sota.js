@@ -136,6 +136,19 @@ define(['d3', 'helper'], function (d3, helper) {
                     tooltip.style("opacity", 0);
                 });
 
+            svg.selectAll(".module-lineGraph-label")
+                .data(values)
+                .join("text")
+                .text((d, i) => {
+                    if (inputIsPercentage){
+                        return d + "%";
+                    }
+                })
+                .attr("class","module-lineGraph-label")
+                .attr("x", (d, i) => x(labels[i]) + x.bandwidth() / 2)
+                .attr("y", d => y(d) - 16)
+                .style("text-anchor","middle")
+
         });
     }
 
