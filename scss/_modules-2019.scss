@@ -1,5 +1,8 @@
 $main-width: 1500px;
 $module-margin: 24px;
+$axis-stroke-width: 2px;
+$axis-stroke-color: #999;
+$axis-text-margin: 4px;
 
 section{
     padding: 48px 0;
@@ -18,6 +21,7 @@ h1{
 .container{
     max-width: $main-width;
     box-sizing: border-box;
+    font-family: "Gotham";
     width: 100%;
     padding: 48px 24px;
     margin: 0 auto;
@@ -50,8 +54,42 @@ h1{
             text-transform: uppercase;
         }
 
+        .subtitle{
+            font-weight: 700;
+            text-align: center;
+            opacity: 0.4;
+        }
+
         text{
             pointer-events: none;
+        }
+
+        .module-lineGraph-axis{
+
+            &.module-lineGraph-xAxis{
+                .tick text{
+                    transform: translateY($axis-text-margin);
+                }
+            }
+
+            &.module-lineGraph-yAxis{
+                .tick text{
+                    transform: translateX(-$axis-text-margin - 4);
+                    text-anchor: middle;
+                }
+            }
+
+            .tick text{
+                color: $axis-stroke-color;
+                font-size: 16px;
+                font-family: 'Gotham';
+                font-weight: 700;
+            }
+
+            .tick line, path.domain{
+                stroke-width: $axis-stroke-width;
+                stroke: $axis-stroke-color;
+            }
         }
     }
 }

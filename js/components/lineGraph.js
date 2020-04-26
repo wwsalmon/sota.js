@@ -39,7 +39,8 @@ define(['d3', 'helper'], function (d3, helper) {
         d3.csv("data/" + dataFile + ".csv").then(data => {
             var lineColor = "#bbb";
             var lineWidth = 3;
-            var circleRad = 8;
+            var tickSize = 8;
+            var circleRad = 9;
             var circleStrokeWidth = 5;
             var hoverOpacity = 0.8;
             // define styling variables here
@@ -76,11 +77,13 @@ define(['d3', 'helper'], function (d3, helper) {
                 .range([height - margin.bottom, margin.top]);
 
             svg.append("g")
-                .call(d3.axisBottom(x).ticks(data.length))
+                .attr("class", "module-lineGraph-axis module-lineGraph-xAxis")
+                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
             svg.append("g")
-                .call(d3.axisLeft(y))
+                .attr("class","module-lineGraph-axis module-lineGraph-yAxis")
+                .call(d3.axisLeft(y).tickSize(-tickSize))
                 .style("transform","translateX(" + margin.left + "px)");
 
             // process tooltip labels
