@@ -32,17 +32,6 @@ h1{
         width: calc(33.3% - #{$module-margin * 2 / 3});
         margin-right: $module-margin;
 
-        .highcharts-root{
-            color: inherit;
-            font-family: 'Gotham';
-        }
-
-        .highcharts-title, .highcharts-title tspan{
-            font-family: 'Gotham';
-            font-weight: 700;
-            color: inherit!important;
-        }
-
         svg{
             width: 100%;
         }
@@ -64,19 +53,19 @@ h1{
             pointer-events: none;
         }
 
-        .module-lineGraph-label{
+        .sota-floatingLabel{
             font-weight: 700;
         }
+        
+        .sota-lineGraph-axis{
 
-        .module-lineGraph-axis{
-
-            &.module-lineGraph-xAxis{
+            &.sota-lineGraph-xAxis{
                 .tick text{
                     transform: translateY($axis-text-margin);
                 }
             }
 
-            &.module-lineGraph-yAxis{
+            &.sota-lineGraph-yAxis{
                 .tick text{
                     transform: translateX(-$axis-text-margin - 4);
                     text-anchor: middle;
@@ -112,7 +101,7 @@ h1{
     background-color: $general-1;
     color: $general-1;
 
-    .module-barchart-bar{
+    .sota-barChart-bar{
         fill: $general-5;
     }
 

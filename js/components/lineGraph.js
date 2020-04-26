@@ -19,7 +19,8 @@ define(['d3', 'helper'], function (d3, helper) {
         } }) {
 
         var container = d3.select(selector);
-        var svg = container.append("svg");
+        var svg = container.append("svg")
+            .attr("class", "sota-lineGraph");
         var tooltip = d3.select("body").append("div")
             .attr("class", "tooltip");
 
@@ -77,12 +78,12 @@ define(['d3', 'helper'], function (d3, helper) {
                 .range([height - margin.bottom, margin.top]);
 
             svg.append("g")
-                .attr("class", "module-lineGraph-axis module-lineGraph-xAxis")
+                .attr("class", "sota-lineGraph-axis sota-lineGraph-xAxis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
             svg.append("g")
-                .attr("class","module-lineGraph-axis module-lineGraph-yAxis")
+                .attr("class","sota-lineGraph-axis sota-lineGraph-yAxis")
                 .call(d3.axisLeft(y).tickSize(-tickSize))
                 .style("transform","translateX(" + margin.left + "px)");
 
@@ -97,10 +98,10 @@ define(['d3', 'helper'], function (d3, helper) {
 
             // run main loop here
 
-            svg.selectAll(".module-lineGraph-path")
+            svg.selectAll(".sota-lineGraph-path")
                 .data([values])
                 .join("path")
-                .attr("class", "module-lineGraph-path")
+                .attr("class", "sota-lineGraph-path")
                 .attr("d", d3.line()
                     .x((d, i) => x(labels[i]) + x.bandwidth() / 2)
                     .y(d => y(d)))
@@ -108,10 +109,10 @@ define(['d3', 'helper'], function (d3, helper) {
                 .attr("stroke",lineColor)
                 .style("stroke-width",lineWidth);
 
-            svg.selectAll(".module-lineGraph-circle")
+            svg.selectAll(".sota-lineGraph-circle")
                 .data(values)
                 .join("circle")
-                .attr("class", "module-lineGraph-circle")
+                .attr("class", "sota-lineGraph-circle")
                 .attr("cx", (d, i) => x(labels[i]) + x.bandwidth() / 2)
                 .attr("cy", d => y(d))
                 .attr("r", circleRad)
@@ -136,15 +137,15 @@ define(['d3', 'helper'], function (d3, helper) {
                     tooltip.style("opacity", 0);
                 });
 
-            svg.selectAll(".module-lineGraph-label")
+            svg.selectAll(".sota-lineGraph-label")
                 .data(values)
                 .join("text")
+                .attr("class", "sota-lineGraph-label sota-floatingLabel")
                 .text((d, i) => {
                     if (inputIsPercentage){
                         return d + "%";
                     }
                 })
-                .attr("class","module-lineGraph-label")
                 .attr("x", (d, i) => x(labels[i]) + x.bandwidth() / 2)
                 .attr("y", d => y(d) - 16)
                 .style("text-anchor","middle")

@@ -5,6 +5,7 @@ define(['d3', 'helper'], function (d3, helper) {
         selector,
         dataFile,
         inputIsPercentage = false,
+        height = 300,
         prop1 = "value1",
         prop2 = "value2",
         prop3 = "value3",
@@ -25,11 +26,10 @@ define(['d3', 'helper'], function (d3, helper) {
 
         var width = document.querySelector(selector).offsetWidth;
 
-        var height = pieRad * 2 + margin.top + margin.bottom;
-
         svg.attr("height", height);
 
         boilerplate.inputIsPercentage = inputIsPercentage;
+        boilerplate.height = height;
         boilerplate.prop1 = prop1;
         boilerplate.prop2 = prop2;
         boilerplate.prop3 = prop3;
@@ -70,10 +70,10 @@ define(['d3', 'helper'], function (d3, helper) {
 
             // run main loop here
 
-            svg.selectAll(".module-barchart-bar")
+            svg.selectAll(".sota-boilerplate-bar")
                 .data(dataset)
                 .join("rect")
-                .attr("class", "module-barchart-bar")
+                .attr("class", "sota-boilerplate-bar")
                 // more attributes here
                 .on("mouseover", function (d, i) {
                     d3.select(this)

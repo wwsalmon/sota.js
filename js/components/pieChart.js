@@ -5,7 +5,6 @@ define(['d3', 'helper'], function (d3, helper) {
         selector,
         dataFile,
         inputIsPercentage = false,
-        legend = false,
         pieRad = 150,
         pieThick = 80,
         separatorStroke = 8,
@@ -17,14 +16,12 @@ define(['d3', 'helper'], function (d3, helper) {
         } }) {
 
         var container = d3.select(selector);
-        var svg = container.append("svg");
+        var svg = container.append("svg")
+            .attr("class", "sota-pieChart");
         var tooltip = d3.select("body").append("div")
             .attr("class", "tooltip");
 
-        var containerDOM = document.querySelector(selector);
-        var width = containerDOM.offsetWidth;
-        var containerX = containerDOM.getBoundingClientRect().left;
-        var containerY = containerDOM.getBoundingClientRect().top;
+        var width = document.querySelector(selector).offsetWidth;
 
         var trueWidth = width - margin.left - margin.right;
 
@@ -41,7 +38,6 @@ define(['d3', 'helper'], function (d3, helper) {
         svg.attr("height", height);
 
         pieChart.inputIsPercentage = inputIsPercentage;
-        pieChart.legend = legend;
         pieChart.pieRad = pieRad;
         pieChart.pieThick = pieThick;
         pieChart.separatorStroke = separatorStroke;
@@ -49,6 +45,8 @@ define(['d3', 'helper'], function (d3, helper) {
 
         d3.csv("data/" + dataFile + ".csv").then(data => {
             var hoverOpacity = 0.8;
+            var polylineColor = "#999";
+            var polylineStrokeWidth = 2;
             var labels = data.map(d => d.label);
 
             if (!pieChart.inputIsPercentage) {
@@ -70,9 +68,6 @@ define(['d3', 'helper'], function (d3, helper) {
 
             // create subgroups for labels eventually
 
-            var slices = g.append("g")
-                .attr("class", "slices");
-
             var arc = d3.arc()
                 .innerRadius(pieChart.pieRad * 0.8 - pieChart.pieThick * 0.8)
                 .outerRadius(pieChart.pieRad * 0.8)
@@ -90,11 +85,11 @@ define(['d3', 'helper'], function (d3, helper) {
                 var tooltipAppend = "";
             }
 
-            slices.selectAll("path")
+            g.selectAll(".sota-pieChart-slice")
                 .data(pieData)
                 .join("path")
+                .attr("class", (d, i) => "sota-pieChart-slice module-fill-" + (i + 1))
                 .attr("d", arc)
-                .attr("class", (d, i) => "module-fill-" + (i + 1))
                 .attr("stroke", "#fff")
                 .style("stroke-width", pieChart.separatorStroke)
                 .on("mouseover", function (d, i) {
@@ -117,44 +112,38 @@ define(['d3', 'helper'], function (d3, helper) {
             
             // following code, especially calculations part, taken more or less directly from https://www.d3-graph-gallery.com/graph/donut_label.html
 
-            if (!pieChart.legend){
-                var labelElem = g.append("g")
-                    .attr("class", "labels");
-    
-                var lines = g.append("g")
-                    .attr("class", "lines");
-    
-                lines.selectAll("allPolylines")
-                    .data(pieData)
-                    .join("polyline")
-                    .attr("stroke","#222")
-                    .style("fill", "none")
-                    .attr("stroke-width", 1)
-                    .attr("points", d => {
-                        var posA = arc.centroid(d);
-                        var posB = outerArc.centroid(d);
-                        var posC = outerArc.centroid(d);
-                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                        posC[0] = pieChart.pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
-                        return [posA, posB, posC];
-                    })
-    
-                labelElem.selectAll("allLabels")
-                    .data(pieData)
-                    .join("text")
-                    .text((d, i) => labels[i] + ": " + percentages[i] + "%")
-                    .attr("alignment-baseline", "central")
-                    .attr("transform", d => {
-                        var pos = outerArc.centroid(d);
-                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                        pos[0] = pieChart.pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
-                        return 'translate(' + pos + ')';
-                    })
-                    .style("text-anchor", d => {
-                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                        return (midangle < Math.PI ? 'start' : 'end')
-                    })
-            }
+            g.selectAll(".sota-pieChart-polyline")
+                .data(pieData)
+                .join("polyline")
+                .attr("class","sota-pieChart-polyline")
+                .attr("stroke", polylineColor)
+                .style("fill", "none")
+                .attr("stroke-width", polylineStrokeWidth)
+                .attr("points", d => {
+                    var posA = arc.centroid(d);
+                    var posB = outerArc.centroid(d);
+                    var posC = outerArc.centroid(d);
+                    var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                    posC[0] = pieChart.pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
+                    return [posA, posB, posC];
+                })
+
+            g.selectAll(".sota-pieChart-labelText")
+                .data(pieData)
+                .join("text")
+                .attr("class","sota-pieChart-labelText sota-floatingLabel")
+                .text((d, i) => labels[i] + ": " + percentages[i] + "%")
+                .attr("alignment-baseline", "central")
+                .attr("transform", d => {
+                    var pos = outerArc.centroid(d);
+                    var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                    pos[0] = pieChart.pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
+                    return 'translate(' + pos + ')';
+                })
+                .style("text-anchor", d => {
+                    var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                    return (midangle < Math.PI ? 'start' : 'end')
+                })
 
         });
     }
