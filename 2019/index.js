@@ -1,4 +1,4 @@
-define(['barChart','pieChart','masonry'], function(barChart, pieChart, masonry){
+define(['barChart','pieChart','lineGraph','masonry'], function(barChart, pieChart,lineGraph, masonry){
 
     // D3/sota.js
 
@@ -6,7 +6,7 @@ define(['barChart','pieChart','masonry'], function(barChart, pieChart, masonry){
 
     pieChart({ selector: "#module-general-community-d3", dataFile: "community"});
 
-    // lineChart({ selector: "#module-discipline-time-d3", dataFile: "disc-time"})
+    lineGraph({ selector: "#module-discipline-time-d3", dataFile: "disc-time", inputIsPercentage: true, maxVal: 8 })
 
     // MASONRY LAYOUT
 

@@ -5,12 +5,12 @@ define(['d3', 'helper'], function (d3, helper) {
         selector,
         dataFile,
         inputIsPercentage = false,
-        prop1 = value1,
-        prop2 = value2,
-        prop3 = value3,
-        prop4 = value4,
-        prop5 = value5,
-        prop6 = value6,
+        prop1 = "value1",
+        prop2 = "value2",
+        prop3 = "value3",
+        prop4 = "value4",
+        prop5 = "value5",
+        prop6 = "value6",
         margin = {
             "top": 0,
             "bottom": 0,
@@ -29,14 +29,14 @@ define(['d3', 'helper'], function (d3, helper) {
 
         svg.attr("height", height);
 
-        pieChart.inputIsPercentage = inputIsPercentage;
-        this.prop1 = prop1;
-        this.prop2 = prop2;
-        this.prop3 = prop3;
-        this.prop4 = prop4;
-        this.prop5 = prop5;
-        this.prop6 = prop6;
-        pieChart.margin = margin;
+        boilerplate.inputIsPercentage = inputIsPercentage;
+        boilerplate.prop1 = prop1;
+        boilerplate.prop2 = prop2;
+        boilerplate.prop3 = prop3;
+        boilerplate.prop4 = prop4;
+        boilerplate.prop5 = prop5;
+        boilerplate.prop6 = prop6;
+        boilerplate.margin = margin;
 
         d3.csv("data/" + dataFile + ".csv").then(data => {
             var hoverOpacity = 0.8;

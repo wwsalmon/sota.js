@@ -76,8 +76,6 @@ define(['d3', 'helper'], function (d3, helper) {
                 }
             }
 
-            // else maxVal should be set to number so we can move on
-
             if (barChart.minVal == null) {
                 if (displayPercentage || inputIsPercentage) {
                     barChart.minVal = 0;
@@ -94,8 +92,6 @@ define(['d3', 'helper'], function (d3, helper) {
                     barChart.minVal = Math.min(...percentages);
                 }
             }
-
-            // ekse minVal should be set to number so we can move on
 
             var xScale = d3.scaleLinear()
                 .domain([barChart.minVal, barChart.maxVal])
