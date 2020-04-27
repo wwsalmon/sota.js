@@ -45,10 +45,10 @@ pieChart.chart = function ({
     pieChart.margin = margin;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
-        var hoverOpacity = 0.8;
-        var polylineColor = "#999";
-        var polylineStrokeWidth = 2;
-        var labels = data.map(d => d.label);
+        const hoverOpacity = 0.8;
+        const polylineColor = "#999";
+        const polylineStrokeWidth = 2;
+        const labels = data.map(d => d.label);
 
         if (!pieChart.inputIsPercentage) {
             var values = data.map(d => d.value);
@@ -59,21 +59,21 @@ pieChart.chart = function ({
             var percentages = data.map(d => d.value);
         }
 
-        var pie = d3.pie();
-        var pieData = pie(percentages);
+        const pie = d3.pie();
+        const pieData = pie(percentages);
 
         // centered g to place chart in
 
-        var g = svg.append("g")
+        const g = svg.append("g")
             .attr("transform", "translate(" + (trueWidth / 2 + margin.left) + "," + (pieRad + margin.top) + ")");
 
         // create subgroups for labels eventually
 
-        var arc = d3.arc()
+        const arc = d3.arc()
             .innerRadius(pieChart.pieRad * 0.8 - pieChart.pieThick * 0.8)
             .outerRadius(pieChart.pieRad * 0.8)
 
-        var outerArc = d3.arc()
+        const outerArc = d3.arc()
             .innerRadius(pieChart.pieRad * 0.9)
             .outerRadius(pieChart.pieRad * 0.9);
 
@@ -121,10 +121,10 @@ pieChart.chart = function ({
             .style("fill", "none")
             .attr("stroke-width", polylineStrokeWidth)
             .attr("points", d => {
-                var posA = arc.centroid(d);
-                var posB = outerArc.centroid(d);
-                var posC = outerArc.centroid(d);
-                var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                let posA = arc.centroid(d);
+                let posB = outerArc.centroid(d);
+                let posC = outerArc.centroid(d);
+                let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                 posC[0] = pieChart.pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
                 return [posA, posB, posC];
             })
@@ -136,13 +136,13 @@ pieChart.chart = function ({
             .text((d, i) => labels[i] + ": " + percentages[i] + "%")
             .attr("alignment-baseline", "central")
             .attr("transform", d => {
-                var pos = outerArc.centroid(d);
-                var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                let pos = outerArc.centroid(d);
+                let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
                 pos[0] = pieChart.pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
                 return 'translate(' + pos + ')';
             })
             .style("text-anchor", d => {
-                var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
                 return (midangle < Math.PI ? 'start' : 'end')
             })
 

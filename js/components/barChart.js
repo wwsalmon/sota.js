@@ -32,17 +32,17 @@ barChart.chart = function ({
     barChart.margin = margin;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
-        var lineColor = "#dddddd";
-        var hoverOpacity = 0.8;
-        var separatorOffset = 6;
-        var separatorStrokeWidth = 2;
-        var labelMargin = 8;
-        var barHeight = 28;
-        var barMargin = 16;
+        const lineColor = "#dddddd";
+        const hoverOpacity = 0.8;
+        const separatorOffset = 6;
+        const separatorStrokeWidth = 2;
+        const labelMargin = 8;
+        const barHeight = 28;
+        const barMargin = 16;
 
-        var values = data.map(d => d.value);
-        var barspace = barHeight + barMargin;
-        var height = data.length * barspace + barChart.margin.bottom;
+        const values = data.map(d => d.value);
+        const barspace = barHeight + barMargin;
+        const height = data.length * barspace + barChart.margin.bottom;
 
         if (!barChart.inputIsPercentage) {
             if (totalResp == null) {
@@ -87,7 +87,7 @@ barChart.chart = function ({
             }
         }
 
-        var xScale = d3.scaleLinear()
+        const xScale = d3.scaleLinear()
             .domain([barChart.minVal, barChart.maxVal])
             .range([0, width]);
 
