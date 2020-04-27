@@ -60,6 +60,11 @@ h1{
             pointer-events: none;
         }
 
+        .sota-barChart-label, .sota-pieChart-label{
+            font-family: 'Mercury Text G1';
+            font-weight: 700;
+        }
+
         .sota-floatingLabel{ // replace this with CSS-in-JS
             font-weight: 700;
         }

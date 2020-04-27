@@ -1,4 +1,4 @@
-import helper, { sotaConfig } from '../helper.js';
+import { sotaConfig } from '../helper.js';
 
 export default function ({
     selector,
@@ -39,7 +39,7 @@ export default function ({
             if (totalResp == null) {
                 totalResp = values.reduce((a, b) => +a + +b, 0)
             }
-            var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
+            var percentages = values.map(value => 100 * value / totalResp);
         }
 
         // SET DEFAULT maxVal and minVal values
@@ -120,7 +120,7 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(data[i].label + ": " + labelset[i] + tooltipAppend)
+                    .html(data[i].label + ": " + d3.format(".1f")(labelset[i]) + tooltipAppend)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })
@@ -158,7 +158,7 @@ export default function ({
             .data(dataset)
             .join("text")
             .attr("class", "sota-barChart-value")
-            .html(d => d + append)
+            .html(d => d3.format(".1f")(d) + append)
             .attr("alignment-baseline", "central")
             .attr("text-anchor", "end")
             .attr("x", width)

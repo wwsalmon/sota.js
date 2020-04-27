@@ -1,4 +1,4 @@
-import helper, { sotaConfig } from '../helper.js';
+import { sotaConfig } from '../helper.js';
 
 export default function ({
     selector,

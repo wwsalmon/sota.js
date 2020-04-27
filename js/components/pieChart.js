@@ -121,10 +121,10 @@ export default function ({
                 return [posA, posB, posC];
             })
 
-        g.selectAll(".sota-pieChart-labelText")
+        g.selectAll(".sota-pieChart-label")
             .data(pieData)
             .join("text")
-            .attr("class","sota-pieChart-labelText sota-floatingLabel")
+            .attr("class","sota-pieChart-label sota-floatingLabel")
             .text((d, i) => labels[i] + ": " + percentages[i] + "%")
             .attr("alignment-baseline", "central")
             .attr("transform", d => {

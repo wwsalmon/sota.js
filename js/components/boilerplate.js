@@ -1,4 +1,4 @@
-import helper, { sotaConfig } from '../helper.js';
+import { sotaConfig } from '../helper.js';
 
 export default function ({
     selector,
@@ -38,7 +38,7 @@ export default function ({
         if (!inputIsPercentage) {
             var values = data.map(d => d.value);
             var totalResp = values.reduce((a, b) => +a + +b, 0);
-            var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
+            var percentages = values.map(value => 100 * value / totalResp);
         }
         else {
             var percentages = data.map(d => d.value);
@@ -68,7 +68,7 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(labels[i] + ": " + labelset[i] + tooltipAppend)
+                    .html(d3.format(".1f")(labels[i]) + ": " + labelset[i] + tooltipAppend)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })
