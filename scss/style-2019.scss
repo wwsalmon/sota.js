@@ -56,15 +56,15 @@ h1{
             opacity: 0.4;
         }
 
-        text{
+        text{ // replace this with CSS-in-JS
             pointer-events: none;
         }
 
-        .sota-floatingLabel{
+        .sota-floatingLabel{ // replace this with CSS-in-JS
             font-weight: 700;
         }
         
-        .sota-lineGraph-axis{
+        .sota-lineGraph-axis{ // replace this with CSS-in-JS
 
             &.sota-lineGraph-xAxis{
                 .tick text{
@@ -94,7 +94,7 @@ h1{
     }
 }
 
-.tooltip{
+.tooltip{ // replace this with CSS-in-JS
     background-color: #222;
     color: #fff;
     padding: 12px;
