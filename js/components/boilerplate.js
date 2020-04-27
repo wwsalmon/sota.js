@@ -1,100 +1,100 @@
-define(['d3', 'helper'], function (d3, helper) {
-    var boilerplate = {}; // replace with variable name, find and replace in entire document
+import helper from '../helper.js';
 
-    boilerplate.chart = function ({
-        selector,
-        dataFile,
-        inputIsPercentage = false,
-        height = 300,
-        prop1 = "value1",
-        prop2 = "value2",
-        prop3 = "value3",
-        prop4 = "value4",
-        prop5 = "value5",
-        prop6 = "value6",
-        margin = {
-            "top": 0,
-            "bottom": 0,
-            "left": 0,
-            "right": 0
-        } }) {
+var boilerplate = {}; // replace with variable name, find and replace in entire document
 
-        var container = d3.select(selector);
-        var svg = container.append("svg");
-        var tooltip = d3.select("body").append("div")
-            .attr("class", "tooltip");
+boilerplate.chart = function ({
+    selector,
+    dataFile,
+    inputIsPercentage = false,
+    height = 300,
+    prop1 = "value1",
+    prop2 = "value2",
+    prop3 = "value3",
+    prop4 = "value4",
+    prop5 = "value5",
+    prop6 = "value6",
+    margin = {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0
+    } }) {
 
-        var width = document.querySelector(selector).offsetWidth;
+    var container = d3.select(selector);
+    var svg = container.append("svg");
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip");
 
-        svg.attr("height", height);
+    var width = document.querySelector(selector).offsetWidth;
 
-        boilerplate.inputIsPercentage = inputIsPercentage;
-        boilerplate.height = height;
-        boilerplate.prop1 = prop1;
-        boilerplate.prop2 = prop2;
-        boilerplate.prop3 = prop3;
-        boilerplate.prop4 = prop4;
-        boilerplate.prop5 = prop5;
-        boilerplate.prop6 = prop6;
-        boilerplate.margin = margin;
+    svg.attr("height", height);
 
-        d3.csv("data/" + dataFile + ".csv").then(data => {
-            var hoverOpacity = 0.8;
-            // define styling variables here
+    boilerplate.inputIsPercentage = inputIsPercentage;
+    boilerplate.height = height;
+    boilerplate.prop1 = prop1;
+    boilerplate.prop2 = prop2;
+    boilerplate.prop3 = prop3;
+    boilerplate.prop4 = prop4;
+    boilerplate.prop5 = prop5;
+    boilerplate.prop6 = prop6;
+    boilerplate.margin = margin;
 
-            // PROCESS values AND percentages
+    d3.csv("data/" + dataFile + ".csv").then(data => {
+        var hoverOpacity = 0.8;
+        // define styling variables here
 
-            var labels = data.map(d => d.label);
+        // PROCESS values AND percentages
 
-            if (!boilerplate.inputIsPercentage) {
-                var values = data.map(d => d.value);
-                var totalResp = values.reduce((a, b) => +a + +b, 0);
-                var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
-            }
-            else {
-                var percentages = data.map(d => d.value);
-            }
+        var labels = data.map(d => d.label);
 
-            // process data here. Create scales, etc.
+        if (!boilerplate.inputIsPercentage) {
+            var values = data.map(d => d.value);
+            var totalResp = values.reduce((a, b) => +a + +b, 0);
+            var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
+        }
+        else {
+            var percentages = data.map(d => d.value);
+        }
 
-            // LABELSET for tooltip:
+        // process data here. Create scales, etc.
 
-            if (inputIsPercentage) {
-                var labelset = percentages;
-                var tooltipAppend = "%";
-            }
-            else {
-                var labelset = values;
-                var tooltipAppend = "";
-            }
+        // LABELSET for tooltip:
 
-            // run main loop here
+        if (inputIsPercentage) {
+            var labelset = percentages;
+            var tooltipAppend = "%";
+        }
+        else {
+            var labelset = values;
+            var tooltipAppend = "";
+        }
 
-            svg.selectAll(".sota-boilerplate-bar")
-                .data(dataset)
-                .join("rect")
-                .attr("class", "sota-boilerplate-bar")
-                // more attributes here
-                .on("mouseover", function (d, i) {
-                    d3.select(this)
-                        .attr("opacity", hoverOpacity);
-                    tooltip.style("opacity", 1.0)
-                        .html(labels[i] + ": " + labelset[i] + tooltipAppend)
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY) + "px");
-                })
-                .on("mousemove", d => {
-                    tooltip.style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY) + "px");
-                })
-                .on("mouseout", function (d) {
-                    d3.select(this)
-                        .attr("opacity", 1.0);
-                    tooltip.style("opacity", 0);
-                });
+        // run main loop here
 
-        });
-    }
+        svg.selectAll(".sota-boilerplate-bar")
+            .data(dataset)
+            .join("rect")
+            .attr("class", "sota-boilerplate-bar")
+            // more attributes here
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("opacity", hoverOpacity);
+                tooltip.style("opacity", 1.0)
+                    .html(labels[i] + ": " + labelset[i] + tooltipAppend)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+            })
+            .on("mousemove", d => {
+                tooltip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+            })
+            .on("mouseout", function (d) {
+                d3.select(this)
+                    .attr("opacity", 1.0);
+                tooltip.style("opacity", 0);
+            });
 
-    return boilerplate.chart;
-});
+    });
+}
+
+export default boilerplate.chart;
