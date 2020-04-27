@@ -1,8 +1,6 @@
 import helper from '../helper.js';
 
-var stackedBarChart = {}; // replace with variable name, find and replace in entire document
-
-stackedBarChart.chart = function ({
+export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
@@ -112,5 +110,3 @@ stackedBarChart.chart = function ({
 
     });
 }
-
-export default stackedBarChart.chart;
