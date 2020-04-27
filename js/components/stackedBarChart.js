@@ -46,14 +46,12 @@ stackedBarChart.chart = function ({
         const subgroups = data.columns.slice(1);
         const groups = d3.map(data, d => d.group).keys()
 
-        console.log(margin, prop3);
-
-        const x = d3.scaleBand()
+        const y = d3.scaleBand()
             .domain(groups)
             .range([height - margin.bottom, margin.top])
             .padding([0.2])
         
-        const y = d3.scaleLinear()
+        const x = d3.scaleLinear()
             .domain([0, 100])
             .range([margin.left, width - margin.right])
 
@@ -75,12 +73,9 @@ stackedBarChart.chart = function ({
             let total = 0;
             for (let i in subgroups){ name = subgroups[i]; total += +d[name]}
             for (let i in subgroups){ name = subgroups[i]; d[name] = d[name] / total * 100}
-            console.log(d);
         })
 
         const stackedData = d3.stack().keys(subgroups)(data);
-
-        console.log(stackedData);
 
         // MAIN LOOP
 
@@ -92,50 +87,28 @@ stackedBarChart.chart = function ({
             .selectAll("rect")
             .data(d=>d)
             .join("rect")
-            .attr("y", d=>x(d.data.group))
-            .attr("x", d=>y(d[1]))
-            .attr("height",d=>y(d[1]) - y(d[0]))
-            .attr("width",x.bandwidth());
-
-                // PROCESS values AND percentages
-
-        // process data here. Create scales, etc.
-
-        // LABELSET for tooltip:
-
-        // if (inputIsPercentage) {
-        //     var labelset = percentages;
-        //     var tooltipAppend = "%";
-        // }
-        // else {
-        //     var labelset = values;
-        //     var tooltipAppend = "";
-        // }
-
-        // run main loop here
-
-        // svg.selectAll(".sota-stackedBarChart-bar")
-        //     .data(dataset)
-        //     .join("rect")
-        //     .attr("class", "sota-stackedBarChart-bar")
-        //     // more attributes here
-        //     .on("mouseover", function (d, i) {
-        //         d3.select(this)
-        //             .attr("opacity", hoverOpacity);
-        //         tooltip.style("opacity", 1.0)
-        //             .html(labels[i] + ": " + labelset[i] + tooltipAppend)
-        //             .style("left", (d3.event.pageX) + "px")
-        //             .style("top", (d3.event.pageY) + "px");
-        //     })
-        //     .on("mousemove", d => {
-        //         tooltip.style("left", (d3.event.pageX) + "px")
-        //             .style("top", (d3.event.pageY) + "px");
-        //     })
-        //     .on("mouseout", function (d) {
-        //         d3.select(this)
-        //             .attr("opacity", 1.0);
-        //         tooltip.style("opacity", 0);
-        //     });
+            .attr("y", d => y(d.data.group))
+            .attr("x", d=>x(d[0]))
+            .attr("width",d=>x(d[1]) - x(d[0]))
+            .attr("height", barHeight)
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("opacity", hoverOpacity);
+                console.log(subgroups[i],d.data,d.data[subgroups[i]]); // broken
+                tooltip.style("opacity", 1.0)
+                    .html("test")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+            })
+            .on("mousemove", d => {
+                tooltip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+            })
+            .on("mouseout", function (d) {
+                d3.select(this)
+                    .attr("opacity", 1.0);
+                tooltip.style("opacity", 0);
+            });
 
     });
 }
