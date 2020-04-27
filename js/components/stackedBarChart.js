@@ -11,10 +11,10 @@ export default function ({
     prop5 = "value5",
     prop6 = "value6",
     margin = {
-        "top": 0,
-        "bottom": 0,
-        "left": 0,
-        "right": 0
+        "top": 20,
+        "bottom": 20,
+        "left": 24,
+        "right": 20
     } }) {
 
     var container = d3.select(selector);
@@ -41,60 +41,94 @@ export default function ({
 
         // DATA PROCESSING
 
-        const subgroups = data.columns.slice(1);
-        const groups = d3.map(data, d => d.group).keys()
+        const valueLabels = data.columns.slice(1);
+        const groupLabels = d3.map(data, d => d.group).keys()
+
+        // arrays of values and percentages
+
+        var stackedData = [];
+
+        if (inputIsPercentage){
+            data.forEach(d => {
+                let prevPercentage = 0;
+                let thisPrevPercentages = [];
+                let thisData = [];
+                for (let valueLabel of valueLabels) {
+                    thisPrevPercentages.push(prevPercentage);
+                    let thisPercentage = +d[valueLabel];
+                    thisData.push([thisPercentage,prevPercentage]);
+                    prevPercentage += thisPercentage;
+                }
+                stackedData.push(thisData);
+            })
+        }
+        else{
+            data.forEach(d => {
+                let prevPercentage = 0;
+                let thisPrevPercentages = [];
+                let total = d3.sum(valueLabels, k => +d[k]);
+                let thisData = [];
+                let thisValues = [];
+                for (let valueLabel of valueLabels) {
+                    thisPrevPercentages.push(prevPercentage);
+                    let thisPercentage = +d[valueLabel] / total * 100;
+                    thisData.push([thisPercentage, prevPercentage, +d[valueLabel]]);
+                    prevPercentage += thisPercentage;
+                }
+                stackedData.push(thisData);
+            });
+        }
 
         const y = d3.scaleBand()
-            .domain(groups)
+            .domain(groupLabels)
             .range([height - margin.bottom, margin.top])
             .padding([0.2])
         
         const x = d3.scaleLinear()
             .domain([0, 100])
-            .range([margin.left, width - margin.right])
+            .range([0, width - margin.left - margin.right])
 
         const color = d3.scaleOrdinal()
-            .domain(subgroups)
-            .range(['#e41a1c', '#377eb8', '#4daf4a'])
+            .domain(valueLabels)
+            .range(['#e41a1c', '#377eb8', '#4daf4a']) // temporary. replace with class names later? with something like a map function for index so it can take any number of value options
 
         svg.append("g")
             .attr("class", "sota-lineGraph-axis sota-lineGraph-xAxis")
             .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
-            .style("transform", "translateY(" + (height - margin.bottom) + "px)");
+            .attr("transform", "translate(" + margin.left + " " + (height - margin.bottom) + ")");
 
         svg.append("g")
             .attr("class", "sota-lineGraph-axis sota-lineGraph-yAxis")
             .call(d3.axisLeft(y).tickSize(-tickSize))
             .style("transform", "translateX(" + margin.left + "px)");
 
-        data.forEach(d => {
-            let total = 0;
-            for (let i in subgroups){ name = subgroups[i]; total += +d[name]}
-            for (let i in subgroups){ name = subgroups[i]; d[name] = d[name] / total * 100}
-        })
-
-        const stackedData = d3.stack().keys(subgroups)(data);
-
         // MAIN LOOP
 
-        svg.append("g")
-            .selectAll("g")
+        svg.selectAll(".sota-stackedBarChart-group")
             .data(stackedData)
             .join("g")
-            .attr("fill",d=>color(d.key))
-            .selectAll("rect")
-            .data(d=>d)
+            .attr("class","sota-stackedBarChart-group")
+            .attr("transform",(d, i) => "translate(0 " + y(groupLabels[i]) + ")")
+            .selectAll(".sota-stackedBarChart-bar")
+            .data(d => d)
             .join("rect")
-            .attr("y", d => y(d.data.group))
-            .attr("x", d=>x(d[0]))
-            .attr("width",d=>x(d[1]) - x(d[0]))
+            .attr("class","sota-stackedBarChart-bar")
+            .attr("x", d => margin.left + x(d[1]))
+            .attr("y", 0)
+            .attr("fill", (d, i) => color(valueLabels[i]))
+            .attr("width", d => x(d[0]))
             .attr("height", barHeight)
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
-                console.log(subgroups[i],d.data,d.data[subgroups[i]]); // broken
                 tooltip.style("opacity", 1.0)
-                    .html("test")
+                    .html(() => {
+                        let retval = valueLabels[i] + "<br/>Percentage: " + d3.format(".1f")(d[0]) + "%";
+                        if (!inputIsPercentage){
+                            retval += "<br/>Number of responses: " + d[2];
+                        }
+                        return retval;
+                    })
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })
@@ -107,6 +141,20 @@ export default function ({
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
             });
+
+        // svg.append("g")
+        //     .selectAll("g")
+        //     .data(stackedData)
+        //     .join("g")
+        //     .attr("fill",d=>color(d.key))
+        //     .selectAll("rect")
+        //     .data(d=>d)
+        //     .join("rect")
+        //     .attr("y", d => y(d.data.group))
+        //     .attr("x", d=>x(d[0]))
+        //     .attr("width",d=>x(d[1]) - x(d[0]))
+        //     .attr("height", barHeight)
+            
 
     });
 }

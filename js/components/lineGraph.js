@@ -14,7 +14,7 @@ export default function ({
         "top": 20,
         "bottom": 20,
         "left": 24,
-        "right": 0
+        "right": 20
     } }) {
 
     const container = d3.select(selector);
