@@ -1,9 +1,7 @@
-define(function(){
-    var helper = [];
+let helper = {};
 
-    helper.oneDecimal = function (number) {
-        return Math.round(number * 10) / 10;
-    }
+helper.oneDecimal = function (number) {
+    return Math.round(number * 10) / 10;
+}
 
-    return helper;
-})
+export default helper;
