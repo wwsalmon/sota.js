@@ -1,4 +1,4 @@
-import helper from '../helper.js';
+import helper, {sotaConfig} from '../helper.js';
 
 export default function ({
     selector,
@@ -28,10 +28,9 @@ export default function ({
         const hoverOpacity = 0.8;
         const tickSize = 8;
         const axisMargin = 16;
-        const separatorStrokeWidth = 0;
-        
-        const barHeight = 28;
-        const barMargin = 16;
+        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+        const barHeight = sotaConfig.barHeight;
+        const barMargin = sotaConfig.barMargin;
         
         // define styling variables here
         
@@ -153,7 +152,14 @@ export default function ({
             .attr("fill","white")
             .attr("x", d => margin.left + x(d[1]) + x(d[0]))
             .attr("y", 0)
-            .attr("width", separatorStrokeWidth)
+            .attr("width", d => {
+                if (d[0] > 0){
+                    return separatorStrokeWidth;
+                }
+                else{
+                    return 0;
+                }
+            })
             .attr("height", barHeight)
 
         // svg.append("g")

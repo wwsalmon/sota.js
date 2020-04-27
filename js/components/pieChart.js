@@ -1,4 +1,4 @@
-import helper from '../helper.js';
+import helper, {sotaConfig} from '../helper.js';
 
 export default function ({
     selector,
@@ -39,7 +39,7 @@ export default function ({
         const hoverOpacity = 0.8;
         const polylineColor = "#999";
         const polylineStrokeWidth = 2;
-        const separatorStrokeWidth = 8;
+        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const labels = data.map(d => d.label);
 
         if (!inputIsPercentage) {

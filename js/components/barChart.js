@@ -1,4 +1,4 @@
-import helper from '../helper.js';
+import helper, { sotaConfig } from '../helper.js';
 
 export default function ({
     selector,
@@ -26,10 +26,10 @@ export default function ({
         const lineColor = "#dddddd";
         const hoverOpacity = 0.8;
         const separatorOffset = 6;
-        const separatorStrokeWidth = 2;
+        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const labelMargin = 8;
-        const barHeight = 28;
-        const barMargin = 16;
+        const barHeight = sotaConfig.barHeight;
+        const barMargin = sotaConfig.barMargin;
 
         const values = data.map(d => d.value);
         const barspace = barHeight + barMargin;

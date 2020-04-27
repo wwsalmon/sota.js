@@ -1,4 +1,4 @@
-import helper from '../helper.js'; //...not used for some reason?
+import helper, { sotaConfig } from '../helper.js';
 
 export default function ({
     selector,
@@ -31,7 +31,7 @@ export default function ({
         const lineWidth = 3;
         const tickSize = 8;
         const circleRad = 9;
-        const circleStrokeWidth = 5;
+        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const hoverOpacity = 0.8;
         // define styling variables here
 
@@ -106,7 +106,7 @@ export default function ({
             .attr("cy", d => y(d))
             .attr("r", circleRad)
             .attr("stroke", "white")
-            .style("stroke-width", circleStrokeWidth)
+            .style("stroke-width", separatorStrokeWidth)
             // more attributes here
             .on("mouseover", function (d, i) {
                 d3.select(this)
