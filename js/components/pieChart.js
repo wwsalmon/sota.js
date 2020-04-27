@@ -6,7 +6,6 @@ export default function ({
     inputIsPercentage = false,
     pieRad = 150,
     pieThick = 80,
-    separatorStroke = 8,
     margin = {
         "top": 0,
         "bottom": 0,
@@ -40,6 +39,7 @@ export default function ({
         const hoverOpacity = 0.8;
         const polylineColor = "#999";
         const polylineStrokeWidth = 2;
+        const separatorStrokeWidth = 8;
         const labels = data.map(d => d.label);
 
         if (!inputIsPercentage) {
@@ -84,7 +84,7 @@ export default function ({
             .attr("class", (d, i) => "sota-pieChart-slice module-fill-" + (i + 1))
             .attr("d", arc)
             .attr("stroke", "#fff")
-            .style("stroke-width", separatorStroke)
+            .style("stroke-width", separatorStrokeWidth)
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("opacity", hoverOpacity);

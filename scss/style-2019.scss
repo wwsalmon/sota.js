@@ -132,4 +132,20 @@ h1{
 #discipline{
     background-color: $discipline-1;
     color: $discipline-1;
+
+    .module-fill-1{
+        fill: $discipline-1;
+    }
+
+    .module-fill-2{
+        fill: $discipline-2;
+    }
+
+    .module-fill-3{
+        fill: $discipline-3;
+    }
+
+    .module-fill-4{
+        fill: $discipline-4;
+    }
 }

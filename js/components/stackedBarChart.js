@@ -13,7 +13,7 @@ export default function ({
     margin = {
         "top": 20,
         "bottom": 20,
-        "left": 24,
+        "left": 6,
         "right": 20
     } }) {
 
@@ -27,6 +27,8 @@ export default function ({
     d3.csv("data/" + dataFile + ".csv").then(data => {
         const hoverOpacity = 0.8;
         const tickSize = 8;
+        const axisMargin = 16;
+        const separatorStrokeWidth = 0;
         
         const barHeight = 28;
         const barMargin = 16;
@@ -34,7 +36,11 @@ export default function ({
         // define styling variables here
         
         const barspace = barHeight + barMargin;
-        const height = data.length * barspace + margin.bottom;
+        var height = data.length * barspace + axisMargin + margin.top;
+
+        if (showXAxis){
+            height += barMargin;
+        }
 
         svg.attr("width", width)
             .attr("height", height);
@@ -88,34 +94,32 @@ export default function ({
             .domain([0, 100])
             .range([0, width - margin.left - margin.right])
 
-        const color = d3.scaleOrdinal()
+        const classNames = d3.scaleOrdinal()
             .domain(valueLabels)
-            .range(['#e41a1c', '#377eb8', '#4daf4a']) // temporary. replace with class names later? with something like a map function for index so it can take any number of value options
+            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys())
 
-        svg.append("g")
-            .attr("class", "sota-lineGraph-axis sota-lineGraph-xAxis")
-            .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
-            .attr("transform", "translate(" + margin.left + " " + (height - margin.bottom) + ")");
+        if (showXAxis){
+            svg.append("g")
+                .attr("class", "sota-lineGraph-axis sota-lineGraph-xAxis")
+                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                .attr("transform", "translate(" + margin.left + " " + (height - margin.bottom) + ")");
+        }
 
-        svg.append("g")
-            .attr("class", "sota-lineGraph-axis sota-lineGraph-yAxis")
-            .call(d3.axisLeft(y).tickSize(-tickSize))
-            .style("transform", "translateX(" + margin.left + "px)");
 
         // MAIN LOOP
 
-        svg.selectAll(".sota-stackedBarChart-group")
+        const chartGroups = svg.selectAll(".sota-stackedBarChart-group")
             .data(stackedData)
             .join("g")
             .attr("class","sota-stackedBarChart-group")
             .attr("transform",(d, i) => "translate(0 " + y(groupLabels[i]) + ")")
-            .selectAll(".sota-stackedBarChart-bar")
+            
+        chartGroups.selectAll(".sota-stackedBarChart-bar")
             .data(d => d)
             .join("rect")
-            .attr("class","sota-stackedBarChart-bar")
+            .attr("class", (d, i) => "sota-stackedBarChart-bar " + classNames(i))
             .attr("x", d => margin.left + x(d[1]))
             .attr("y", 0)
-            .attr("fill", (d, i) => color(valueLabels[i]))
             .attr("width", d => x(d[0]))
             .attr("height", barHeight)
             .on("mouseover", function (d, i) {
@@ -124,7 +128,7 @@ export default function ({
                 tooltip.style("opacity", 1.0)
                     .html(() => {
                         let retval = valueLabels[i] + "<br/>Percentage: " + d3.format(".1f")(d[0]) + "%";
-                        if (!inputIsPercentage){
+                        if (!inputIsPercentage) {
                             retval += "<br/>Number of responses: " + d[2];
                         }
                         return retval;
@@ -140,7 +144,17 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
-            });
+            })
+
+        chartGroups.selectAll(".sota-stackedBarChart-separator")
+            .data(d => d)
+            .join("rect")
+            .attr("class", "sota-stackedBarChart-separator")
+            .attr("fill","white")
+            .attr("x", d => margin.left + x(d[1]) + x(d[0]))
+            .attr("y", 0)
+            .attr("width", separatorStrokeWidth)
+            .attr("height", barHeight)
 
         // svg.append("g")
         //     .selectAll("g")
