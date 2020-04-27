@@ -1,8 +1,6 @@
 import helper from '../helper.js';
 
-var boilerplate = {}; // replace with variable name, find and replace in entire document
-
-boilerplate.chart = function ({
+export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
@@ -29,16 +27,6 @@ boilerplate.chart = function ({
 
     svg.attr("height", height);
 
-    boilerplate.inputIsPercentage = inputIsPercentage;
-    boilerplate.height = height;
-    boilerplate.prop1 = prop1;
-    boilerplate.prop2 = prop2;
-    boilerplate.prop3 = prop3;
-    boilerplate.prop4 = prop4;
-    boilerplate.prop5 = prop5;
-    boilerplate.prop6 = prop6;
-    boilerplate.margin = margin;
-
     d3.csv("data/" + dataFile + ".csv").then(data => {
         var hoverOpacity = 0.8;
         // define styling variables here
@@ -47,7 +35,7 @@ boilerplate.chart = function ({
 
         var labels = data.map(d => d.label);
 
-        if (!boilerplate.inputIsPercentage) {
+        if (!inputIsPercentage) {
             var values = data.map(d => d.value);
             var totalResp = values.reduce((a, b) => +a + +b, 0);
             var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
@@ -96,5 +84,3 @@ boilerplate.chart = function ({
 
     });
 }
-
-export default boilerplate.chart;

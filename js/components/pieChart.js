@@ -1,8 +1,6 @@
 import helper from '../helper.js';
 
-var pieChart = {};
-
-pieChart.chart = function ({
+export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
@@ -38,19 +36,13 @@ pieChart.chart = function ({
 
     svg.attr("height", height);
 
-    pieChart.inputIsPercentage = inputIsPercentage;
-    pieChart.pieRad = pieRad;
-    pieChart.pieThick = pieThick;
-    pieChart.separatorStroke = separatorStroke;
-    pieChart.margin = margin;
-
     d3.csv("data/" + dataFile + ".csv").then(data => {
         const hoverOpacity = 0.8;
         const polylineColor = "#999";
         const polylineStrokeWidth = 2;
         const labels = data.map(d => d.label);
 
-        if (!pieChart.inputIsPercentage) {
+        if (!inputIsPercentage) {
             var values = data.map(d => d.value);
             var totalResp = values.reduce((a, b) => +a + +b, 0);
             var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
@@ -70,12 +62,12 @@ pieChart.chart = function ({
         // create subgroups for labels eventually
 
         const arc = d3.arc()
-            .innerRadius(pieChart.pieRad * 0.8 - pieChart.pieThick * 0.8)
-            .outerRadius(pieChart.pieRad * 0.8)
+            .innerRadius(pieRad * 0.8 - pieThick * 0.8)
+            .outerRadius(pieRad * 0.8)
 
         const outerArc = d3.arc()
-            .innerRadius(pieChart.pieRad * 0.9)
-            .outerRadius(pieChart.pieRad * 0.9);
+            .innerRadius(pieRad * 0.9)
+            .outerRadius(pieRad * 0.9);
 
         if (inputIsPercentage){
             var labelset = percentages;
@@ -92,7 +84,7 @@ pieChart.chart = function ({
             .attr("class", (d, i) => "sota-pieChart-slice module-fill-" + (i + 1))
             .attr("d", arc)
             .attr("stroke", "#fff")
-            .style("stroke-width", pieChart.separatorStroke)
+            .style("stroke-width", separatorStroke)
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
@@ -125,7 +117,7 @@ pieChart.chart = function ({
                 let posB = outerArc.centroid(d);
                 let posC = outerArc.centroid(d);
                 let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                posC[0] = pieChart.pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
+                posC[0] = pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
                 return [posA, posB, posC];
             })
 
@@ -138,7 +130,7 @@ pieChart.chart = function ({
             .attr("transform", d => {
                 let pos = outerArc.centroid(d);
                 let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                pos[0] = pieChart.pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
+                pos[0] = pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
                 return 'translate(' + pos + ')';
             })
             .style("text-anchor", d => {
@@ -148,5 +140,3 @@ pieChart.chart = function ({
 
     });
 }
-
-export default pieChart.chart;

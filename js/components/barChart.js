@@ -1,8 +1,6 @@
 import helper from '../helper.js';
 
-var barChart = {};
-
-barChart.chart = function ({
+export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
@@ -24,13 +22,6 @@ barChart.chart = function ({
 
     var width = document.querySelector(selector).offsetWidth;
 
-    barChart.maxVal = maxVal;
-    barChart.minVal = minVal;
-    barChart.inputIsPercentage = inputIsPercentage;
-    barChart.displayPercentage = displayPercentage;
-    barChart.totalResp = totalResp;
-    barChart.margin = margin;
-
     d3.csv("data/" + dataFile + ".csv").then(data => {
         const lineColor = "#dddddd";
         const hoverOpacity = 0.8;
@@ -42,9 +33,9 @@ barChart.chart = function ({
 
         const values = data.map(d => d.value);
         const barspace = barHeight + barMargin;
-        const height = data.length * barspace + barChart.margin.bottom;
+        const height = data.length * barspace + margin.bottom + margin.top;
 
-        if (!barChart.inputIsPercentage) {
+        if (!inputIsPercentage) {
             if (totalResp == null) {
                 totalResp = values.reduce((a, b) => +a + +b, 0)
             }
@@ -53,42 +44,42 @@ barChart.chart = function ({
 
         // SET DEFAULT maxVal and minVal values
 
-        if (barChart.maxVal == null) {
+        if (maxVal == null) {
             if (displayPercentage || inputIsPercentage) {
-                barChart.maxVal = 100;
+                maxVal = 100;
             }
             else {
-                barChart.maxVal = Math.max(...values);
+                maxVal = Math.max(...values);
             }
         }
-        else if (barChart.maxVal == "maxVal") {
+        else if (maxVal == "maxVal") {
             if (inputIsPercentage || !displayPercentage) {
-                barChart.maxVal = Math.max(...values);
+                maxVal = Math.max(...values);
             }
             else {
-                barChart.maxVal = Math.max(...percentages);
+                maxVal = Math.max(...percentages);
             }
         }
 
-        if (barChart.minVal == null) {
+        if (minVal == null) {
             if (displayPercentage || inputIsPercentage) {
-                barChart.minVal = 0;
+                minVal = 0;
             }
             else {
-                barChart.minVal = Math.min(...values);
+                minVal = Math.min(...values);
             }
         }
-        else if (barChart.minVal == "minVal") {
+        else if (minVal == "minVal") {
             if (inputIsPercentage || !displayPercentage) {
-                barChart.minVal = Math.min(...values);
+                minVal = Math.min(...values);
             }
             else {
-                barChart.minVal = Math.min(...percentages);
+                minVal = Math.min(...percentages);
             }
         }
 
         const xScale = d3.scaleLinear()
-            .domain([barChart.minVal, barChart.maxVal])
+            .domain([minVal, maxVal])
             .range([0, width]);
 
         if (!inputIsPercentage && displayPercentage) {
@@ -110,8 +101,8 @@ barChart.chart = function ({
             }
         }
 
-        svg.attr("width", width + barChart.margin.left)
-            .attr("height", height + barChart.margin.top + barChart.margin.bottom);
+        svg.attr("width", width)
+            .attr("height", height);
 
         function yPos(index) {
             return index * barspace;
@@ -123,7 +114,7 @@ barChart.chart = function ({
             .attr("class", "sota-barChart-bar")
             .attr("width", d => xScale(d))
             .attr("height", barHeight)
-            .attr("x", barChart.margin.left)
+            .attr("x", margin.left)
             .attr("y", (d, i) => yPos(i))
             .on("mouseover", function (d, i) {
                 d3.select(this)
@@ -156,7 +147,7 @@ barChart.chart = function ({
             .data(dataset)
             .join("line")
             .attr("class", "sota-barChart-separator")
-            .attr("x1", barChart.margin.left)
+            .attr("x1", margin.left)
             .attr("x2", width)
             .attr("y1", (d, i) => yPos(i) + barHeight + separatorOffset)
             .attr("y2", (d, i) => yPos(i) + barHeight + separatorOffset)
@@ -174,6 +165,3 @@ barChart.chart = function ({
             .attr("y", (d, i) => yPos(i) + barHeight / 2);
     });
 }
-
-export default barChart.chart;
-

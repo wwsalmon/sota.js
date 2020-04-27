@@ -1,8 +1,6 @@
 import helper from '../helper.js'; //...not used for some reason?
 
-var lineGraph = {}; // replace with variable name, find and replace in entire document
-
-lineGraph.chart = function ({
+export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
@@ -28,15 +26,6 @@ lineGraph.chart = function ({
 
     svg.attr("height", height);
 
-    lineGraph.inputIsPercentage = inputIsPercentage;
-    lineGraph.minVal = minVal;
-    lineGraph.maxVal = maxVal;
-    lineGraph.height = height;
-    lineGraph.customTooltipAppend = customTooltipAppend;
-    lineGraph.prop5 = prop5;
-    lineGraph.prop6 = prop6;
-    lineGraph.margin = margin;
-
     d3.csv("data/" + dataFile + ".csv").then(data => {
         const lineColor = "#bbb";
         const lineWidth = 3;
@@ -49,21 +38,21 @@ lineGraph.chart = function ({
         const labels = data.map(d => d.label);
         const values = data.map(d => +d.value);
 
-        if (lineGraph.minVal == "minVal"){
+        if (minVal == "minVal"){
             if (inputIsPercentage){
-                lineGraph.minVal = 0;
+                minVal = 0;
             }
             else{
-                lineGraph.minVal = Math.min(...values);
+                minVal = Math.min(...values);
             }
         }
         
-        if (lineGraph.maxVal == "maxVal"){
+        if (maxVal == "maxVal"){
             if (inputIsPercentage){
-                lineGraph.maxVal = 100;
+                maxVal = 100;
             }
             else{
-                lineGraph.maxVal = Math.max(...values);
+                maxVal = Math.max(...values);
             }
         }
 
@@ -74,7 +63,7 @@ lineGraph.chart = function ({
             .range([margin.left, width - margin.right]);
 
         const y = d3.scaleLinear()
-            .domain([lineGraph.minVal, lineGraph.maxVal])
+            .domain([minVal, maxVal])
             .range([height - margin.bottom, margin.top]);
 
         svg.append("g")
@@ -90,10 +79,10 @@ lineGraph.chart = function ({
         // process tooltip labels
 
         if (inputIsPercentage) {
-            var tooltipAppend = "% " + lineGraph.customTooltipAppend;
+            var tooltipAppend = "% " + customTooltipAppend;
         }
         else {
-            var tooltipAppend = lineGraph.customTooltipAppend;
+            var tooltipAppend = customTooltipAppend;
         }
 
         // run main loop here
@@ -152,5 +141,3 @@ lineGraph.chart = function ({
 
     });
 }
-
-export default lineGraph.chart;
