@@ -121,6 +121,8 @@ export default function ({
         const mainChart = svg.append("g")
             .attr("class", "sota-stackedBarChart-mainChart");
 
+        // LEGEND
+
         if (showLegend){
             let valueLabelWidths = [];
 
@@ -141,7 +143,7 @@ export default function ({
 
             var legendHeight = 0;
 
-            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchRight + 2 * swatchBetween > width - margin.left - margin.right){
+            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > width - margin.left - margin.right){
                 // vertical legends
                 let legendLeft = width - margin.right - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
@@ -164,12 +166,34 @@ export default function ({
                     .attr("alignment-baseline", "central")
 
                 legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
-
-                mainChart.attr("transform", `translate(0 ${legendHeight})`)
             }
             else{
+                let legendLeft = width - margin.right - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
+
+                console.log(legendLeft);
+
+                legend.selectAll(".sota-gen-legend-swatch")
+                    .data(valueLabels)
+                    .join("rect")
+                    .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0,i), d => d))
+                    .attr("y", 0)
+                    .attr("width", swatchWidth)
+                    .attr("height", swatchHeight)
+
+                legend.selectAll(".sota-gen-legend-text")
+                    .data(valueLabels)
+                    .join("text")
+                    .attr("class", "sota-gen-legend-text")
+                    .text(d => d)
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
+                    .attr("y", swatchHeight / 2)
+                    .attr("alignment-baseline", "central")
+
+                legendHeight = swatchHeight + swatchBelow;
             }
 
+            mainChart.attr("transform", `translate(0 ${legendHeight})`)
             svg.attr("height", height + legendHeight);
         }
 

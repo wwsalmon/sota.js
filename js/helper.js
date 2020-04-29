@@ -26,9 +26,9 @@ export let sotaConfig = {
     groupLabelMargin: 24,
     lineColor: "#999999",
     swatch: {
-        between: 24,
+        between: 12,
         belowBetween: 8,
-        right: 8,
+        right: 24,
         width: 32,
         height: 24,
         below: 16
