@@ -7,7 +7,8 @@ helper.oneDecimal = function (number) {
 export let sotaConfig = {
     separatorStrokeWidth: 2,
     barHeight: 32,
-    barMargin: 16
+    barMargin: 16,
+    groupLabelMargin: 24
 }
 
 export default helper;

@@ -6,7 +6,7 @@ export default function ({
     inputIsPercentage = false,
     showXAxis = true,
     writePercentageOnBar = true,
-    prop3 = "value3",
+    groupLabelStyle = "onBar",
     prop4 = "value4",
     prop5 = "value5",
     prop6 = "value6",
@@ -31,11 +31,19 @@ export default function ({
         const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const barHeight = sotaConfig.barHeight;
         const barMargin = sotaConfig.barMargin;
+        const groupLabelMargin = sotaConfig.groupLabelMargin;
         
         // define styling variables here
-        
-        const barspace = barHeight + barMargin;
+
+        var barspace = barHeight + barMargin;
         var height = data.length * barspace + axisMargin + margin.top;
+        var marginBefore = 0;
+
+        if (groupLabelStyle == "onBar"){
+            barspace += data.length * groupLabelMargin;
+            height += data.length * groupLabelMargin;
+            marginBefore = groupLabelMargin;
+        }
 
         if (showXAxis){
             height += barMargin;
@@ -111,7 +119,7 @@ export default function ({
             .data(stackedData)
             .join("g")
             .attr("class","sota-stackedBarChart-group")
-            .attr("transform",(d, i) => "translate(0 " + y(groupLabels[i]) + ")")
+            .attr("transform",(d, i) => "translate(0 " + (y(groupLabels[i]) + marginBefore - barMargin) + ")")
             
         chartGroups.selectAll(".sota-stackedBarChart-bar")
             .data(d => d)
@@ -161,6 +169,17 @@ export default function ({
                 }
             })
             .attr("height", barHeight)
+            
+        if (groupLabelStyle == "onBar"){
+            svg.selectAll(".sota-stackedBarChart-groupLabel-onBar")
+                .data(groupLabels)
+                .join("text")
+                .attr("class", "sota-stackedBarChart-groupLabel-onBar")
+                .text(d => d)
+                .attr("alignment-baseline", "bottom")
+                .attr("x", margin.left)
+                .attr("y", d => y(d))
+        }
 
         // svg.append("g")
         //     .selectAll("g")
