@@ -125,7 +125,9 @@ export default function ({
                 .data(data)
                 .join("rect")
                 .attr("class", "sota-customBarChart-separator")
-                .attr("x", (d, i) => x(prevValues[i]))
+                .attr("x", (d, i) => {
+                    return (i == 0) ? -separatorStrokeWidth : x(prevValues[i]);
+                })
                 .attr("y", 0)
                 .attr("width", separatorStrokeWidth)
                 .attr("height", height)
