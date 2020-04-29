@@ -67,12 +67,12 @@ export default function ({
             .range([height - margin.bottom, margin.top]);
 
         svg.append("g")
-            .attr("class", "sota-lineGraph-axis sota-lineGraph-xAxis")
+            .attr("class", "sota-gen-axis sota-gen-xAxis")
             .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
             .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
         svg.append("g")
-            .attr("class","sota-lineGraph-axis sota-lineGraph-yAxis")
+            .attr("class", "sota-gen-axis sota-gen-YAxis")
             .call(d3.axisLeft(y).tickSize(-tickSize))
             .style("transform","translateX(" + margin.left + "px)");
 

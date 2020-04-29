@@ -73,15 +73,15 @@ h1{
             font-weight: 700;
         }
         
-        .sota-lineGraph-axis{ // replace this with CSS-in-JS
+        .sota-gen-axis{ // replace this with CSS-in-JS
 
-            &.sota-lineGraph-xAxis{
+            &.sota-gen-xAxis{
                 .tick text{
                     transform: translateY($axis-text-margin);
                 }
             }
 
-            &.sota-lineGraph-yAxis{
+            &.sota-gen-yAxis{
                 .tick text{
                     transform: translateX(-$axis-text-margin - 4);
                     text-anchor: middle;

@@ -7,7 +7,7 @@ export default function ({
     showXAxis = true,
     labelStyle = "onBar", // "none" | "onBar" | "aboveBar" 
     groupLabelStyle = "none", // "none" | "onBar" | "left"
-    prop4 = "value4",
+    showLegend = true,
     prop5 = "value5",
     prop6 = "value6",
     margin = {
@@ -35,6 +35,12 @@ export default function ({
         const labelLeft = sotaConfig.labelLeft;
         const labelBelow = sotaConfig.labelBelow;
         const lineColor = sotaConfig.lineColor;
+        const swatchBetween = sotaConfig.swatch.between;
+        const swatchRight = sotaConfig.swatch.right;
+        const swatchWidth = sotaConfig.swatch.width;
+        const swatchHeight = sotaConfig.swatch.height;
+        const swatchBelowBetween = sotaConfig.swatch.belowBetween;
+        const swatchBelow = sotaConfig.swatch.below;
         
         // define styling variables here
 
@@ -112,9 +118,64 @@ export default function ({
             .domain(valueLabels)
             .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys())
 
+        const mainChart = svg.append("g")
+            .attr("class", "sota-stackedBarChart-mainChart");
+
+        if (showLegend){
+            let valueLabelWidths = [];
+
+            const legend = svg.append("g")
+                .lower()
+                .attr("class","sota-gen-legend")
+
+            legend.selectAll("nothing")
+                .data(valueLabels)
+                .enter()
+                .append("text")
+                .attr("class","sota-gen-legend-text")
+                .text(d => d)
+                .attr("x", function(d){
+                    valueLabelWidths.push(this.getBBox().width);
+                })
+                .remove();
+
+            var legendHeight = 0;
+
+            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchRight + 2 * swatchBetween > width - margin.left - margin.right){
+                // vertical legends
+                let legendLeft = width - margin.right - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
+
+                legend.selectAll(".sota-gen-legend-swatch")
+                    .data(valueLabels)
+                    .join("rect")
+                    .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
+                    .attr("x",legendLeft)
+                    .attr("y", (d, i) => margin.top + (swatchHeight + swatchBelowBetween) * i)
+                    .attr("width",swatchWidth)
+                    .attr("height",swatchHeight)
+
+                legend.selectAll(".sota-gen-legend-text")
+                    .data(valueLabels)
+                    .join("text")
+                    .attr("class", "sota-gen-legend-text")
+                    .text(d => d)
+                    .attr("x", legendLeft + swatchWidth + swatchBetween)
+                    .attr("y", (d, i) => margin.top + (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
+                    .attr("alignment-baseline", "central")
+
+                legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
+
+                mainChart.attr("transform", `translate(0 ${legendHeight})`)
+            }
+            else{
+            }
+
+            svg.attr("height", height + legendHeight);
+        }
+
         if (showXAxis){
-            svg.append("g")
-                .attr("class", "sota-lineGraph-axis sota-lineGraph-xAxis")
+            mainChart.append("g")
+                .attr("class", "sota-gen-axis sota-gen-xAxis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .attr("transform", "translate(" + margin.left + " " + (height - margin.bottom) + ")");
         }
@@ -122,7 +183,7 @@ export default function ({
 
         // MAIN LOOP
 
-        const chartGroups = svg.selectAll(".sota-stackedBarChart-group")
+        const chartGroups = mainChart.selectAll(".sota-stackedBarChart-group")
             .data(stackedData)
             .join("g")
             .attr("class","sota-stackedBarChart-group")
@@ -180,7 +241,7 @@ export default function ({
         // onBar group label
             
         if (groupLabelStyle == "onBar"){
-            svg.selectAll(".sota-stackedBarChart-groupLabel-onBar")
+            mainChart.selectAll(".sota-stackedBarChart-groupLabel-onBar")
                 .data(groupLabels)
                 .join("text")
                 .attr("class", "sota-stackedBarChart-groupLabel-onBar")
@@ -226,14 +287,11 @@ export default function ({
             let labelHeights = []
 
             function getLabelHeight(i) {
-                console.log(i+1, labelRightBounds);
                 if (i == labelRightBounds.length - 1){
-                    console.log("endpoint")
                     labelHeights[i] = -2;
                     return -2;
                 }
                 else if (labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft > labelRightBounds[i+1][0]){
-                    console.log("overlap")
                     labelRightBounds[i + 1][0] = labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft;
                     let nextHeight = getLabelHeight(i+1);
                     let thisHeight = nextHeight - 1;
@@ -241,7 +299,6 @@ export default function ({
                     return thisHeight;
                 }
                 else{
-                    console.log("no-overlap")
                     getLabelHeight(i+1);
                     labelHeights[i] = -2;
                     return -2;
