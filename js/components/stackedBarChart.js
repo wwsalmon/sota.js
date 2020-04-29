@@ -208,20 +208,6 @@ export default function ({
         // aboveBar value label
         
         else if (labelStyle == "aboveBar"){
-            chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-line")
-                .data(d => d)
-                .join("polyline")
-                .attr("class", "sota-stackedBarChart-label-aboveBar-line")
-                .attr("points", d => {
-                    let x1 = margin.left + x(d[1]) + x(d[0]) / 2;
-                    let y1 = barHeight / 2;
-                    let x2 = x1;
-                    let y2 = -labelBelow;
-                    return `${x1},${y1} ${x2},${y2}`;
-                })
-                .attr("stroke-width", separatorStrokeWidth)
-                .attr("stroke", lineColor)
-                .attr("fill", "none")
 
             let labelRightBounds = [];
 
@@ -232,18 +218,48 @@ export default function ({
                 .text((d, i) => `${valueLabels[i]}: ${d3.format(".1f")(d[0])}%`)
                 .attr("x", d => margin.left + x(d[1]) + x(d[0]) / 2)
                 .attr("y", function(d){
-                    labelRightBounds.push(d[1] + this.getBBox().x + this.getBBox().width)
+                    labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
                     return -2 * labelBelow;
                 })
                 .attr("alignment-baseline", "bottom")
 
+            let labelHeights = []
+            let prevRightBound = -labelLeft;
+
+            for (let i in labelRightBounds){
+                if (labelRightBounds[i][0] < prevRightBound + labelLeft){
+                    labelRightBounds[i][0] = prevRightBound + labelLeft;
+                    labelHeights[i-1] -= 1;
+                    labelHeights.push(-2);
+                }
+                else{
+                    labelHeights.push(-2)
+                }
+                prevRightBound = labelRightBounds[i][0] + labelRightBounds[i][1]
+            }
+
             chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-line")
                 .data(d => d)
                 .join("polyline")
-                .attr("points", function(d, i){
-                    let currentPoints = this.getAttribute("points");
-                    return currentPoints + ` ${labelRightBounds[i]},${-labelBelow}`;
+                .attr("class", "sota-stackedBarChart-label-aboveBar-line")
+                .attr("points", (d, i) => {
+                    let x1 = margin.left + x(d[1]) + x(d[0]) / 2;
+                    let y1 = barHeight / 2;
+                    let x2 = x1;
+                    let y2 = (labelHeights[i] + 1) * labelBelow;
+                    let x3 = labelRightBounds[i][0] + labelRightBounds[i][1];
+                    let y3 = y2;
+                    return `${x1},${y1} ${x2},${y2} ${x3},${y3}`;
                 })
+                .attr("stroke-width", separatorStrokeWidth)
+                .attr("stroke", lineColor)
+                .attr("fill", "none")
+
+            chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-text")
+                .data(d => d)
+                .join("text")
+                .attr("x", (d, i) => labelRightBounds[i][0])
+                .attr("y", (d, i) => labelHeights[i] * labelBelow);
         }
 
     });
