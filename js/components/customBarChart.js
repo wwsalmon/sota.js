@@ -22,6 +22,7 @@ export default function ({
     var width = document.querySelector(selector).offsetWidth;
 
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+    const hoverOpacity = 0.8;
 
     svg.attr("height", height);
 
@@ -96,6 +97,29 @@ export default function ({
                 .attr("width", d => x(d.value))
                 .attr("height", height)
                 .attr("clip-path", "url(#shapeDef)")
+                .on("mouseover", function (d, i) {
+                    d3.select(this)
+                        .attr("opacity", hoverOpacity);
+                    tooltip.style("opacity", 1.0)
+                        .html(() => {
+                            let retval = d.label + "<br/>Percentage: " + percentages[i];
+                            if (!inputIsPercentage) {
+                                retval += "<br/>Number of responses: " + values[i];
+                            }
+                            return retval;
+                        })
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY) + "px");
+                })
+                .on("mousemove", d => {
+                    tooltip.style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY) + "px");
+                })
+                .on("mouseout", function (d) {
+                    d3.select(this)
+                        .attr("opacity", 1.0);
+                    tooltip.style("opacity", 0);
+                })
 
             mainChart.selectAll(".sota-customBarChart-separator")
                 .data(data)
