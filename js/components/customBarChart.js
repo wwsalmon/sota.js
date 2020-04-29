@@ -21,68 +21,93 @@ export default function ({
 
     var width = document.querySelector(selector).offsetWidth;
 
+    const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+
     svg.attr("height", height);
 
     d3.xml("shapes/" + shapeFile + ".svg").then(shape => {
 
         // import shape and make it a definition
 
-        var importedNode = document.importNode(shape.documentElement, true)
-
-        var firstPath = d3.select(importedNode)
+        let importedNode = document.importNode(shape.documentElement, true)
+        let firstPath = d3.select(importedNode)
             .select("path")
+            .node()
+        let firstPathWidth = 0;
 
-        console.log(firstPath);
-
-        let shapeCurrentWidth = 0;
-
-        var shapeContainer = svg.append("g");
-
-        shapeContainer.append(() => firstPath._groups[0][0])
-            .attr("class", "sota-shapePath")
-            .attr("transform",function(){
-                return `scale(${shapeWidth / this.getBBox().width})`
+        svg.append(() => firstPath)
+            .attr("class",function(){
+                firstPathWidth = this.getBBox().width;
+                return "";
             })
+            .remove();
+
+        let scaleFactor = shapeWidth / firstPathWidth;
+
+        svg.append("defs")
+            .append("clipPath")
+            .attr("id","shapeDef")
+            .append(() => firstPath)
+            .attr("transform", `scale(${scaleFactor})`)
 
         d3.csv("data/" + dataFile + ".csv").then(data => {
 
             // process data
+            // percentages is only used for labels so we format it and add % sign
 
             if (!inputIsPercentage) {
                 var values = data.map(d => d.value);
                 var totalResp = d3.sum(values, d => d);
-                var percentages = values.map(value => 100 * value / totalResp);
+                var percentages = values.map(value => d3.format(".1f")(100 * value / totalResp) + "%");
             }
             else {
-                var percentages = data.map(d => d.value);
+                var totalResp = 100;
+                var percentages = data.map(d => d3.format(".1f")(d.value) + "%");
+            }
+            
+            // since stacked, left coordinate of each bar progresses, so we need this cumulative array
+
+            let prevValue = 0;
+            let prevValues = [];
+            for (let d of data){
+                prevValues.push(prevValue)
+                prevValue += +d.value;
             }
 
-            // configure labelset
+            const x = d3.scaleLinear()
+                .domain([0, totalResp])
+                .range([0, shapeWidth]);
 
-            if (inputIsPercentage) {
-                var labelset = d3.map(percentages, d => d3.format(".1f")(d) + "%");
-            }
-            else {
-                var labelset = values;
-            }
+            const classNames = d3.scaleOrdinal()
+                .domain(d3.map(data, d=>d.label))
+                .range(d3.map(data, (d, i) => "module-fill-" + (i + 1)).keys())
 
+            // main loop
+
+            const mainChart = svg.append("g")
+                .attr("class", "sota-mainChart");
+                
+            mainChart.selectAll(".sota-customBarChart-bar")
+                .data(data)
+                .join("rect")
+                .attr("class", d => "sota-customBarChart-bar " + classNames(d.label))
+                .attr("x", (d,i) => x(prevValues[i]))
+                .attr("y", 0)
+                .attr("width", d => x(d.value))
+                .attr("height", height)
+                .attr("clip-path", "url(#shapeDef)")
+
+            mainChart.selectAll(".sota-customBarChart-separator")
+                .data(data)
+                .join("rect")
+                .attr("class", "sota-customBarChart-separator")
+                .attr("x", (d, i) => x(prevValues[i]))
+                .attr("y", 0)
+                .attr("width", separatorStrokeWidth)
+                .attr("height", height)
+                .attr("fill", "white")
+                .attr("clip-path", "url(#shapeDef)")
         });
 
     })
-
-    d3.csv("data/" + dataFile + ".csv").then(data => {
-        var hoverOpacity = 0.8;
-        // define styling variables here
-
-        // PROCESS values AND percentages
-
-        var labels = data.map(d => d.label);
-
-        // process data here. Create scales, etc.
-
-        // LABELSET for tooltip:
-
-        // run main loop here
-
-    });
 }
