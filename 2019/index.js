@@ -12,3 +12,5 @@ sota.lineGraph({ selector: "#module-discipline-time-d3", dataFile: "disc-time", 
 sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "room-visit-policy", groupLabelStyle: "onBar" })
 
 sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "parents-college", labelStyle: "aboveBar", showLegend: false })
+
+sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "happiness", shapeFile: "cloud" })

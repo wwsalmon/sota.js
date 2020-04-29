@@ -45,7 +45,7 @@ h1{
         position: relative;
         width: 100%;
 
-        svg{
+        &> svg{
             width: 100%;
         }
 
@@ -156,5 +156,26 @@ h1{
 
     .module-fill-4{
         fill: $discipline-4;
+    }
+}
+
+#wellness{
+    background-color: $wellness-1;
+    color: $wellness-1;
+
+    .module-fill-1{
+        fill: $wellness-1;
+    }
+
+    .module-fill-2{
+        fill: $wellness-2;
+    }
+
+    .module-fill-3{
+        fill: $wellness-3;
+    }
+
+    .module-fill-4{
+        fill: $wellness-4;
     }
 }
