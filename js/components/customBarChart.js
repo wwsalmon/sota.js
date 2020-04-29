@@ -6,10 +6,9 @@ export default function ({
     shapeFile,
     shapeWidth = 300,
     inputIsPercentage = false,
-    height = 300,
     margin = {
-        "top": 0,
-        "bottom": 0,
+        "top": 20,
+        "bottom": 20,
         "left": 0,
         "right": 0
     } }) {
@@ -23,8 +22,10 @@ export default function ({
 
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
     const hoverOpacity = 0.8;
-
-    svg.attr("height", height);
+    const labelLeft = sotaConfig.labelLeft;
+    const labelBelow = sotaConfig.labelBelow;
+    const lineColor = sotaConfig.lineColor;
+    const coeffLabelBelow = 3;
 
     d3.xml("shapes/" + shapeFile + ".svg").then(shape => {
 
@@ -35,15 +36,18 @@ export default function ({
             .select("path")
             .node()
         let firstPathWidth = 0;
+        let firstPathHeight = 0;
 
         svg.append(() => firstPath)
             .attr("class",function(){
                 firstPathWidth = this.getBBox().width;
+                firstPathHeight = this.getBBox().height;
                 return "";
             })
             .remove();
 
         let scaleFactor = shapeWidth / firstPathWidth;
+        let scaledHeight = firstPathHeight * scaleFactor;
 
         svg.append("defs")
             .append("clipPath")
@@ -95,7 +99,7 @@ export default function ({
                 .attr("x", (d,i) => x(prevValues[i]))
                 .attr("y", 0)
                 .attr("width", d => x(d.value))
-                .attr("height", height)
+                .attr("height", scaledHeight)
                 .attr("clip-path", "url(#shapeDef)")
                 .on("mouseover", function (d, i) {
                     d3.select(this)
@@ -125,14 +129,84 @@ export default function ({
                 .data(data)
                 .join("rect")
                 .attr("class", "sota-customBarChart-separator")
-                .attr("x", (d, i) => {
-                    return (i == 0) ? -separatorStrokeWidth : x(prevValues[i]);
-                })
+                .attr("x", (d, i) => (i == 0) ? -separatorStrokeWidth : x(prevValues[i]))
                 .attr("y", 0)
                 .attr("width", separatorStrokeWidth)
-                .attr("height", height)
+                .attr("height", scaledHeight)
                 .attr("fill", "white")
                 .attr("clip-path", "url(#shapeDef)")
+
+            // draw labels. Code taken just about verbatim from stackedBarChart aboveBar label
+
+            var labelRightBounds = [];
+
+            mainChart.selectAll(".sota-customBarChart-label-aboveBar-text")
+                .data(data)
+                .join("text")
+                .attr("class", "sota-customBarChart-label-aboveBar-text")
+                .text((d,i) => `${d.label}: ${percentages[i]}`)
+                .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
+                .attr("y", function (d) {
+                    labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
+                    return scaledHeight + 3 * labelBelow;
+                })
+                .attr("alignment-baseline", "top")
+
+            let labelHeights = []
+
+            function getLabelHeight(i) {
+                if (i == labelRightBounds.length - 1) {
+                    labelHeights[i] = coeffLabelBelow;
+                    return coeffLabelBelow;
+                }
+                else if (labelRightBounds[i][0] + labelRightBounds[i][1] + 2 * labelLeft > labelRightBounds[i + 1][0]) {
+                    labelRightBounds[i + 1][0] = labelRightBounds[i][0] + labelRightBounds[i][1] + 2 * labelLeft;
+                    let nextHeight = getLabelHeight(i + 1);
+                    let thisHeight = nextHeight + 1;
+                    labelHeights[i] = thisHeight;
+                    return thisHeight;
+                }
+                else {
+                    getLabelHeight(i + 1);
+                    labelHeights[i] = coeffLabelBelow;
+                    return coeffLabelBelow;
+                }
+            }
+
+            getLabelHeight(0);
+
+            mainChart.selectAll(".sota-customBarChart-label-aboveBar-line")
+                .data(data)
+                .join("polyline")
+                .attr("class", "sota-customBarChart-label-aboveBar-line")
+                .attr("points", (d, i) => {
+                    let x1 = x(prevValues[i]) + x(d.value) / 2;
+                    let y1 = scaledHeight - labelBelow;
+                    let x2 = x1;
+                    let y2 = scaledHeight + (labelHeights[i] + 1) * labelBelow;
+                    let x3 = labelRightBounds[i][0] + labelRightBounds[i][1];
+                    let y3 = y2;
+                    return `${x1},${y1} ${x2},${y2} ${x3},${y3}`;
+                })
+                .attr("stroke-width", separatorStrokeWidth)
+                .attr("stroke", lineColor)
+                .attr("fill", "none")
+
+            mainChart.selectAll(".sota-customBarChart-label-aboveBar-text")
+                .data(data)
+                .join("text")
+                .attr("x", (d, i) => labelRightBounds[i][0])
+                .attr("y", (d, i) => scaledHeight + labelHeights[i] * labelBelow);
+
+            let labelsHeight = d3.max(labelHeights) * labelBelow + 20;
+
+            let height = scaledHeight + margin.top + margin.bottom + labelsHeight;
+
+            svg.attr("height", height);
+
+            mainChart.attr("transform",`translate(${margin.left} ${margin.top})`)
+                .attr("width",width - margin.left - margin.right)
+
         });
 
     })
