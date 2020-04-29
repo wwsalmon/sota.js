@@ -43,7 +43,7 @@ export default function ({
                 minVal = 0;
             }
             else{
-                minVal = Math.min(...values);
+                minVal = d3.min(values);
             }
         }
         
@@ -52,7 +52,7 @@ export default function ({
                 maxVal = 100;
             }
             else{
-                maxVal = Math.max(...values);
+                maxVal = d3.max(values);
             }
         }
 

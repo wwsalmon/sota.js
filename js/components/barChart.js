@@ -37,7 +37,7 @@ export default function ({
 
         if (!inputIsPercentage) {
             if (totalResp == null) {
-                totalResp = values.reduce((a, b) => +a + +b, 0)
+                totalResp = d3.sum(values, d => d);
             }
             var percentages = values.map(value => 100 * value / totalResp);
         }
@@ -49,15 +49,15 @@ export default function ({
                 maxVal = 100;
             }
             else {
-                maxVal = Math.max(...values);
+                maxVal = d3.max(values);
             }
         }
         else if (maxVal == "maxVal") {
             if (inputIsPercentage || !displayPercentage) {
-                maxVal = Math.max(...values);
+                maxVal = d3.max(values);
             }
             else {
-                maxVal = Math.max(...percentages);
+                maxVal = d3.max(percentages);
             }
         }
 
@@ -66,15 +66,15 @@ export default function ({
                 minVal = 0;
             }
             else {
-                minVal = Math.min(...values);
+                minVal = d3.min(values);
             }
         }
         else if (minVal == "minVal") {
             if (inputIsPercentage || !displayPercentage) {
-                minVal = Math.min(...values);
+                minVal = d3.min(values);
             }
             else {
-                minVal = Math.min(...percentages);
+                minVal = d3.min(percentages);
             }
         }
 
@@ -97,7 +97,7 @@ export default function ({
             }
             else {
                 var append = "";
-                var labelset = percentages;
+                var labelset = d3.map(percentages, d => d3.format(".1f")(d));
             }
         }
 
@@ -120,7 +120,7 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(data[i].label + ": " + d3.format(".1f")(labelset[i]) + tooltipAppend)
+                    .html(data[i].label + ": " + labelset[i] + tooltipAppend)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })

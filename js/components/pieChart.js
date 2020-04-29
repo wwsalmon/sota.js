@@ -44,7 +44,7 @@ export default function ({
 
         if (!inputIsPercentage) {
             var values = data.map(d => d.value);
-            var totalResp = values.reduce((a, b) => +a + +b, 0);
+            var totalResp = d3.sum(values, d => d);
             var percentages = values.map(value => 100 * value / totalResp);
         }
         else {
