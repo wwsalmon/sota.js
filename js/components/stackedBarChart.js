@@ -123,6 +123,8 @@ export default function ({
 
         // LEGEND
 
+        var legendHeight = 0;
+
         if (showLegend){
             let valueLabelWidths = [];
 
@@ -140,8 +142,6 @@ export default function ({
                     valueLabelWidths.push(this.getBBox().width);
                 })
                 .remove();
-
-            var legendHeight = 0;
 
             if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > width - margin.left - margin.right){
                 // vertical legends
@@ -192,9 +192,6 @@ export default function ({
 
                 legendHeight = swatchHeight + swatchBelow;
             }
-
-            mainChart.attr("transform", `translate(0 ${legendHeight})`)
-            svg.attr("height", height + legendHeight);
         }
 
         if (showXAxis){
@@ -275,6 +272,8 @@ export default function ({
                 .attr("y", d => y(d))
         }
 
+        var labelsHeight = 0;
+
         // onBar value label
 
         if (labelStyle == "onBar"){
@@ -353,7 +352,13 @@ export default function ({
                 .join("text")
                 .attr("x", (d, i) => labelRightBounds[i][0])
                 .attr("y", (d, i) => labelHeights[i] * labelBelow);
+
+            labelsHeight = -1 * d3.min(labelHeights) * labelBelow;
+
         }
+
+        svg.attr("height", height + legendHeight + labelsHeight);
+        mainChart.attr("transform",`translate(0 ${legendHeight + labelsHeight})`)
 
     });
 }
