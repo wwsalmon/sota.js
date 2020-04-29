@@ -5,8 +5,8 @@ export default function ({
     dataFile,
     inputIsPercentage = false,
     showXAxis = true,
-    labelStyle = "onBar", // "none" | "onBar" | "singleLabels" 
-    groupLabelStyle = "onBar", // "none" | "onBar" | "left"
+    labelStyle = "onBar", // "none" | "onBar" | "aboveBar" 
+    groupLabelStyle = "none", // "none" | "onBar" | "left"
     prop4 = "value4",
     prop5 = "value5",
     prop6 = "value6",
@@ -33,8 +33,14 @@ export default function ({
         const barMargin = sotaConfig.barMargin;
         const groupLabelMargin = sotaConfig.groupLabelMargin;
         const labelLeft = sotaConfig.labelLeft;
+        const labelBelow = sotaConfig.labelBelow;
+        const lineColor = sotaConfig.lineColor;
         
         // define styling variables here
+
+        if (labelStyle == "aboveBar"){
+            margin.top += labelBelow + 20;
+        }
 
         var barspace = barHeight + barMargin;
         var height = data.length * barspace + axisMargin + margin.top;
@@ -184,6 +190,8 @@ export default function ({
                 .attr("y", d => y(d))
         }
 
+        // onBar value label
+
         if (labelStyle == "onBar"){
             chartGroups.selectAll(".sota-stackedBarChart-label-onBar")
                 .data(d => d)
@@ -196,7 +204,47 @@ export default function ({
                 .attr("y", barHeight / 2)
                 .call(hideIfOOB,margin.left)
         }
-            
+         
+        // aboveBar value label
+        
+        else if (labelStyle == "aboveBar"){
+            chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-line")
+                .data(d => d)
+                .join("polyline")
+                .attr("class", "sota-stackedBarChart-label-aboveBar-line")
+                .attr("points", d => {
+                    let x1 = margin.left + x(d[1]) + x(d[0]) / 2;
+                    let y1 = barHeight / 2;
+                    let x2 = x1;
+                    let y2 = -labelBelow;
+                    return `${x1},${y1} ${x2},${y2}`;
+                })
+                .attr("stroke-width", separatorStrokeWidth)
+                .attr("stroke", lineColor)
+                .attr("fill", "none")
+
+            let labelRightBounds = [];
+
+            chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-text")
+                .data(d => d)
+                .join("text")
+                .attr("class", "sota-stackedBarChart-label-aboveBar-text")
+                .text((d, i) => `${valueLabels[i]}: ${d3.format(".1f")(d[0])}%`)
+                .attr("x", d => margin.left + x(d[1]) + x(d[0]) / 2)
+                .attr("y", function(d){
+                    labelRightBounds.push(d[1] + this.getBBox().x + this.getBBox().width)
+                    return -2 * labelBelow;
+                })
+                .attr("alignment-baseline", "bottom")
+
+            chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-line")
+                .data(d => d)
+                .join("polyline")
+                .attr("points", function(d, i){
+                    let currentPoints = this.getAttribute("points");
+                    return currentPoints + ` ${labelRightBounds[i]},${-labelBelow}`;
+                })
+        }
 
     });
 }

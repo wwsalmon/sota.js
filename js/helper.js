@@ -22,5 +22,7 @@ export let sotaConfig = {
     barHeight: 32,
     barMargin: 16,
     labelLeft: 6,
-    groupLabelMargin: 24
+    labelBelow: 8,
+    groupLabelMargin: 24,
+    lineColor: "#999999"
 }

@@ -37,6 +37,10 @@ h1{
     column-gap: $module-margin;
     background-color: #fff;
 
+    .module-two-wide{
+        grid-column: 1/3;
+    }
+
     .module{
         position: relative;
         width: 100%;
