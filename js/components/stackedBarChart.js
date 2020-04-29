@@ -209,7 +209,7 @@ export default function ({
         
         else if (labelStyle == "aboveBar"){
 
-            let labelRightBounds = [];
+            var labelRightBounds = [];
 
             chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-text")
                 .data(d => d)
@@ -224,19 +224,31 @@ export default function ({
                 .attr("alignment-baseline", "bottom")
 
             let labelHeights = []
-            let prevRightBound = -labelLeft;
 
-            for (let i in labelRightBounds){
-                if (labelRightBounds[i][0] < prevRightBound + labelLeft){
-                    labelRightBounds[i][0] = prevRightBound + labelLeft;
-                    labelHeights[i-1] -= 1;
-                    labelHeights.push(-2);
+            function getLabelHeight(i) {
+                console.log(i+1, labelRightBounds);
+                if (i == labelRightBounds.length - 1){
+                    console.log("endpoint")
+                    labelHeights[i] = -2;
+                    return -2;
+                }
+                else if (labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft > labelRightBounds[i+1][0]){
+                    console.log("overlap")
+                    labelRightBounds[i + 1][0] = labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft;
+                    let nextHeight = getLabelHeight(i+1);
+                    let thisHeight = nextHeight - 1;
+                    labelHeights[i] = thisHeight;
+                    return thisHeight;
                 }
                 else{
-                    labelHeights.push(-2)
+                    console.log("no-overlap")
+                    getLabelHeight(i+1);
+                    labelHeights[i] = -2;
+                    return -2;
                 }
-                prevRightBound = labelRightBounds[i][0] + labelRightBounds[i][1]
             }
+
+            getLabelHeight(0);
 
             chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-line")
                 .data(d => d)
