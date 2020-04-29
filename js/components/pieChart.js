@@ -69,13 +69,11 @@ export default function ({
             .innerRadius(pieRad * 0.9)
             .outerRadius(pieRad * 0.9);
 
-        if (inputIsPercentage){
-            var labelset = d3.map(percentages, d => d3.format(".1f")(d));
-            var tooltipAppend = "%";
+        if (inputIsPercentage) {
+            var labelset = d3.map(percentages, d => d3.format(".1f")(d) + "%");
         }
-        else{
+        else {
             var labelset = values;
-            var tooltipAppend = "";
         }
 
         g.selectAll(".sota-pieChart-slice")
@@ -89,7 +87,7 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(labels[i] + ": " + labelset[i] + tooltipAppend)
+                    .html(labels[i] + ": " + labelset[i])
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })
