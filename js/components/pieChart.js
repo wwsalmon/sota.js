@@ -1,4 +1,4 @@
-import helper, {sotaConfig} from '../helper.js';
+import {sotaConfig} from '../helper.js';
 
 export default function ({
     selector,
@@ -45,7 +45,7 @@ export default function ({
         if (!inputIsPercentage) {
             var values = data.map(d => d.value);
             var totalResp = values.reduce((a, b) => +a + +b, 0);
-            var percentages = values.map(value => helper.oneDecimal(100 * value / totalResp));
+            var percentages = values.map(value => 100 * value / totalResp);
         }
         else {
             var percentages = data.map(d => d.value);
@@ -70,7 +70,7 @@ export default function ({
             .outerRadius(pieRad * 0.9);
 
         if (inputIsPercentage){
-            var labelset = percentages;
+            var labelset = d3.map(percentages, d => d3.format(".1f")(d));
             var tooltipAppend = "%";
         }
         else{
@@ -125,7 +125,7 @@ export default function ({
             .data(pieData)
             .join("text")
             .attr("class","sota-pieChart-label sota-floatingLabel")
-            .text((d, i) => labels[i] + ": " + percentages[i] + "%")
+            .text((d, i) => labels[i] + ": " + d3.format(".1f")(percentages[i]) + "%")
             .attr("alignment-baseline", "central")
             .attr("transform", d => {
                 let pos = outerArc.centroid(d);

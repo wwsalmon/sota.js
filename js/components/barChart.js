@@ -27,7 +27,7 @@ export default function ({
         const hoverOpacity = 0.8;
         const separatorOffset = 6;
         const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
-        const labelMargin = 8;
+        const labelLeft = sotaConfig.labelLeft;
         const barHeight = sotaConfig.barHeight;
         const barMargin = sotaConfig.barMargin;
 
@@ -140,7 +140,7 @@ export default function ({
             .attr("class", "sota-barChart-label")
             .html(d => d.label)
             .attr("alignment-baseline", "central")
-            .attr("x", labelMargin)
+            .attr("x", labelLeft)
             .attr("y", (d, i) => yPos(i) + barHeight / 2);
 
         svg.selectAll(".sota-barChart-separator")

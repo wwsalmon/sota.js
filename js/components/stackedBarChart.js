@@ -1,12 +1,12 @@
-import {sotaConfig} from '../helper.js';
+import { sotaConfig, hideIfOOB} from '../helper.js';
 
 export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
     showXAxis = true,
-    writePercentageOnBar = true,
-    groupLabelStyle = "onBar",
+    labelStyle = "onBar", // "none" | "onBar" | "singleLabels" 
+    groupLabelStyle = "onBar", // "none" | "onBar" | "left"
     prop4 = "value4",
     prop5 = "value5",
     prop6 = "value6",
@@ -32,6 +32,7 @@ export default function ({
         const barHeight = sotaConfig.barHeight;
         const barMargin = sotaConfig.barMargin;
         const groupLabelMargin = sotaConfig.groupLabelMargin;
+        const labelLeft = sotaConfig.labelLeft;
         
         // define styling variables here
 
@@ -169,6 +170,8 @@ export default function ({
                 }
             })
             .attr("height", barHeight)
+
+        // onBar group label
             
         if (groupLabelStyle == "onBar"){
             svg.selectAll(".sota-stackedBarChart-groupLabel-onBar")
@@ -181,18 +184,18 @@ export default function ({
                 .attr("y", d => y(d))
         }
 
-        // svg.append("g")
-        //     .selectAll("g")
-        //     .data(stackedData)
-        //     .join("g")
-        //     .attr("fill",d=>color(d.key))
-        //     .selectAll("rect")
-        //     .data(d=>d)
-        //     .join("rect")
-        //     .attr("y", d => y(d.data.group))
-        //     .attr("x", d=>x(d[0]))
-        //     .attr("width",d=>x(d[1]) - x(d[0]))
-        //     .attr("height", barHeight)
+        if (labelStyle == "onBar"){
+            chartGroups.selectAll(".sota-stackedBarChart-label-onBar")
+                .data(d => d)
+                .join("text")
+                .attr("class","sota-stackedBarChart-label-onBar")
+                .text(d => d3.format(".1f")(d[0]) + "%")
+                .attr("alignment-baseline", "central")
+                .attr("text-anchor", "end")
+                .attr("x", d => x(d[1]) + x(d[0]) + margin.left - labelLeft)
+                .attr("y", barHeight / 2)
+                .call(hideIfOOB,margin.left)
+        }
             
 
     });
