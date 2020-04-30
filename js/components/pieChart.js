@@ -69,13 +69,6 @@ export default function ({
             .innerRadius(pieRad * 0.9)
             .outerRadius(pieRad * 0.9);
 
-        if (inputIsPercentage) {
-            var labelset = d3.map(percentages, d => d3.format(".1f")(d) + "%");
-        }
-        else {
-            var labelset = values;
-        }
-
         g.selectAll(".sota-pieChart-slice")
             .data(pieData)
             .join("path")
