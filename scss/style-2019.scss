@@ -33,7 +33,7 @@ h1{
     padding: 48px 24px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(3,minmax(0, 1fr));
     column-gap: $module-margin;
     background-color: #fff;
 

@@ -17,6 +17,17 @@ export default function ({
         "right": 0
     } }) {
 
+    const lineColor = "#dddddd";
+    const hoverOpacity = 0.8;
+    const tickSize = 8;
+    const separatorOffset = 6;
+    const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+    const labelLeft = sotaConfig.labelLeft;
+    const barHeight = sotaConfig.barHeight;
+    const barMargin = sotaConfig.barMargin;
+    const overflowOffset = 12;
+    const xAxisTop = sotaConfig.xAxisTop;
+
     var container = d3.select(selector);
     var svg = container.append("svg");
     var tooltip = d3.select("body").append("div")
@@ -27,17 +38,8 @@ export default function ({
 
     const mainChart = svg.append("g")
         .attr("class", "sota-barChart-mainChart")
-        .attr("transform", `translate(${margin.left} ${margin.right})`)
+        .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
         .attr("width", mainWidth);
-
-    const lineColor = "#dddddd";
-    const hoverOpacity = 0.8;
-    const tickSize = 8;
-    const separatorOffset = 6;
-    const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
-    const labelLeft = sotaConfig.labelLeft;
-    const barHeight = sotaConfig.barHeight;
-    const barMargin = sotaConfig.barMargin;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
 
@@ -78,12 +80,12 @@ export default function ({
             .range([0, mainWidth]);
 
         if (showXAxis) {
-            svg.append("g")
+            mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
-                .attr("transform", "translate(" + 0 + " " + mainHeight + ")");
+                .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
-            mainHeight += 20;
+            mainHeight += 20 + xAxisTop;
         }
 
         function y(index) { // custom y scale
@@ -156,7 +158,8 @@ export default function ({
 
         const height = mainHeight + margin.top + margin.bottom;
 
-        svg.attr("width", width)
-            .attr("height", height);
+        svg.style("width", width + 2 * overflowOffset + "px")
+            .attr("height", height)
+            .attr("transform", `translate(${-overflowOffset} 0)`);
     });
 }
