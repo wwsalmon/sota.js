@@ -6,12 +6,19 @@ export default function ({
     inputIsPercentage = false,
     pieRad = 150,
     pieThick = 80,
-    margin = {
-        "top": 0,
-        "bottom": 0,
-        "left": 0,
-        "right": 0
-    } }) {
+    margin = sotaConfig.margin
+}) {
+
+    const hoverOpacity = 0.8;
+    const polylineColor = "#999";
+    const polylineStrokeWidth = 2;
+    const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+    const swatchBetween = sotaConfig.swatch.between;
+    const swatchRight = sotaConfig.swatch.right;
+    const swatchWidth = sotaConfig.swatch.width;
+    const swatchHeight = sotaConfig.swatch.height;
+    const swatchBelowBetween = sotaConfig.swatch.belowBetween;
+    const swatchBelow = sotaConfig.swatch.below;
 
     var container = d3.select(selector);
     var svg = container.append("svg")
@@ -20,6 +27,7 @@ export default function ({
         .attr("class", "tooltip");
 
     var width = document.querySelector(selector).offsetWidth;
+    var mainWidth = width - margin.left - margin.right;
 
     var trueWidth = width - margin.left - margin.right;
 
@@ -33,13 +41,7 @@ export default function ({
 
     var height = pieRad * 2 + margin.top + margin.bottom;
 
-    svg.attr("height", height);
-
     d3.csv("data/" + dataFile + ".csv").then(data => {
-        const hoverOpacity = 0.8;
-        const polylineColor = "#999";
-        const polylineStrokeWidth = 2;
-        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const labels = data.map(d => d.label);
 
         if (!inputIsPercentage) {
@@ -54,10 +56,84 @@ export default function ({
         const pie = d3.pie();
         const pieData = pie(percentages);
 
+        // generate legend
+
+        var legendHeight = 0;
+
+        let valueLabelWidths = [];
+
+        const classNames = d3.scaleOrdinal()
+            .domain(labels)
+            .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys())
+
+        const legend = svg.append("g")
+            .lower()
+            .attr("class", "sota-gen-legend")
+            .attr("transform", `translate(0 ${margin.top})`)
+
+        legend.selectAll("nothing")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("class", "sota-gen-legend-text")
+            .text(d => d.label)
+            .attr("x", function () {
+                valueLabelWidths.push(this.getBBox().width);
+            })
+            .remove();
+
+        if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth) {
+            // vertical legends
+            let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
+
+            legend.selectAll(".sota-gen-legend-swatch")
+                .data(labels)
+                .join("rect")
+                .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
+                .attr("x", legendLeft)
+                .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i)
+                .attr("width", swatchWidth)
+                .attr("height", swatchHeight)
+
+            legend.selectAll(".sota-gen-legend-text")
+                .data(labels)
+                .join("text")
+                .attr("class", "sota-gen-legend-text")
+                .text(d => d)
+                .attr("x", legendLeft + swatchWidth + swatchBetween)
+                .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
+                .attr("alignment-baseline", "central")
+
+            legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
+        }
+        else {
+            let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
+
+            legend.selectAll(".sota-gen-legend-swatch")
+                .data(labels)
+                .join("rect")
+                .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
+                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0, i), d => d))
+                .attr("y", 0)
+                .attr("width", swatchWidth)
+                .attr("height", swatchHeight)
+
+            legend.selectAll(".sota-gen-legend-text")
+                .data(labels)
+                .join("text")
+                .attr("class", "sota-gen-legend-text")
+                .text(d => d)
+                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
+                .attr("y", swatchHeight / 2)
+                .attr("alignment-baseline", "central")
+
+            legendHeight = swatchHeight + swatchBelow;
+        }
+
         // centered g to place chart in
 
         const g = svg.append("g")
-            .attr("transform", "translate(" + (trueWidth / 2 + margin.left) + "," + (pieRad + margin.top) + ")");
+            .attr("transform", "translate(" + (trueWidth / 2) + "," + (pieRad + margin.top + legendHeight) + ")");
 
         // create subgroups for labels eventually
 
@@ -122,7 +198,7 @@ export default function ({
             .data(pieData)
             .join("text")
             .attr("class","sota-pieChart-label sota-floatingLabel")
-            .text((d, i) => labels[i] + ": " + d3.format(".1f")(percentages[i]) + "%")
+            .text((d, i) => toPercentage(percentages[i]))
             .attr("alignment-baseline", "central")
             .attr("transform", d => {
                 let pos = outerArc.centroid(d);
@@ -134,6 +210,8 @@ export default function ({
                 let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
                 return (midangle < Math.PI ? 'start' : 'end')
             })
+
+        svg.attr("height", height + legendHeight);
 
     });
 }

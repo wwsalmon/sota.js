@@ -139,12 +139,12 @@ export default function ({
                 .append("text")
                 .attr("class","sota-gen-legend-text")
                 .text(d => d)
-                .attr("x", function(d){
+                .attr("x", function(){
                     valueLabelWidths.push(this.getBBox().width);
                 })
                 .remove();
 
-            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > width - margin.left - margin.right){
+            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth){
                 // vertical legends
                 let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
