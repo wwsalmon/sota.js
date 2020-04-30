@@ -18,6 +18,9 @@ export default function ({
     var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
+    const mainChart = svg.append("g")
+        .attr("class", "sota-mainChart");
+
     var width = document.querySelector(selector).offsetWidth;
 
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
@@ -88,9 +91,6 @@ export default function ({
                 .range(d3.map(data, (d, i) => "module-fill-" + (i + 1)).keys())
 
             // main loop
-
-            const mainChart = svg.append("g")
-                .attr("class", "sota-mainChart");
                 
             mainChart.selectAll(".sota-customBarChart-bar")
                 .data(data)

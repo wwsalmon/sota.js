@@ -4,13 +4,15 @@ export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
+    showXAxis = true,
+    showSeparators = true,
     displayPercentage = true,
     totalResp = null,
     maxVal = null,
     minVal = null,
     margin = {
         "top": 0,
-        "bottom": 0,
+        "bottom": 20,
         "left": 0,
         "right": 0
     } }) {
@@ -21,18 +23,26 @@ export default function ({
         .attr("class", "tooltip");
 
     var width = document.querySelector(selector).offsetWidth;
+    var mainWidth = width - margin.left - margin.right;
+
+    const mainChart = svg.append("g")
+        .attr("class", "sota-barChart-mainChart")
+        .attr("transform", `translate(${margin.left} ${margin.right})`)
+        .attr("width", mainWidth);
+
+    const lineColor = "#dddddd";
+    const hoverOpacity = 0.8;
+    const tickSize = 8;
+    const separatorOffset = 6;
+    const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+    const labelLeft = sotaConfig.labelLeft;
+    const barHeight = sotaConfig.barHeight;
+    const barMargin = sotaConfig.barMargin;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
-        const lineColor = "#dddddd";
-        const hoverOpacity = 0.8;
-        const separatorOffset = 6;
-        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
-        const labelLeft = sotaConfig.labelLeft;
-        const barHeight = sotaConfig.barHeight;
-        const barMargin = sotaConfig.barMargin;
 
         const barspace = barHeight + barMargin;
-        const height = data.length * barspace + margin.bottom + margin.top;
+        var mainHeight = data.length * barspace; // if show xAxis, more is added to this
         
         if (inputIsPercentage){
             var percentages = data.map(d => +d.value).keys;
@@ -65,22 +75,28 @@ export default function ({
 
         const x = d3.scaleLinear()
             .domain([minVal, maxVal])
-            .range([0, width]);
+            .range([0, mainWidth]);
 
-        svg.attr("width", width)
-            .attr("height", height);
+        if (showXAxis) {
+            svg.append("g")
+                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                .attr("transform", "translate(" + 0 + " " + mainHeight + ")");
+
+            mainHeight += 20;
+        }
 
         function y(index) { // custom y scale
             return index * barspace;
         }
 
-        svg.selectAll(".sota-barChart-bar")
+        mainChart.selectAll(".sota-barChart-bar")
             .data(dataset)
             .join("rect")
             .attr("class", "sota-barChart-bar")
             .attr("width", d => x(d))
             .attr("height", barHeight)
-            .attr("x", margin.left)
+            .attr("x", 0)
             .attr("y", (d, i) => y(i))
             .on("mouseover", function (d, i) {
                 d3.select(this)
@@ -106,7 +122,7 @@ export default function ({
                 tooltip.style("opacity", 0);
             })
 
-        svg.selectAll(".sota-barChart-label")
+        mainChart.selectAll(".sota-barChart-label")
             .data(data)
             .join("text")
             .attr("class", "sota-barChart-label")
@@ -115,25 +131,32 @@ export default function ({
             .attr("x", labelLeft)
             .attr("y", (d, i) => y(i) + barHeight / 2);
 
-        svg.selectAll(".sota-barChart-separator")
-            .data(dataset)
-            .join("line")
-            .attr("class", "sota-barChart-separator")
-            .attr("x1", margin.left)
-            .attr("x2", width)
-            .attr("y1", (d, i) => y(i) + barHeight + separatorOffset)
-            .attr("y2", (d, i) => y(i) + barHeight + separatorOffset)
-            .attr("stroke-width", separatorStrokeWidth)
-            .attr("stroke", lineColor);
+        if (showSeparators){
+            mainChart.selectAll(".sota-barChart-separator")
+                .data(dataset)
+                .join("line")
+                .attr("class", "sota-barChart-separator")
+                .attr("x1", 0)
+                .attr("x2", mainWidth)
+                .attr("y1", (d, i) => y(i) + barHeight + separatorOffset)
+                .attr("y2", (d, i) => y(i) + barHeight + separatorOffset)
+                .attr("stroke-width", separatorStrokeWidth)
+                .attr("stroke", lineColor);
+        }
 
-        svg.selectAll(".sota-barChart-value")
+        mainChart.selectAll(".sota-barChart-value")
             .data(dataset)
             .join("text")
             .attr("class", "sota-barChart-value")
             .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
             .attr("alignment-baseline", "central")
             .attr("text-anchor", "end")
-            .attr("x", width)
+            .attr("x", mainWidth)
             .attr("y", (d, i) => y(i) + barHeight / 2);
+
+        const height = mainHeight + margin.top + margin.bottom;
+
+        svg.attr("width", width)
+            .attr("height", height);
     });
 }

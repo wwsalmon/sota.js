@@ -22,6 +22,9 @@ export default function ({
     var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
+    const mainChart = svg.append("g")
+        .attr("class", "sota-stackedBarChart-mainChart");
+
     var width = document.querySelector(selector).offsetWidth;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
@@ -118,8 +121,12 @@ export default function ({
             .domain(valueLabels)
             .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys())
 
-        const mainChart = svg.append("g")
-            .attr("class", "sota-stackedBarChart-mainChart");
+        if (showXAxis) {
+            mainChart.append("g")
+                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                .attr("transform", "translate(" + margin.left + " " + (height - margin.bottom) + ")");
+        }
 
         // LEGEND
 
@@ -190,13 +197,6 @@ export default function ({
 
                 legendHeight = swatchHeight + swatchBelow;
             }
-        }
-
-        if (showXAxis){
-            mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis")
-                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
-                .attr("transform", "translate(" + margin.left + " " + (height - margin.bottom) + ")");
         }
 
 
