@@ -10,12 +10,8 @@ export default function ({
     totalResp = null,
     maxVal = null,
     minVal = null,
-    margin = {
-        "top": 0,
-        "bottom": 20,
-        "left": 0,
-        "right": 0
-    } }) {
+    margin = sotaConfig.margin
+}) {
 
     const lineColor = "#dddddd";
     const hoverOpacity = 0.8;
@@ -25,7 +21,7 @@ export default function ({
     const labelLeft = sotaConfig.labelLeft;
     const barHeight = sotaConfig.barHeight;
     const barMargin = sotaConfig.barMargin;
-    const overflowOffset = 12;
+    const overflowOffset = sotaConfig.overflowOffset;
     const xAxisTop = sotaConfig.xAxisTop;
 
     var container = d3.select(selector);

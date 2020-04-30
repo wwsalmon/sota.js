@@ -6,12 +6,8 @@ export default function ({
     shapeFile,
     shapeWidth = 300,
     inputIsPercentage = false,
-    margin = {
-        "top": 20,
-        "bottom": 20,
-        "left": 0,
-        "right": 0
-    } }) {
+    margin = sotaConfig.margin
+}) {
 
     var container = d3.select(selector);
     var svg = container.append("svg");

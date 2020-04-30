@@ -29,7 +29,14 @@ export let sotaConfig = {
     labelBelow: 8,
     groupLabelMargin: 24,
     xAxisTop: 12,
+    overflowOffset: 16,
     lineColor: "#999999",
+    margin: {
+        top: 20,
+        bottom: 20,
+        left: 0,
+        right: 0
+    },
     swatch: {
         between: 12,
         belowBetween: 8,
