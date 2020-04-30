@@ -1,4 +1,4 @@
-import { sotaConfig, hideIfOOB} from '../helper.js';
+import { sotaConfig, hideIfOOB, toPercentage } from '../helper.js';
 
 export default function ({
     selector,
@@ -170,8 +170,6 @@ export default function ({
             else{
                 let legendLeft = width - margin.right - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
 
-                console.log(legendLeft);
-
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(valueLabels)
                     .join("rect")
@@ -223,7 +221,7 @@ export default function ({
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
-                        let retval = valueLabels[i] + "<br/>Percentage: " + d3.format(".1f")(d[0]) + "%";
+                        let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                         if (!inputIsPercentage) {
                             retval += "<br/>Number of responses: " + d[2];
                         }

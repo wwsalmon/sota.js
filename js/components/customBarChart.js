@@ -106,7 +106,7 @@ export default function ({
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = d.label + "<br/>Percentage: " + percentages[i];
+                            let retval = `<span class="sota-tooltip-label">${data[i].label}</span><br/>Percentage: ${percentages[i]}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + values[i];
                             }

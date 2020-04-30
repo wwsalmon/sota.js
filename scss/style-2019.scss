@@ -111,6 +111,10 @@ h1{
     pointer-events: none;
     opacity: 0;
     transform: translate(-50%, -100%);
+
+    .sota-tooltip-label{
+        font-weight: 700;
+    }
 }
 
 #general{

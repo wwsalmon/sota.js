@@ -1,4 +1,4 @@
-import {sotaConfig} from '../helper.js';
+import {sotaConfig, toPercentage} from '../helper.js';
 
 export default function ({
     selector,
@@ -87,7 +87,13 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(labels[i] + ": " + labelset[i])
+                    .html(() => {
+                        let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
+                        if (!inputIsPercentage) {
+                            retval += "<br/>Number of responses: " + values[i];
+                        }
+                        return retval;
+                    })
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })

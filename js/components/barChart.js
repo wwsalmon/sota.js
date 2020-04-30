@@ -1,4 +1,4 @@
-import { sotaConfig } from '../helper.js';
+import { sotaConfig, toPercentage } from '../helper.js';
 
 export default function ({
     selector,
@@ -31,80 +31,46 @@ export default function ({
         const barHeight = sotaConfig.barHeight;
         const barMargin = sotaConfig.barMargin;
 
-        const values = data.map(d => d.value);
         const barspace = barHeight + barMargin;
         const height = data.length * barspace + margin.bottom + margin.top;
-
-        if (!inputIsPercentage) {
-            if (totalResp == null) {
-                totalResp = d3.sum(values, d => d);
-            }
-            var percentages = values.map(value => 100 * value / totalResp);
+        
+        if (inputIsPercentage){
+            var percentages = data.map(d => +d.value).keys;
+        }
+        else{
+            totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
+            var percentages = data.map(d => +d.value / totalResp * 100)
         }
 
-        // SET DEFAULT maxVal and minVal values
+        var dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
+        var labels = data.map(d => d.label);
 
-        if (maxVal == null) {
-            if (displayPercentage || inputIsPercentage) {
-                maxVal = 100;
-            }
-            else {
-                maxVal = d3.max(values);
-            }
+        if (minVal == null) { // default setting
+            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
         }
-        else if (maxVal == "maxVal") {
-            if (inputIsPercentage || !displayPercentage) {
-                maxVal = d3.max(values);
-            }
-            else {
-                maxVal = d3.max(percentages);
-            }
+        else if (minVal == true) { // specified minVal
+            minVal = d3.min(dataset);
         }
+        else if (isNaN(minVal) || minVal == "") throw "invalid minVal for graph on " + selector;
+        // else custom val
 
-        if (minVal == null) {
-            if (displayPercentage || inputIsPercentage) {
-                minVal = 0;
-            }
-            else {
-                minVal = d3.min(values);
-            }
+        if (maxVal == null) { // default setting
+            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(dataset);
         }
-        else if (minVal == "minVal") {
-            if (inputIsPercentage || !displayPercentage) {
-                minVal = d3.min(values);
-            }
-            else {
-                minVal = d3.min(percentages);
-            }
+        else if (maxVal == true) { // specified maxVal
+            maxVal = d3.max(dataset);
         }
+        else if (isNaN(maxVal) || maxVal == "") throw "invalid maxVal for graph on " + selector;
+        // else custom val
 
-        const xScale = d3.scaleLinear()
+        const x = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([0, width]);
-
-        if (!inputIsPercentage && displayPercentage) {
-            var dataset = percentages;
-            var labelset = values; // show values in tooltip
-            var append = "%";
-            var tooltipAppend = "";
-        }
-        else {
-            var dataset = values;
-            var tooltipAppend = "%";
-            if (inputIsPercentage) {
-                var append = "%";
-                var labelset = values; // will just have to show percentages in tooltip
-            }
-            else {
-                var append = "";
-                var labelset = d3.map(percentages, d => d3.format(".1f")(d));
-            }
-        }
 
         svg.attr("width", width)
             .attr("height", height);
 
-        function yPos(index) {
+        function y(index) { // custom y scale
             return index * barspace;
         }
 
@@ -112,15 +78,21 @@ export default function ({
             .data(dataset)
             .join("rect")
             .attr("class", "sota-barChart-bar")
-            .attr("width", d => xScale(d))
+            .attr("width", d => x(d))
             .attr("height", barHeight)
             .attr("x", margin.left)
-            .attr("y", (d, i) => yPos(i))
+            .attr("y", (d, i) => y(i))
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(data[i].label + ": " + labelset[i] + tooltipAppend)
+                    .html(() => {
+                        let retval = `<span class="sota-tooltip-label">${data[i].label}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
+                        if (!inputIsPercentage) {
+                            retval += "<br/>Number of responses: " + data[i].value;
+                        }
+                        return retval;
+                    })
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })
@@ -132,7 +104,7 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
-            });
+            })
 
         svg.selectAll(".sota-barChart-label")
             .data(data)
@@ -141,7 +113,7 @@ export default function ({
             .html(d => d.label)
             .attr("alignment-baseline", "central")
             .attr("x", labelLeft)
-            .attr("y", (d, i) => yPos(i) + barHeight / 2);
+            .attr("y", (d, i) => y(i) + barHeight / 2);
 
         svg.selectAll(".sota-barChart-separator")
             .data(dataset)
@@ -149,8 +121,8 @@ export default function ({
             .attr("class", "sota-barChart-separator")
             .attr("x1", margin.left)
             .attr("x2", width)
-            .attr("y1", (d, i) => yPos(i) + barHeight + separatorOffset)
-            .attr("y2", (d, i) => yPos(i) + barHeight + separatorOffset)
+            .attr("y1", (d, i) => y(i) + barHeight + separatorOffset)
+            .attr("y2", (d, i) => y(i) + barHeight + separatorOffset)
             .attr("stroke-width", separatorStrokeWidth)
             .attr("stroke", lineColor);
 
@@ -158,10 +130,10 @@ export default function ({
             .data(dataset)
             .join("text")
             .attr("class", "sota-barChart-value")
-            .html(d => d3.format(".1f")(d) + append)
+            .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
             .attr("alignment-baseline", "central")
             .attr("text-anchor", "end")
             .attr("x", width)
-            .attr("y", (d, i) => yPos(i) + barHeight / 2);
+            .attr("y", (d, i) => y(i) + barHeight / 2);
     });
 }

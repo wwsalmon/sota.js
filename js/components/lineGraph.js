@@ -1,11 +1,11 @@
-import { sotaConfig } from '../helper.js';
+import { sotaConfig, toPercentage } from '../helper.js';
 
 export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
-    minVal = "minVal",
-    maxVal = "maxVal",
+    minVal = null,
+    maxVal = null,
     height = 300,
     customTooltipAppend = "",
     prop5 = "value5",
@@ -38,23 +38,23 @@ export default function ({
         const labels = data.map(d => d.label);
         const values = data.map(d => +d.value);
 
-        if (minVal == "minVal"){
-            if (inputIsPercentage){
-                minVal = 0;
-            }
-            else{
-                minVal = d3.min(values);
-            }
+        if (minVal == null){ // default setting
+            minVal = (inputIsPercentage) ? 0 : d3.min(data, d => d.value);
         }
+        else if (minVal == true){ // specified minVal
+            minVal = d3.min(data, d => d.value);
+        }
+        else if (isNaN(minVal) || minVal == "") throw "invalid minVal for graph on " + selector;
+        // else custom val
         
-        if (maxVal == "maxVal"){
-            if (inputIsPercentage){
-                maxVal = 100;
-            }
-            else{
-                maxVal = d3.max(values);
-            }
+        if (maxVal == null){ // default setting
+            maxVal = (inputIsPercentage) ? 100 : d3.max(data, d => d.value);
         }
+        else if (maxVal == true){ // specified maxVal
+            maxVal = d3.max(data, d => d.value);
+        }
+        else if (isNaN(maxVal) || maxVal == "") throw "invalid maxVal for graph on " + selector;
+        // else custom val
 
         // process data here. Create scales, etc.
 
@@ -112,7 +112,7 @@ export default function ({
                 d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
-                    .html(labels[i] + ": " + d + tooltipAppend)
+                    .html(`<span class="sota-tooltip-label">${labels[i]}</span><br/>Value: ` + ((inputIsPercentage) ? toPercentage(d) : d) + "</span>")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY) + "px");
             })

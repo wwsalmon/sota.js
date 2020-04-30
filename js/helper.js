@@ -17,6 +17,10 @@ function hideIfOOBHelper(item,marginLeft){
     }
 }
 
+export function toPercentage(i){
+    return d3.format(".1f")(i) + "%";
+}
+
 export let sotaConfig = {
     separatorStrokeWidth: 2,
     barHeight: 32,
