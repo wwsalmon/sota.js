@@ -4,83 +4,43 @@ export default function ({
     selector,
     dataFile,
     inputIsPercentage = false,
-    height = 300,
-    prop1 = "value1",
-    prop2 = "value2",
-    prop3 = "value3",
-    prop4 = "value4",
-    prop5 = "value5",
-    prop6 = "value6",
-    margin = {
-        "top": 0,
-        "bottom": 0,
-        "left": 0,
-        "right": 0
-    } }) {
+    margin = sotaConfig.margin }) {
 
-    var container = d3.select(selector);
-    var svg = container.append("svg");
-    var tooltip = d3.select("body").append("div")
+    const hoverOpacity = 0.8;
+    const overflowOffset = sotaConfig.overflowOffset;
+
+    // define styling variables here
+
+    const container = d3.select(selector);
+    const svg = container.append("svg");
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
-    var width = document.querySelector(selector).offsetWidth;
+    const mainChart = svg.append("g")
+        .attr("class", "sota-mainChart");
 
-    svg.attr("height", height);
+    const width = document.querySelector(selector).offsetWidth;
+    const mainWidth = width - margin.left - margin.right;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
-        var hoverOpacity = 0.8;
-        // define styling variables here
 
-        // PROCESS values AND percentages
+        console.log(container, svg)
 
-        var labels = data.map(d => d.label);
+        // data processing
 
-        if (!inputIsPercentage) {
-            var values = data.map(d => d.value);
-            var totalResp = d3.sum(values, d => d);
-            var percentages = values.map(value => 100 * value / totalResp);
-        }
-        else {
-            var percentages = data.map(d => d.value);
-        }
+        // loop through to render stuff
 
-        // process data here. Create scales, etc.
+        // set widths, heights, offsets
 
-        // LABELSET for tooltip:
+        let mainHeight = 0; // define mainHeight and height at some point
+        let height = mainHeight + margin.top + margin.bottom;
 
-        if (inputIsPercentage) {
-            var labelset = percentages;
-            var tooltipAppend = "%";
-        }
-        else {
-            var labelset = values;
-            var tooltipAppend = "";
-        }
+        svg.style("width", width + 2 * overflowOffset + "px")
+            .attr("height", height)
+            .attr("transform", `translate(${-overflowOffset} 0)`);
 
-        // run main loop here
-
-        svg.selectAll(".sota-boilerplate-bar")
-            .data(dataset)
-            .join("rect")
-            .attr("class", "sota-boilerplate-bar")
-            // more attributes here
-            .on("mouseover", function (d, i) {
-                d3.select(this)
-                    .attr("opacity", hoverOpacity);
-                tooltip.style("opacity", 1.0)
-                    .html(d3.format(".1f")(labels[i]) + ": " + labelset[i] + tooltipAppend)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-            })
-            .on("mousemove", d => {
-                tooltip.style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-            })
-            .on("mouseout", function (d) {
-                d3.select(this)
-                    .attr("opacity", 1.0);
-                tooltip.style("opacity", 0);
-            });
+        mainChart.attr("transform",`translate(${margin.left} ${margin.top})`)
+            .attr("width",mainWidth)
 
     });
 }
