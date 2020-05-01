@@ -29,10 +29,11 @@ export let sotaConfig = {
     labelBelow: 8,
     groupLabelMargin: 24,
     xAxisTop: 24,
-    overflowOffset: 16,
+    overflowOffset: 24,
     lineColor: "#999999",
     mainHeight: 300,
     tickSize: 8,
+    labelAngle: 30,
     margin: {
         top: 20,
         bottom: 20,

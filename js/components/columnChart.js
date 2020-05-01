@@ -9,7 +9,7 @@ export default function ({
                              maxVal = null,
                              minVal = null,
                              mainHeight = sotaConfig.mainHeight,
-                             showLegend = false,
+                             showLegend = true,
                              margin = {
                                  "top": 20,
                                  "bottom": 20,
@@ -24,6 +24,7 @@ export default function ({
     const overflowOffset = sotaConfig.overflowOffset;
     const xAxisTop = sotaConfig.xAxisTop;
     const tickSize = sotaConfig.tickSize;
+    const labelAngle = sotaConfig.labelAngle;
 
     const container = d3.select(selector);
     const svg = container.append("svg");
@@ -82,10 +83,30 @@ export default function ({
             .domain(labels)
             .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys())
 
-        const xAxis = mainChart.append("g")
-            .attr("class", "sota-gen-axis sota-gen-xAxis")
-            .call(d3.axisBottom(x).tickSize(0))
-            .attr("transform", `translate(0 ${mainHeight})`);
+        if (!showLegend){
+            const xAxis = mainChart.append("g")
+                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .call(d3.axisBottom(x).tickSize(0))
+                .attr("transform", `translate(0 ${mainHeight})`);
+
+            // fix xAxis label overlap
+
+            const xText = xAxis.selectAll("text");
+            const xTextNodes = xText.nodes();
+            let overlap = false;
+
+            for (let i in xTextNodes){
+                if (i == xTextNodes.length - 1) continue;
+                let curr = xTextNodes[+i].getBBox();
+                let next = xTextNodes[+i+1].getBBox();
+                if (curr.x + curr.width > next.x){ overlap = true; break;}
+            }
+
+            if (overlap){
+                xText.attr("text-anchor","end")
+                    .style("transform",`translateY(4px) rotate(-${labelAngle}deg)`)
+            }
+        }
 
         const yAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-yAxis")
@@ -131,12 +152,33 @@ export default function ({
 
         // get mainHeight based on x axis
 
-        let textBottom = [];
+        if (!showLegend){
+            if (overlap){
+                let textWidth = [];
 
-        xAxis.selectAll("text")
-            .each(function(){textBottom.push(this.getBBox().y + this.getBBox().height)})
+                const textElem = xAxis.select("text").node().getBBox();
+                const textTop = textElem.y;
+                const textHeight = textElem.height;
 
-        mainHeight += +d3.max(textBottom);
+                xAxis.selectAll("text")
+                    .each(function(){textWidth.push(this.getBBox().width)})
+
+                const maxTextWidth = d3.max(textWidth);
+                const rotatedHeight = maxTextWidth * Math.sin(labelAngle * Math.PI / 180);
+                const rotatedTextHeight = textHeight * Math.cos(labelAngle * Math.PI / 180);
+
+                mainHeight += textTop + rotatedHeight + rotatedTextHeight;
+
+            }
+            else{
+                let textBottom = [];
+
+                xAxis.selectAll("text")
+                    .each(function(){textBottom.push(this.getBBox().y + this.getBBox().height)})
+
+                mainHeight += +d3.max(textBottom);
+            }
+        }
 
         // set widths, heights, offsets
 
