@@ -14,3 +14,5 @@ sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "ro
 sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "parents-college", labelStyle: "aboveBar", showLegend: false })
 
 sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "happiness", shapeFile: "cloud" })
+
+sota.columnChart({ selector: "#wellness-support", dataFile: "support", totalResp: 1052 })

@@ -31,6 +31,8 @@ export let sotaConfig = {
     xAxisTop: 24,
     overflowOffset: 16,
     lineColor: "#999999",
+    mainHeight: 300,
+    tickSize: 8,
     margin: {
         top: 20,
         bottom: 20,

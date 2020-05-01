@@ -15,7 +15,7 @@ export default function ({
 
     const lineColor = "#dddddd";
     const hoverOpacity = 0.8;
-    const tickSize = 8;
+    const tickSize = sotaConfig.tickSize;
     const separatorOffset = 6;
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
     const labelLeft = sotaConfig.labelLeft;
@@ -24,13 +24,13 @@ export default function ({
     const overflowOffset = sotaConfig.overflowOffset;
     const xAxisTop = sotaConfig.xAxisTop;
 
-    var container = d3.select(selector);
-    var svg = container.append("svg");
-    var tooltip = d3.select("body").append("div")
+    const container = d3.select(selector);
+    const svg = container.append("svg");
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
-    var width = document.querySelector(selector).offsetWidth;
-    var mainWidth = width - margin.left - margin.right;
+    const width = document.querySelector(selector).offsetWidth;
+    const mainWidth = width - margin.left - margin.right;
 
     const mainChart = svg.append("g")
         .attr("class", "sota-barChart-mainChart")
@@ -40,48 +40,50 @@ export default function ({
     d3.csv("data/" + dataFile + ".csv").then(data => {
 
         const barspace = barHeight + barMargin;
-        var mainHeight = data.length * barspace; // if show xAxis, more is added to this
+        let mainHeight = data.length * barspace; // if show xAxis, more is added to this
+
+        let percentages;
         
         if (inputIsPercentage){
-            var percentages = data.map(d => +d.value).keys;
+            percentages = data.map(d => +d.value).keys;
         }
         else{
             totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
-            var percentages = data.map(d => +d.value / totalResp * 100)
+            percentages = data.map(d => +d.value / totalResp * 100)
         }
 
-        var dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
-        var labels = data.map(d => d.label);
+        const dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
+        const labels = data.map(d => d.label);
 
         if (minVal == null) { // default setting
             minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
         }
-        else if (minVal == true) { // specified minVal
+        else if (minVal === true) { // specified minVal
             minVal = d3.min(dataset);
         }
-        else if (isNaN(minVal) || minVal == "") throw "invalid minVal for graph on " + selector;
+        else if (isNaN(minVal) || minVal === "") throw "invalid minVal for graph on " + selector;
         // else custom val
 
         if (maxVal == null) { // default setting
             maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(dataset);
         }
-        else if (maxVal == true) { // specified maxVal
+        else if (maxVal === true) { // specified maxVal
             maxVal = d3.max(dataset);
         }
-        else if (isNaN(maxVal) || maxVal == "") throw "invalid maxVal for graph on " + selector;
+        else if (isNaN(maxVal) || maxVal === "") throw "invalid maxVal for graph on " + selector;
         // else custom val
 
         const x = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([0, mainWidth]);
 
+        let xAxis;
+
         if (showXAxis) {
-            mainChart.append("g")
+            xAxis = mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
-
-            mainHeight += 20 + xAxisTop;
         }
 
         function y(index) { // custom y scale
@@ -91,7 +93,7 @@ export default function ({
         mainChart.selectAll(".sota-barChart-bar")
             .data(dataset)
             .join("rect")
-            .attr("class", "sota-barChart-bar")
+            .attr("class", "sota-barChart-bar sota-gen-bar")
             .attr("width", d => x(d))
             .attr("height", barHeight)
             .attr("x", 0)
@@ -151,6 +153,15 @@ export default function ({
             .attr("text-anchor", "end")
             .attr("x", mainWidth)
             .attr("y", (d, i) => y(i) + barHeight / 2);
+
+        if (showXAxis){
+            let textBottom = [];
+
+            xAxis.selectAll("text")
+                .each(function(){textBottom.push(this.getBBox().y + this.getBBox().height)})
+
+            mainHeight += +d3.max(textBottom);
+        }
 
         const height = mainHeight + margin.top + margin.bottom;
 

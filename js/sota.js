@@ -3,6 +3,7 @@ import pieChart from "./components/pieChart.js";
 import lineGraph from "./components/lineGraph.js";
 import stackedBarChart from "./components/stackedBarChart.js";
 import customBarChart from "./components/customBarChart.js";
+import columnChart from "./components/columnChart.js";
 
 let sota = {};
 
@@ -11,6 +12,7 @@ sota.pieChart = pieChart;
 sota.lineGraph = lineGraph;
 sota.stackedBarChart = stackedBarChart;
 sota.customBarChart = customBarChart;
+sota.columnChart = columnChart;
 
 export default sota;
 

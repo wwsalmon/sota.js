@@ -351,8 +351,6 @@ export default function ({
 
         const height = mainHeight + margin.top + margin.bottom + legendHeight + labelsHeight;
 
-        console.log(labelsHeight, legendHeight);
-
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
             .attr("transform", `translate(${-overflowOffset} 0)`);

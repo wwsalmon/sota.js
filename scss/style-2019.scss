@@ -86,7 +86,7 @@ h1{
             &.sota-gen-yAxis{
                 .tick text{
                     transform: translateX(-$axis-text-margin - 4);
-                    text-anchor: middle;
+                    text-anchor: end;
                 }
             }
 
@@ -123,7 +123,7 @@ h1{
     background-color: $general-1;
     color: $general-1;
 
-    .sota-barChart-bar{
+    .sota-gen-bar{
         fill: $general-5;
     }
 
@@ -148,6 +148,10 @@ h1{
     background-color: $discipline-1;
     color: $discipline-1;
 
+    .sota-gen-bar{
+        fill: $discipline-1;
+    }
+
     .module-fill-1{
         fill: $discipline-1;
     }
@@ -168,6 +172,10 @@ h1{
 #wellness{
     background-color: $wellness-1;
     color: $wellness-1;
+
+    .sota-gen-bar{
+        fill: $wellness-1;
+    }
 
     .module-fill-1{
         fill: $wellness-1;

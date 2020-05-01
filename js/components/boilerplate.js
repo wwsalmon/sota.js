@@ -6,10 +6,10 @@ export default function ({
     inputIsPercentage = false,
     margin = sotaConfig.margin }) {
 
+    // define styling variables here
+
     const hoverOpacity = 0.8;
     const overflowOffset = sotaConfig.overflowOffset;
-
-    // define styling variables here
 
     const container = d3.select(selector);
     const svg = container.append("svg");
@@ -23,8 +23,6 @@ export default function ({
     const mainWidth = width - margin.left - margin.right;
 
     d3.csv("data/" + dataFile + ".csv").then(data => {
-
-        console.log(container, svg)
 
         // data processing
 
