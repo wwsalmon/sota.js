@@ -58,7 +58,7 @@ export default function ({
 
         // generate legend
 
-        var legendHeight = 0;
+        let legendHeight = 0;
 
         let valueLabelWidths = [];
 

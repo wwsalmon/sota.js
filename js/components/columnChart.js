@@ -9,7 +9,7 @@ export default function ({
                              maxVal = null,
                              minVal = null,
                              mainHeight = sotaConfig.mainHeight,
-                             showLegend = true,
+                             showLegend = false, // if false, x axis shown instead
                              margin = {
                                  "top": 20,
                                  "bottom": 20,
@@ -22,9 +22,14 @@ export default function ({
 
     const hoverOpacity = 0.8;
     const overflowOffset = sotaConfig.overflowOffset;
-    const xAxisTop = sotaConfig.xAxisTop;
     const tickSize = sotaConfig.tickSize;
     const labelAngle = sotaConfig.labelAngle;
+    const swatchBetween = sotaConfig.swatch.between;
+    const swatchRight = sotaConfig.swatch.right;
+    const swatchWidth = sotaConfig.swatch.width;
+    const swatchHeight = sotaConfig.swatch.height;
+    const swatchBelowBetween = sotaConfig.swatch.belowBetween;
+    const swatchBelow = sotaConfig.swatch.below;
 
     const container = d3.select(selector);
     const svg = container.append("svg");
@@ -83,8 +88,80 @@ export default function ({
             .domain(labels)
             .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys())
 
-        if (!showLegend){
-            const xAxis = mainChart.append("g")
+        let legendHeight = 0;
+        let overlap = false;
+        let xAxis;
+
+        if (showLegend){
+
+            let valueLabelWidths = [];
+
+            const legend = svg.append("g")
+                .lower()
+                .attr("class", "sota-gen-legend")
+                .attr("transform", `translate(0 ${margin.top})`)
+
+            legend.selectAll("nothing")
+                .data(data)
+                .enter()
+                .append("text")
+                .attr("class", "sota-gen-legend-text")
+                .text(d => d.label)
+                .attr("x", function () {
+                    valueLabelWidths.push(this.getBBox().width);
+                })
+                .remove();
+
+            if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
+                // vertical legends
+                let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
+
+                legend.selectAll(".sota-gen-legend-swatch")
+                    .data(labels)
+                    .join("rect")
+                    .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
+                    .attr("x", legendLeft)
+                    .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i)
+                    .attr("width", swatchWidth)
+                    .attr("height", swatchHeight)
+
+                legend.selectAll(".sota-gen-legend-text")
+                    .data(labels)
+                    .join("text")
+                    .attr("class", "sota-gen-legend-text")
+                    .text(d => d)
+                    .attr("x", legendLeft + swatchWidth + swatchBetween)
+                    .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
+                    .attr("alignment-baseline", "central")
+
+                legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
+            }
+            else {
+                let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
+
+                legend.selectAll(".sota-gen-legend-swatch")
+                    .data(labels)
+                    .join("rect")
+                    .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0, i), d => d))
+                    .attr("y", 0)
+                    .attr("width", swatchWidth)
+                    .attr("height", swatchHeight)
+
+                legend.selectAll(".sota-gen-legend-text")
+                    .data(labels)
+                    .join("text")
+                    .attr("class", "sota-gen-legend-text")
+                    .text(d => d)
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
+                    .attr("y", swatchHeight / 2)
+                    .attr("alignment-baseline", "central")
+
+                legendHeight = swatchHeight + swatchBelow;
+            }
+        }
+        else {
+            xAxis = mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis")
                 .call(d3.axisBottom(x).tickSize(0))
                 .attr("transform", `translate(0 ${mainHeight})`);
@@ -93,7 +170,6 @@ export default function ({
 
             const xText = xAxis.selectAll("text");
             const xTextNodes = xText.nodes();
-            let overlap = false;
 
             for (let i in xTextNodes){
                 if (i == xTextNodes.length - 1) continue;
@@ -152,7 +228,9 @@ export default function ({
 
         // get mainHeight based on x axis
 
-        if (!showLegend){
+        if (showLegend) {
+            mainHeight += legendHeight;
+        } else{
             if (overlap){
                 let textWidth = [];
 
@@ -188,7 +266,7 @@ export default function ({
             .attr("height", height)
             .attr("transform", `translate(${-overflowOffset} 0)`);
 
-        mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top})`)
+        mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top + legendHeight})`)
             .attr("width", mainWidth)
 
     });
