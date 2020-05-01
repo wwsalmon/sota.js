@@ -1,6 +1,8 @@
 @import 'fonts';
 @import 'colors-2019';
 
+// test
+
 body{
     margin: 0;
 }
@@ -18,7 +20,7 @@ section{
 
 h1{
     font-size: 56px;
-    font-family: 'Gotham';
+    font-family: 'Gotham', sans-serif;
     text-transform: uppercase;
     font-weight: 700;
     text-align: center;
@@ -28,7 +30,7 @@ h1{
 .container{
     max-width: $main-width;
     box-sizing: border-box;
-    font-family: "Gotham";
+    font-family: "Gotham", Arial, sans-serif;
     width: 100%;
     padding: 48px 24px;
     margin: 0 auto;
@@ -50,13 +52,13 @@ h1{
         }
 
         h3{
-            font-family: 'Gotham';
+            font-family: 'Gotham', sans-serif;
             font-weight: 700;
             text-transform: uppercase;
         }
 
         .subtitle{
-            font-family: "Mercury Text G1";
+            font-family: "Mercury Text G1", serif;
             opacity: 0.4;
         }
 
@@ -65,7 +67,7 @@ h1{
         }
 
         .sota-barChart-label, .sota-pieChart-label, .sota-stackedBarChart-groupLabel-onBar{
-            font-family: 'Mercury Text G1';
+            font-family: 'Mercury Text G1', serif;
             font-weight: 700;
         }
 
@@ -91,7 +93,7 @@ h1{
             .tick text{
                 color: $axis-stroke-color;
                 font-size: 16px;
-                font-family: 'Gotham';
+                font-family: 'Gotham', sans-serif;
                 font-weight: 700;
             }
 

@@ -28,7 +28,7 @@ export let sotaConfig = {
     labelLeft: 6,
     labelBelow: 8,
     groupLabelMargin: 24,
-    xAxisTop: 12,
+    xAxisTop: 24,
     overflowOffset: 16,
     lineColor: "#999999",
     margin: {
