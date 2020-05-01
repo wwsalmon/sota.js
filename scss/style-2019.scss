@@ -82,7 +82,7 @@ h1{
     }
 }
 
-.sota-barChart-label, .sota-pieChart-label, .sota-stackedBarChart-groupLabel-onBar{
+.sota-barChart-label, .sota-pieChart-label, .sota-gen-groupLabel{
     font-family: 'Mercury Text G1', serif;
     font-weight: 700;
 }
@@ -116,6 +116,12 @@ h1{
     .tick line, path.domain{
         stroke-width: $axis-stroke-width;
         stroke: $axis-stroke-color;
+    }
+}
+
+.sota-groupedBarChart-xAxis{
+    .tick line{
+        opacity: 0.2;
     }
 }
 

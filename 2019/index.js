@@ -16,3 +16,5 @@ sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "p
 sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "happiness", shapeFile: "cloud" })
 
 sota.columnChart({ selector: "#wellness-support", dataFile: "support", totalResp: 1052 })
+
+sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} })

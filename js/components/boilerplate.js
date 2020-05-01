@@ -1,10 +1,11 @@
 import { sotaConfig } from '../helper.js';
 
 export default function ({
-    selector,
-    dataFile,
-    inputIsPercentage = false,
-    margin = sotaConfig.margin }) {
+                             selector,
+                             dataFile,
+                             inputIsPercentage = false,
+                             margin = sotaConfig.margin
+                         }) {
 
     // define styling variables here
 

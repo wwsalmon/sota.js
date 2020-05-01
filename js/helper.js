@@ -27,13 +27,17 @@ export let sotaConfig = {
     barMargin: 16,
     labelLeft: 6,
     labelBelow: 8,
-    groupLabelMargin: 24,
+    groupLabelMargin: 32,
     xAxisTop: 24,
     overflowOffset: 24,
     lineColor: "#999999",
     mainHeight: 300,
     tickSize: 8,
     labelAngle: 30,
+    groupedBarChart: {
+        barHeight: 24,
+        barMargin: 8
+    },
     margin: {
         top: 20,
         bottom: 20,

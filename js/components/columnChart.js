@@ -57,16 +57,16 @@ export default function ({
         const dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
         const labels = data.map(d => d.label);
 
-        if (minVal == null) { // default setting
+        if (minVal === null) { // default setting
             minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
         }
-        else if (minVal == true) { // specified minVal
+        else if (minVal === true) { // specified minVal
             minVal = d3.min(dataset);
         }
-        else if (isNaN(minVal) || minVal == "") throw "invalid minVal for graph on " + selector;
+        else if (isNaN(minVal) || minVal === "") throw "invalid minVal for graph on " + selector;
         // else custom val
 
-        if (maxVal == null) { // default setting
+        if (maxVal === null) { // default setting
             maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(dataset);
         }
         else if (maxVal === true) { // specified maxVal
@@ -190,7 +190,7 @@ export default function ({
 
         // loop through to render stuff
 
-        mainChart.selectAll("sota-columnChart-bar")
+        mainChart.selectAll(".sota-columnChart-bar")
             .data(dataset)
             .join("rect")
             .attr("class", (d,i) => {

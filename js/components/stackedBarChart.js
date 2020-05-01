@@ -1,17 +1,17 @@
 import { sotaConfig, hideIfOOB, toPercentage } from '../helper.js';
 
 export default function ({
-    selector,
-    dataFile,
-    inputIsPercentage = false,
-    showXAxis = true,
-    labelStyle = "onBar", // "none" | "onBar" | "aboveBar" 
-    groupLabelStyle = "none", // "none" | "onBar" | "left"
-    showLegend = true,
-    prop5 = "value5",
-    prop6 = "value6",
-    margin = sotaConfig.margin
-}) {
+                             selector,
+                             dataFile,
+                             inputIsPercentage = false,
+                             showXAxis = true,
+                             labelStyle = "onBar", // "none" | "onBar" | "aboveBar"
+                             groupLabelStyle = "none", // "none" | "onBar" | "left"
+                             showLegend = true,
+                             prop5 = "value5",
+                             prop6 = "value6",
+                             margin = sotaConfig.margin
+                         }) {
 
     const hoverOpacity = 0.8;
     const tickSize = 8;
@@ -257,7 +257,7 @@ export default function ({
             mainChart.selectAll(".sota-stackedBarChart-groupLabel-onBar")
                 .data(groupLabels)
                 .join("text")
-                .attr("class", "sota-stackedBarChart-groupLabel-onBar")
+                .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-gen-groupLabel")
                 .text(d => d)
                 .attr("alignment-baseline", "bottom")
                 .attr("x", 0)
