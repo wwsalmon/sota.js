@@ -42,66 +42,29 @@ h1{
     .module-two-wide{
         grid-column: 1/3;
     }
+}
 
-    .module{
-        position: relative;
+.module{
+    position: relative;
+    width: 100%;
+
+    &> svg{
         width: 100%;
+    }
 
-        &> svg{
-            width: 100%;
-        }
+    h3{
+        font-family: 'Gotham', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
 
-        h3{
-            font-family: 'Gotham', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+    .subtitle{
+        font-family: "Mercury Text G1", serif;
+        opacity: 0.4;
+    }
 
-        .subtitle{
-            font-family: "Mercury Text G1", serif;
-            opacity: 0.4;
-        }
-
-        text{ // replace this with CSS-in-JS
-            pointer-events: none;
-        }
-
-        .sota-barChart-label, .sota-pieChart-label, .sota-stackedBarChart-groupLabel-onBar{
-            font-family: 'Mercury Text G1', serif;
-            font-weight: 700;
-        }
-
-        .sota-floatingLabel{ // replace this with CSS-in-JS
-            font-weight: 700;
-        }
-        
-        .sota-gen-axis{ // replace this with CSS-in-JS
-
-            &.sota-gen-xAxis{
-                .tick text{
-                    transform: translateY($axis-text-margin);
-                }
-            }
-
-            &.sota-gen-yAxis{
-                .tick text{
-                    transform: translateX(-$axis-text-margin - 4);
-                    text-anchor: end;
-                }
-            }
-
-            .tick text{
-                color: $axis-stroke-color;
-                font-size: 16px;
-                font-family: 'Gotham', sans-serif;
-                font-weight: 700;
-            }
-
-            .tick line, path.domain{
-                stroke-width: $axis-stroke-width;
-                stroke: $axis-stroke-color;
-            }
-        }
+    text{ // replace this with CSS-in-JS
+        pointer-events: none;
     }
 }
 
@@ -117,6 +80,51 @@ h1{
     .sota-tooltip-label{
         font-weight: 700;
     }
+}
+
+.sota-barChart-label, .sota-pieChart-label, .sota-stackedBarChart-groupLabel-onBar{
+    font-family: 'Mercury Text G1', serif;
+    font-weight: 700;
+}
+
+.sota-floatingLabel{ // replace this with CSS-in-JS
+    font-weight: 700;
+}
+
+.sota-gen-axis{ // replace this with CSS-in-JS
+
+    &.sota-gen-xAxis{
+        .tick text{
+            transform: translateY($axis-text-margin);
+        }
+    }
+
+    &.sota-gen-yAxis{
+        .tick text{
+            transform: translateX(-$axis-text-margin - 4);
+            text-anchor: end;
+        }
+    }
+
+    .tick text{
+        color: $axis-stroke-color;
+        font-size: 16px;
+        font-family: 'Gotham', sans-serif;
+        font-weight: 700;
+    }
+
+    .tick line, path.domain{
+        stroke-width: $axis-stroke-width;
+        stroke: $axis-stroke-color;
+    }
+}
+
+.sota-big{
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 1.0;
+    margin-top: -8px;
+    font-family: "Mercury Text G1", serif;
 }
 
 #general{
