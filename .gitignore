@@ -1,2 +1,4 @@
 .vscode/
 .idea/
+.cache/
+node_modules/

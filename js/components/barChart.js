@@ -1,3 +1,4 @@
+import '../d3.v5.min.js';
 import { sotaConfig, toPercentage } from '../helper.js';
 
 export default function ({
@@ -37,7 +38,7 @@ export default function ({
         .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
         .attr("width", mainWidth);
 
-    d3.csv("data/" + dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
 
         const barspace = barHeight + barMargin;
         let mainHeight = data.length * barspace; // if show xAxis, more is added to this

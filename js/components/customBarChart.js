@@ -1,3 +1,4 @@
+import '../d3.v5.min.js';
 import { sotaConfig } from '../helper.js';
 
 export default function ({
@@ -54,7 +55,7 @@ export default function ({
             .append(() => firstPath)
             .attr("transform", `scale(${scaleFactor})`)
 
-        d3.csv("data/" + dataFile + ".csv").then(data => {
+        d3.csv(dataFile + ".csv").then(data => {
 
             // process data
             // percentages is only used for labels so we format it and add % sign
