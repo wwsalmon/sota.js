@@ -1,4 +1,4 @@
-import '../d3.v5.min.js';
+import * as d3 from "d3";
 import { sotaConfig, hideIfOOB, toPercentage } from '../helper.js';
 
 export default function ({

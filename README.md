@@ -4,18 +4,32 @@ Charting library for *The Phillipian*'s [annual State of the Academy survey proj
 
 # Installation
 
-Using browser/plain JS: download `dist/sota.min.js` (eventually this will be in releases...) and include it in your project:
+## Using browser/plain JS:
 
-`<script src="PATH/TO/sota.min.js"></script>`
+1. Download or use a cdn to include d3 in your project before sota.js:
 
-Using npm (not recommended for now, I'm working on it):
+        <script src="PATH/TO/d3.min.v5.js"></script>
 
-`npm i sota.js`
+2. Download `dist/sota.min.js` (eventually this will be in releases...) and include it in your project:
+
+        <script src="PATH/TO/sota.min.js"></script>
+    
+3. In your app or index js, you can now access the `sota` object with functions like `sota.barChart()`.
+
+## Using npm:
+
+Run:
+
+    npm i sota.js
+
+d3 is a dependency, so you don't have to worry about it separately.
+
+Then, in your app or index js:
+
+    import sota from "sota.js"
+
+And now you have access to the `sota` object with functions like `sota.barChart()`.
 
 # Usage
 
-If npm:
-
-`import sota from "sota.js"`
-
-Then (or just by including the script in browser/plain JS) you have access to the `sota` object and can call functions like `sota.barChart()`. Detailed instructions on component parameters and usage to come.
+Usage documentation to come.

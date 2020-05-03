@@ -7,7 +7,10 @@ export default [
             name: "sota",
             file: 'dist/sota.min.js',
             format: 'umd',
-            indent: false
+            indent: false,
+            globals: {
+                d3: 'd3'
+            }
         },
 
         plugins: [
