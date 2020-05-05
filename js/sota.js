@@ -5,6 +5,7 @@ import stackedBarChart from "./components/stackedBarChart.js";
 import customBarChart from "./components/customBarChart.js";
 import columnChart from "./components/columnChart.js";
 import groupedBarChart from "./components/groupedBarChart.js";
+import stackedColumnChart from "./components/stackedColumnChart.js";
 
 let sota = {};
 
@@ -15,6 +16,7 @@ sota.stackedBarChart = stackedBarChart;
 sota.customBarChart = customBarChart;
 sota.columnChart = columnChart;
 sota.groupedBarChart = groupedBarChart;
+sota.stackedColumChart = stackedColumnChart;
 
 export default sota;
 

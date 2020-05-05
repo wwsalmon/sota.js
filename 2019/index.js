@@ -18,3 +18,5 @@ sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "happiness", sh
 sota.columnChart({ selector: "#wellness-support", dataFile: "support", totalResp: 1052 })
 
 sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} })
+
+sota.stackedColumChart({ selector: "#module-politics-reverse-racism-gender", dataFile: "reverse-racism-gender", totalResp: 1032 })
