@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { sotaConfig, toPercentage } from '../helper.js';
 
 export default function ({
@@ -26,7 +27,7 @@ export default function ({
 
     svg.attr("height", height);
 
-    d3.csv("data/" + dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
         const lineColor = "#bbb";
         const lineWidth = 3;
         const tickSize = 8;

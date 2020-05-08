@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import {sotaConfig, toPercentage} from '../helper.js';
 
 export default function ({
@@ -41,7 +42,7 @@ export default function ({
 
     var height = pieRad * 2 + margin.top + margin.bottom;
 
-    d3.csv("data/" + dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
         const labels = data.map(d => d.label);
 
         if (!inputIsPercentage) {

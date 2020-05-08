@@ -1,22 +1,17 @@
-import sota from '../js/sota.js';
-import '../js/d3.v5.min.js';
+sota.barChart({ selector: "#module-general-ethnicity-d3", dataFile: "data/ethnicity", totalResp: 1052, maxVal: true, displayPercentage: true });
 
-// D3/sota.js
+sota.pieChart({ selector: "#module-general-community-d3", dataFile: "data/community"});
 
-sota.barChart({ selector: "#module-general-ethnicity-d3", dataFile: "ethnicity", totalResp: 1052, maxVal: true, displayPercentage: true });
+sota.lineGraph({ selector: "#module-discipline-time-d3", dataFile: "data/disc-time", inputIsPercentage: true, maxVal: 8 })
 
-sota.pieChart({ selector: "#module-general-community-d3", dataFile: "community"});
+sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "data/room-visit-policy", groupLabelStyle: "onBar" })
 
-sota.lineGraph({ selector: "#module-discipline-time-d3", dataFile: "disc-time", inputIsPercentage: true, maxVal: 8 })
+sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "data/parents-college", labelStyle: "aboveBar", showLegend: false })
 
-sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "room-visit-policy", groupLabelStyle: "onBar" })
+sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "data/happiness", shapeFile: "cloud" })
 
-sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "parents-college", labelStyle: "aboveBar", showLegend: false })
+sota.columnChart({ selector: "#wellness-support", dataFile: "data/support", totalResp: 1052 })
 
-sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "happiness", shapeFile: "cloud" })
+sota.stackedColumChart({ selector: "#module-politics-reverse-racism-gender", dataFile: "data/reverse-racism-gender", totalResp: 1032 })
 
-sota.columnChart({ selector: "#wellness-support", dataFile: "support", totalResp: 1052 })
-
-sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} })
-
-sota.stackedColumChart({ selector: "#module-politics-reverse-racism-gender", dataFile: "reverse-racism-gender", totalResp: 1032 })
+sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "data/wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} })

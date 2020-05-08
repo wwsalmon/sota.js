@@ -1,0 +1,32 @@
+{
+  "name": "sota.js",
+  "version": "0.0.2",
+  "description": "d3-based charting library for The Phillipian's State of the Academy",
+  "main": "dist/sota.node.js",
+  "files": [
+    "dist/sota.node.js"
+  ],
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phillipian/sota.js.git"
+  },
+  "keywords": [
+    "d3"
+  ],
+  "author": "Samson Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phillipian/sota.js/issues"
+  },
+  "homepage": "https://github.com/phillipian/sota.js#readme",
+  "dependencies": {
+    "d3": "^5.16.0"
+  },
+  "devDependencies": {
+    "rollup": "^2.7.6",
+    "rollup-plugin-terser": "^5.3.0"
+  }
+}

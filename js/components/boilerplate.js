@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { sotaConfig } from '../helper.js';
 
 export default function ({
@@ -23,7 +24,7 @@ export default function ({
     const width = document.querySelector(selector).offsetWidth;
     const mainWidth = width - margin.left - margin.right;
 
-    d3.csv("data/" + dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
 
         // data processing
 
