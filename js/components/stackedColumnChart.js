@@ -112,8 +112,8 @@ export default function ({
             .range([mainHeight, 0]);
 
         const classNames = d3.scaleOrdinal()
-            .domain(groupLabels)
-            .range(d3.map(groupLabels, (d, i) => "module-fill-" + (i + 1)).keys())
+            .domain(valueLabels)
+            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys())
 
         const yAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-yAxis")
