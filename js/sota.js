@@ -16,7 +16,7 @@ sota.stackedBarChart = stackedBarChart;
 sota.customBarChart = customBarChart;
 sota.columnChart = columnChart;
 sota.groupedBarChart = groupedBarChart;
-sota.stackedColumChart = stackedColumnChart;
+sota.stackedColumnChart = stackedColumnChart;
 
 export default sota;
 

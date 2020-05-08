@@ -24,7 +24,6 @@ export default function ({
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
     const overflowOffset = sotaConfig.overflowOffset;
     const labelAngle = sotaConfig.labelAngle;
-    const groupLabelMargin = sotaConfig.groupLabelMargin;
     const swatchBetween = sotaConfig.swatch.between;
     const swatchRight = sotaConfig.swatch.right;
     const swatchWidth = sotaConfig.swatch.width;
