@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {sotaConfig, toPercentage} from '../helper.js';
+import {sotaConfig, processData, bindTooltip} from '../helper.js';
 
 export default function ({
                              selector,
@@ -45,18 +45,8 @@ export default function ({
 
     d3.csv(dataFile + ".csv").then(data => {
 
-        let percentages;
-
-        if (inputIsPercentage){
-            percentages = data.map(d => +d.value).keys;
-        }
-        else{
-            totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
-            percentages = data.map(d => +d.value / totalResp * 100)
-        }
-
-        const dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
-        const labels = data.map(d => d.label);
+        const [percentages, values, labels] = processData(data, inputIsPercentage, totalResp);
+        const dataset = (displayPercentage || inputIsPercentage) ? percentages : values;
 
         if (minVal === null) { // default setting
             minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
@@ -203,29 +193,7 @@ export default function ({
             .attr("y", d => y(d))
             .attr("width", x.bandwidth())
             .attr("height", d => mainHeight - y(d))
-            .on("mouseover", function (d, i) {
-                d3.select(this)
-                    .attr("opacity", hoverOpacity);
-                tooltip.style("opacity", 1.0)
-                    .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
-                        if (!inputIsPercentage) {
-                            retval += "<br/>Number of responses: " + data[i].value;
-                        }
-                        return retval;
-                    })
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-            })
-            .on("mousemove", d => {
-                tooltip.style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-            })
-            .on("mouseout", function (d) {
-                d3.select(this)
-                    .attr("opacity", 1.0);
-                tooltip.style("opacity", 0);
-            })
+            .call(bindTooltip, tooltip, percentages, labels, values)
 
         // get mainHeight based on x axis
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var d3$1 = require('d3');
+var d3 = require('d3');
 
 function hideIfOOB(elems,marginLeft){
     for (let item of elems._groups){
@@ -21,8 +21,55 @@ function hideIfOOBHelper(item,marginLeft){
     }
 }
 
+function mouseXIfNotOffsreen(tooltip){
+    const toSide = tooltip.node().offsetWidth / 2;
+    const mouseX = d3.event.pageX;
+    if (mouseX - toSide < 0){
+        return toSide;
+    }
+    if (mouseX + toSide > window.innerWidth){
+        return window.innerWidth - toSide;
+    }
+    return mouseX;
+}
+
+function processData(data, inputIsPercentage, totalResp = null){
+    totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
+    const percentages = (inputIsPercentage) ? data.map(d => +d.value).keys : data.map(d => +d.value / totalResp * 100);
+    const values = (inputIsPercentage) ? false : data.map(d => +d.value);
+    const labels = data.map(d => d.label);
+    return [percentages, values, labels];
+}
+
 function toPercentage(i){
     return d3.format(".1f")(i) + "%";
+}
+
+function bindTooltip(selection, tooltip, percentages, labels, values){
+    selection.on("mouseover", function (d, i){
+        d3.select(this)
+            .attr("opacity", sotaConfig.hoverOpacity);
+        tooltip.style("opacity", 1.0)
+            .html(() => {
+                let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
+                if (values) {
+                    retval += "<br/>Number of responses: " + values[i];
+                }
+                return retval;
+            })
+            .style("left", mouseXIfNotOffsreen(tooltip) + "px")
+            .style("top", (d3.event.pageY) + "px");
+    })
+    .on("mousemove", d => {
+        tooltip.style("left", mouseXIfNotOffsreen(tooltip) + "px")
+            .style("top", (d3.event.pageY) + "px");
+    })
+    .on("mouseout", function (d) {
+        d3.select(this)
+            .attr("opacity", 1.0);
+        tooltip.style("opacity", 0);
+    });
+
 }
 
 let sotaConfig = {
@@ -72,7 +119,6 @@ function barChart ({
 }) {
 
     const lineColor = "#dddddd";
-    const hoverOpacity = 0.8;
     const tickSize = sotaConfig.tickSize;
     const separatorOffset = 6;
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
@@ -82,9 +128,9 @@ function barChart ({
     const overflowOffset = sotaConfig.overflowOffset;
     const xAxisTop = sotaConfig.xAxisTop;
 
-    const container = d3$1.select(selector);
+    const container = d3.select(selector);
     const svg = container.append("svg");
-    const tooltip = d3$1.select("body").append("div")
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     const width = document.querySelector(selector).offsetWidth;
@@ -95,43 +141,33 @@ function barChart ({
         .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
         .attr("width", mainWidth);
 
-    d3$1.csv(dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
 
         const barspace = barHeight + barMargin;
         let mainHeight = data.length * barspace; // if show xAxis, more is added to this
 
-        let percentages;
-        
-        if (inputIsPercentage){
-            percentages = data.map(d => +d.value).keys;
-        }
-        else {
-            totalResp = (totalResp == null) ? d3$1.sum(data, d => +d.value) : totalResp;
-            percentages = data.map(d => +d.value / totalResp * 100);
-        }
-
-        const dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
-        const labels = data.map(d => d.label);
+        const [percentages, values, labels] = processData(data, inputIsPercentage, totalResp);
+        const dataset = (displayPercentage || inputIsPercentage) ? percentages : values;
 
         if (minVal == null) { // default setting
-            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3$1.min(dataset);
+            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
         }
         else if (minVal === true) { // specified minVal
-            minVal = d3$1.min(dataset);
+            minVal = d3.min(dataset);
         }
         else if (isNaN(minVal) || minVal === "") throw "invalid minVal for graph on " + selector;
         // else custom val
 
         if (maxVal == null) { // default setting
-            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3$1.max(dataset);
+            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(dataset);
         }
         else if (maxVal === true) { // specified maxVal
-            maxVal = d3$1.max(dataset);
+            maxVal = d3.max(dataset);
         }
         else if (isNaN(maxVal) || maxVal === "") throw "invalid maxVal for graph on " + selector;
         // else custom val
 
-        const x = d3$1.scaleLinear()
+        const x = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([0, mainWidth]);
 
@@ -140,7 +176,7 @@ function barChart ({
         if (showXAxis) {
             xAxis = mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis")
-                .call(d3$1.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
         }
 
@@ -156,29 +192,7 @@ function barChart ({
             .attr("height", barHeight)
             .attr("x", 0)
             .attr("y", (d, i) => y(i))
-            .on("mouseover", function (d, i) {
-                d3$1.select(this)
-                    .attr("opacity", hoverOpacity);
-                tooltip.style("opacity", 1.0)
-                    .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${data[i].label}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
-                        if (!inputIsPercentage) {
-                            retval += "<br/>Number of responses: " + data[i].value;
-                        }
-                        return retval;
-                    })
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
-            })
-            .on("mousemove", d => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
-            })
-            .on("mouseout", function (d) {
-                d3$1.select(this)
-                    .attr("opacity", 1.0);
-                tooltip.style("opacity", 0);
-            });
+            .call(bindTooltip, tooltip, percentages, labels, values);
 
         mainChart.selectAll(".sota-barChart-label")
             .data(data)
@@ -218,7 +232,7 @@ function barChart ({
             xAxis.selectAll("text")
                 .each(function(){textBottom.push(this.getBBox().y + this.getBBox().height);});
 
-            mainHeight += +d3$1.max(textBottom);
+            mainHeight += +d3.max(textBottom);
         }
 
         const height = mainHeight + margin.top + margin.bottom;
@@ -237,8 +251,6 @@ function pieChart ({
     pieThick = 80,
     margin = sotaConfig.margin
 }) {
-
-    const hoverOpacity = 0.8;
     const polylineColor = "#999";
     const polylineStrokeWidth = 2;
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
@@ -249,10 +261,10 @@ function pieChart ({
     const swatchBelowBetween = sotaConfig.swatch.belowBetween;
     const swatchBelow = sotaConfig.swatch.below;
 
-    var container = d3$1.select(selector);
+    var container = d3.select(selector);
     var svg = container.append("svg")
         .attr("class", "sota-pieChart");
-    var tooltip = d3$1.select("body").append("div")
+    var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     var width = document.querySelector(selector).offsetWidth;
@@ -270,19 +282,10 @@ function pieChart ({
 
     var height = pieRad * 2 + margin.top + margin.bottom;
 
-    d3$1.csv(dataFile + ".csv").then(data => {
-        const labels = data.map(d => d.label);
+    d3.csv(dataFile + ".csv").then(data => {
 
-        if (!inputIsPercentage) {
-            var values = data.map(d => d.value);
-            var totalResp = d3$1.sum(values, d => d);
-            var percentages = values.map(value => 100 * value / totalResp);
-        }
-        else {
-            var percentages = data.map(d => d.value);
-        }
-
-        const pie = d3$1.pie();
+        const [percentages, values, labels] = processData(data, inputIsPercentage);
+        const pie = d3.pie();
         const pieData = pie(percentages);
 
         // generate legend
@@ -291,9 +294,9 @@ function pieChart ({
 
         let valueLabelWidths = [];
 
-        const classNames = d3$1.scaleOrdinal()
+        const classNames = d3.scaleOrdinal()
             .domain(labels)
-            .range(d3$1.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
 
         const legend = svg.append("g")
             .lower()
@@ -311,9 +314,9 @@ function pieChart ({
             })
             .remove();
 
-        if (d3$1.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth) {
+        if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth) {
             // vertical legends
-            let legendLeft = mainWidth - d3$1.max(valueLabelWidths) - swatchWidth - swatchBetween;
+            let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
             legend.selectAll(".sota-gen-legend-swatch")
                 .data(labels)
@@ -336,13 +339,13 @@ function pieChart ({
             legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
         }
         else {
-            let legendLeft = mainWidth - (d3$1.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
+            let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
 
             legend.selectAll(".sota-gen-legend-swatch")
                 .data(labels)
                 .join("rect")
                 .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
-                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", 0)
                 .attr("width", swatchWidth)
                 .attr("height", swatchHeight);
@@ -352,7 +355,7 @@ function pieChart ({
                 .join("text")
                 .attr("class", "sota-gen-legend-text")
                 .text(d => d)
-                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", swatchHeight / 2)
                 .attr("alignment-baseline", "central");
 
@@ -366,11 +369,11 @@ function pieChart ({
 
         // create subgroups for labels eventually
 
-        const arc = d3$1.arc()
+        const arc = d3.arc()
             .innerRadius(pieRad * 0.8 - pieThick * 0.8)
             .outerRadius(pieRad * 0.8);
 
-        const outerArc = d3$1.arc()
+        const outerArc = d3.arc()
             .innerRadius(pieRad * 0.9)
             .outerRadius(pieRad * 0.9);
 
@@ -381,29 +384,7 @@ function pieChart ({
             .attr("d", arc)
             .attr("stroke", "#fff")
             .style("stroke-width", separatorStrokeWidth)
-            .on("mouseover", function (d, i) {
-                d3$1.select(this)
-                    .attr("opacity", hoverOpacity);
-                tooltip.style("opacity", 1.0)
-                    .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
-                        if (!inputIsPercentage) {
-                            retval += "<br/>Number of responses: " + values[i];
-                        }
-                        return retval;
-                    })
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
-            })
-            .on("mousemove", d => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
-            })
-            .on("mouseout", function (d) {
-                d3$1.select(this)
-                    .attr("opacity", 1.0);
-                tooltip.style("opacity", 0);
-            });
+            .call(bindTooltip, tooltip, percentages, labels, values);
         
         // following code, especially calculations part, taken more or less directly from https://www.d3-graph-gallery.com/graph/donut_label.html
 
@@ -462,16 +443,16 @@ function lineGraph ({
         "right": 0
     } }) {
 
-    const container = d3$1.select(selector);
+    const container = d3.select(selector);
     const svg = container.append("svg")
         .attr("class", "sota-lineGraph");
-    const tooltip = d3$1.select("body").append("div")
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
     const width = document.querySelector(selector).offsetWidth;
 
     svg.attr("height", height);
 
-    d3$1.csv(dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
         const lineColor = "#bbb";
         const lineWidth = 3;
         const tickSize = 8;
@@ -484,41 +465,41 @@ function lineGraph ({
         const values = data.map(d => +d.value);
 
         if (minVal == null){ // default setting
-            minVal = (inputIsPercentage) ? 0 : d3$1.min(data, d => d.value);
+            minVal = (inputIsPercentage) ? 0 : d3.min(data, d => d.value);
         }
         else if (minVal == true){ // specified minVal
-            minVal = d3$1.min(data, d => d.value);
+            minVal = d3.min(data, d => d.value);
         }
         else if (isNaN(minVal) || minVal == "") throw "invalid minVal for graph on " + selector;
         // else custom val
         
         if (maxVal == null){ // default setting
-            maxVal = (inputIsPercentage) ? 100 : d3$1.max(data, d => d.value);
+            maxVal = (inputIsPercentage) ? 100 : d3.max(data, d => d.value);
         }
         else if (maxVal == true){ // specified maxVal
-            maxVal = d3$1.max(data, d => d.value);
+            maxVal = d3.max(data, d => d.value);
         }
         else if (isNaN(maxVal) || maxVal == "") throw "invalid maxVal for graph on " + selector;
         // else custom val
 
         // process data here. Create scales, etc.
 
-        const x = d3$1.scaleBand()
+        const x = d3.scaleBand()
             .domain(labels.map(d => d))
             .range([margin.left, width - margin.right]);
 
-        const y = d3$1.scaleLinear()
+        const y = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([height - margin.bottom, margin.top]);
 
         svg.append("g")
             .attr("class", "sota-gen-axis sota-gen-xAxis")
-            .call(d3$1.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+            .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
             .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
         svg.append("g")
             .attr("class", "sota-gen-axis sota-gen-YAxis")
-            .call(d3$1.axisLeft(y).tickSize(-tickSize))
+            .call(d3.axisLeft(y).tickSize(-tickSize))
             .style("transform","translateX(" + margin.left + "px)");
 
         // run main loop here
@@ -527,7 +508,7 @@ function lineGraph ({
             .data([values])
             .join("path")
             .attr("class", "sota-lineGraph-path")
-            .attr("d", d3$1.line()
+            .attr("d", d3.line()
                 .x((d, i) => x(labels[i]) + x.bandwidth() / 2)
                 .y(d => y(d)))
             .attr("fill","none")
@@ -545,19 +526,19 @@ function lineGraph ({
             .style("stroke-width", separatorStrokeWidth)
             // more attributes here
             .on("mouseover", function (d, i) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(`<span class="sota-tooltip-label">${labels[i]}</span><br/>Value: ` + ((inputIsPercentage) ? toPercentage(d) : d) + "</span>")
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mousemove", d => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                tooltip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mouseout", function (d) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
             });
@@ -609,9 +590,9 @@ function stackedBarChart ({
     const swatchBelow = sotaConfig.swatch.below;
     const xAxisTop = sotaConfig.xAxisTop;
 
-    var container = d3$1.select(selector);
+    var container = d3.select(selector);
     var svg = container.append("svg");
-    var tooltip = d3$1.select("body").append("div")
+    var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     var width = document.querySelector(selector).offsetWidth;
@@ -622,7 +603,7 @@ function stackedBarChart ({
         .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
         .attr("width", mainWidth);
 
-    d3$1.csv(dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
         
         // define styling variables here
 
@@ -640,7 +621,7 @@ function stackedBarChart ({
         // DATA PROCESSING
 
         const valueLabels = data.columns.slice(1);
-        const groupLabels = d3$1.map(data, d => d.group).keys();
+        const groupLabels = d3.map(data, d => d.group).keys();
 
         // arrays of values and percentages
 
@@ -661,7 +642,7 @@ function stackedBarChart ({
         else {
             data.forEach(d => {
                 let prevPercentage = 0;
-                let total = d3$1.sum(valueLabels, k => +d[k]);
+                let total = d3.sum(valueLabels, k => +d[k]);
                 let thisData = [];
                 for (let valueLabel of valueLabels) {
                     let thisPercentage = +d[valueLabel] / total * 100;
@@ -672,23 +653,23 @@ function stackedBarChart ({
             });
         }
 
-        const y = d3$1.scaleBand()
+        const y = d3.scaleBand()
             .domain(groupLabels)
             .range([0,mainHeight])
             .padding([0.2]);
         
-        const x = d3$1.scaleLinear()
+        const x = d3.scaleLinear()
             .domain([0, 100])
             .range([0, mainWidth]);
 
-        const classNames = d3$1.scaleOrdinal()
+        const classNames = d3.scaleOrdinal()
             .domain(valueLabels)
-            .range(d3$1.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
 
         if (showXAxis) {
             mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis")
-                .call(d3$1.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
             mainHeight += 20 + xAxisTop;
@@ -717,9 +698,9 @@ function stackedBarChart ({
                 })
                 .remove();
 
-            if (d3$1.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth){
+            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth){
                 // vertical legends
-                let legendLeft = mainWidth - d3$1.max(valueLabelWidths) - swatchWidth - swatchBetween;
+                let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(valueLabels)
@@ -742,13 +723,13 @@ function stackedBarChart ({
                 legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
             }
             else {
-                let legendLeft = mainWidth - (d3$1.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
+                let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(valueLabels)
                     .join("rect")
                     .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
-                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3$1.sum(valueLabelWidths.slice(0,i), d => d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0,i), d => d))
                     .attr("y", 0)
                     .attr("width", swatchWidth)
                     .attr("height", swatchHeight);
@@ -758,7 +739,7 @@ function stackedBarChart ({
                     .join("text")
                     .attr("class", "sota-gen-legend-text")
                     .text(d => d)
-                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
                     .attr("alignment-baseline", "central");
 
@@ -784,7 +765,7 @@ function stackedBarChart ({
             .attr("width", d => x(d[0]))
             .attr("height", barHeight)
             .on("mouseover", function (d, i) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
@@ -794,15 +775,15 @@ function stackedBarChart ({
                         }
                         return retval;
                     })
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mousemove", () => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                tooltip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mouseout", function (d) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
             });
@@ -846,7 +827,7 @@ function stackedBarChart ({
                 .data(d => d)
                 .join("text")
                 .attr("class","sota-stackedBarChart-label-onBar")
-                .text(d => d3$1.format(".1f")(d[0]) + "%")
+                .text(d => d3.format(".1f")(d[0]) + "%")
                 .attr("alignment-baseline", "central")
                 .attr("text-anchor", "end")
                 .attr("x", d => x(d[1]) + x(d[0]) - labelLeft)
@@ -864,7 +845,7 @@ function stackedBarChart ({
                 .data(d => d)
                 .join("text")
                 .attr("class", "sota-stackedBarChart-label-aboveBar-text")
-                .text((d, i) => `${valueLabels[i]}: ${d3$1.format(".1f")(d[0])}%`)
+                .text((d, i) => `${valueLabels[i]}: ${d3.format(".1f")(d[0])}%`)
                 .attr("x", d => x(d[1]) + x(d[0]) / 2)
                 .attr("y", function(d){
                     labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
@@ -918,7 +899,7 @@ function stackedBarChart ({
                 .attr("x", (d, i) => labelRightBounds[i][0])
                 .attr("y", (d, i) => labelHeights[i] * labelBelow);
 
-            labelsHeight = -1 * d3$1.min(labelHeights) * labelBelow + 20;
+            labelsHeight = -1 * d3.min(labelHeights) * labelBelow + 20;
 
         }
 
@@ -943,9 +924,9 @@ function customBarChart ({
     margin = sotaConfig.margin
 }) {
 
-    var container = d3$1.select(selector);
+    var container = d3.select(selector);
     var svg = container.append("svg");
-    var tooltip = d3$1.select("body").append("div")
+    var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     const mainChart = svg.append("g")
@@ -954,18 +935,17 @@ function customBarChart ({
     var width = document.querySelector(selector).offsetWidth;
 
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
-    const hoverOpacity = 0.8;
     const labelLeft = sotaConfig.labelLeft;
     const labelBelow = sotaConfig.labelBelow;
     const lineColor = sotaConfig.lineColor;
     const coeffLabelBelow = 3;
 
-    d3$1.xml("shapes/" + shapeFile + ".svg").then(shape => {
+    d3.xml("shapes/" + shapeFile + ".svg").then(shape => {
 
         // import shape and make it a definition
 
         let importedNode = document.importNode(shape.documentElement, true);
-        let firstPath = d3$1.select(importedNode)
+        let firstPath = d3.select(importedNode)
             .select("path")
             .node();
         let firstPathWidth = 0;
@@ -988,20 +968,9 @@ function customBarChart ({
             .append(() => firstPath)
             .attr("transform", `scale(${scaleFactor})`);
 
-        d3$1.csv(dataFile + ".csv").then(data => {
+        d3.csv(dataFile + ".csv").then(data => {
 
-            // process data
-            // percentages is only used for labels so we format it and add % sign
-
-            if (!inputIsPercentage) {
-                var values = data.map(d => d.value);
-                var totalResp = d3$1.sum(values, d => d);
-                var percentages = values.map(value => d3$1.format(".1f")(100 * value / totalResp) + "%");
-            }
-            else {
-                var totalResp = 100;
-                var percentages = data.map(d => d3$1.format(".1f")(d.value) + "%");
-            }
+            const [percentages, values, labels] = processData(data, inputIsPercentage);
             
             // since stacked, left coordinate of each bar progresses, so we need this cumulative array
 
@@ -1012,13 +981,13 @@ function customBarChart ({
                 prevValue += +d.value;
             }
 
-            const x = d3$1.scaleLinear()
-                .domain([0, totalResp])
+            const x = d3.scaleLinear()
+                .domain([0, d3.sum(data, d => +d.value)])
                 .range([0, shapeWidth]);
 
-            const classNames = d3$1.scaleOrdinal()
-                .domain(d3$1.map(data, d=>d.label))
-                .range(d3$1.map(data, (d, i) => "module-fill-" + (i + 1)).keys());
+            const classNames = d3.scaleOrdinal()
+                .domain(d3.map(data, d=>d.label))
+                .range(d3.map(data, (d, i) => "module-fill-" + (i + 1)).keys());
 
             // main loop
                 
@@ -1031,29 +1000,7 @@ function customBarChart ({
                 .attr("width", d => x(d.value))
                 .attr("height", scaledHeight)
                 .attr("clip-path", "url(#shapeDef)")
-                .on("mouseover", function (d, i) {
-                    d3$1.select(this)
-                        .attr("opacity", hoverOpacity);
-                    tooltip.style("opacity", 1.0)
-                        .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${data[i].label}</span><br/>Percentage: ${percentages[i]}`;
-                            if (!inputIsPercentage) {
-                                retval += "<br/>Number of responses: " + values[i];
-                            }
-                            return retval;
-                        })
-                        .style("left", (d3$1.event.pageX) + "px")
-                        .style("top", (d3$1.event.pageY) + "px");
-                })
-                .on("mousemove", d => {
-                    tooltip.style("left", (d3$1.event.pageX) + "px")
-                        .style("top", (d3$1.event.pageY) + "px");
-                })
-                .on("mouseout", function (d) {
-                    d3$1.select(this)
-                        .attr("opacity", 1.0);
-                    tooltip.style("opacity", 0);
-                });
+                .call(bindTooltip, tooltip, percentages, labels, values);
 
             mainChart.selectAll(".sota-customBarChart-separator")
                 .data(data)
@@ -1074,7 +1021,7 @@ function customBarChart ({
                 .data(data)
                 .join("text")
                 .attr("class", "sota-customBarChart-label-aboveBar-text")
-                .text((d,i) => `${d.label}: ${percentages[i]}`)
+                .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
                 .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
                 .attr("y", function (d) {
                     labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
@@ -1128,7 +1075,7 @@ function customBarChart ({
                 .attr("x", (d, i) => labelRightBounds[i][0])
                 .attr("y", (d, i) => scaledHeight + labelHeights[i] * labelBelow);
 
-            let labelsHeight = d3$1.max(labelHeights) * labelBelow + 20;
+            let labelsHeight = d3.max(labelHeights) * labelBelow + 20;
 
             let height = scaledHeight + margin.top + margin.bottom + labelsHeight;
 
@@ -1159,10 +1106,6 @@ function columnChart ({
                                  "right": 0
                              }
                          }) {
-
-    // define styling variables here
-
-    const hoverOpacity = 0.8;
     const overflowOffset = sotaConfig.overflowOffset;
     const tickSize = sotaConfig.tickSize;
     const labelAngle = sotaConfig.labelAngle;
@@ -1173,9 +1116,9 @@ function columnChart ({
     const swatchBelowBetween = sotaConfig.swatch.belowBetween;
     const swatchBelow = sotaConfig.swatch.below;
 
-    const container = d3$1.select(selector);
+    const container = d3.select(selector);
     const svg = container.append("svg");
-    const tooltip = d3$1.select("body").append("div")
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     const mainChart = svg.append("g")
@@ -1184,51 +1127,41 @@ function columnChart ({
     const width = document.querySelector(selector).offsetWidth;
     const mainWidth = width - margin.left - margin.right;
 
-    d3$1.csv(dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
 
-        let percentages;
-
-        if (inputIsPercentage){
-            percentages = data.map(d => +d.value).keys;
-        }
-        else {
-            totalResp = (totalResp == null) ? d3$1.sum(data, d => +d.value) : totalResp;
-            percentages = data.map(d => +d.value / totalResp * 100);
-        }
-
-        const dataset = (displayPercentage || inputIsPercentage) ? percentages : data.map(d => +d.value);
-        const labels = data.map(d => d.label);
+        const [percentages, values, labels] = processData(data, inputIsPercentage, totalResp);
+        const dataset = (displayPercentage || inputIsPercentage) ? percentages : values;
 
         if (minVal === null) { // default setting
-            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3$1.min(dataset);
+            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
         }
         else if (minVal === true) { // specified minVal
-            minVal = d3$1.min(dataset);
+            minVal = d3.min(dataset);
         }
         else if (isNaN(minVal) || minVal === "") throw "invalid minVal for graph on " + selector;
         // else custom val
 
         if (maxVal === null) { // default setting
-            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3$1.max(dataset);
+            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(dataset);
         }
         else if (maxVal === true) { // specified maxVal
-            maxVal = d3$1.max(dataset);
+            maxVal = d3.max(dataset);
         }
         else if (isNaN(maxVal) || maxVal === "") throw "invalid maxVal for graph on " + selector;
         // else custom val
 
-        const x = d3$1.scaleBand()
+        const x = d3.scaleBand()
             .domain(labels)
             .range([0, mainWidth])
             .padding([0.3]);
 
-        const y = d3$1.scaleLinear()
+        const y = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([mainHeight, 0]);
 
-        const classNames = d3$1.scaleOrdinal()
+        const classNames = d3.scaleOrdinal()
             .domain(labels)
-            .range(d3$1.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
 
         let legendHeight = 0;
         let overlap = false;
@@ -1254,9 +1187,9 @@ function columnChart ({
                 })
                 .remove();
 
-            if (d3$1.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
+            if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
                 // vertical legends
-                let legendLeft = mainWidth - d3$1.max(valueLabelWidths) - swatchWidth - swatchBetween;
+                let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(labels)
@@ -1279,13 +1212,13 @@ function columnChart ({
                 legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
             }
             else {
-                let legendLeft = mainWidth - (d3$1.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
+                let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(labels)
                     .join("rect")
                     .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
-                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", 0)
                     .attr("width", swatchWidth)
                     .attr("height", swatchHeight);
@@ -1295,7 +1228,7 @@ function columnChart ({
                     .join("text")
                     .attr("class", "sota-gen-legend-text")
                     .text(d => d)
-                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
                     .attr("alignment-baseline", "central");
 
@@ -1305,7 +1238,7 @@ function columnChart ({
         else {
             xAxis = mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis")
-                .call(d3$1.axisBottom(x).tickSize(0))
+                .call(d3.axisBottom(x).tickSize(0))
                 .attr("transform", `translate(0 ${mainHeight})`);
 
             // fix xAxis label overlap
@@ -1328,7 +1261,7 @@ function columnChart ({
 
         const yAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-yAxis")
-            .call(d3$1.axisLeft(y).tickSize(-tickSize));
+            .call(d3.axisLeft(y).tickSize(-tickSize));
 
         // loop through to render stuff
 
@@ -1344,29 +1277,7 @@ function columnChart ({
             .attr("y", d => y(d))
             .attr("width", x.bandwidth())
             .attr("height", d => mainHeight - y(d))
-            .on("mouseover", function (d, i) {
-                d3$1.select(this)
-                    .attr("opacity", hoverOpacity);
-                tooltip.style("opacity", 1.0)
-                    .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
-                        if (!inputIsPercentage) {
-                            retval += "<br/>Number of responses: " + data[i].value;
-                        }
-                        return retval;
-                    })
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
-            })
-            .on("mousemove", d => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
-            })
-            .on("mouseout", function (d) {
-                d3$1.select(this)
-                    .attr("opacity", 1.0);
-                tooltip.style("opacity", 0);
-            });
+            .call(bindTooltip, tooltip, percentages, labels, values);
 
         // get mainHeight based on x axis
 
@@ -1383,7 +1294,7 @@ function columnChart ({
                 xAxis.selectAll("text")
                     .each(function(){textWidth.push(this.getBBox().width);});
 
-                const maxTextWidth = d3$1.max(textWidth);
+                const maxTextWidth = d3.max(textWidth);
                 const rotatedHeight = maxTextWidth * Math.sin(labelAngle * Math.PI / 180);
                 const rotatedTextHeight = textHeight * Math.cos(labelAngle * Math.PI / 180);
 
@@ -1396,7 +1307,7 @@ function columnChart ({
                 xAxis.selectAll("text")
                     .each(function(){textBottom.push(this.getBBox().y + this.getBBox().height);});
 
-                mainHeight += +d3$1.max(textBottom);
+                mainHeight += +d3.max(textBottom);
             }
         }
 
@@ -1434,9 +1345,9 @@ function groupedBarChart ({
     const groupLabelMargin = sotaConfig.groupLabelMargin;
     const xAxisTop = sotaConfig.xAxisTop;
 
-    const container = d3$1.select(selector);
+    const container = d3.select(selector);
     const svg = container.append("svg");
-    const tooltip = d3$1.select("body").append("div")
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     const mainChart = svg.append("g")
@@ -1445,7 +1356,7 @@ function groupedBarChart ({
     const width = document.querySelector(selector).offsetWidth;
     const mainWidth = width - margin.left - margin.right;
 
-    d3$1.csv(dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
 
         // data processing
 
@@ -1464,17 +1375,17 @@ function groupedBarChart ({
         window.wow = data;
 
         const subGroups = data.columns.splice(1);
-        const groupLabels = d3$1.map(data, d => d.group).keys();
+        const groupLabels = d3.map(data, d => d.group).keys();
 
-        const allGroupValues = d3$1.map(data, d => {
+        const allGroupValues = d3.map(data, d => {
             let subGroupValues = [];
             for (let subGroup of subGroups){
                 subGroupValues.push(+d[subGroup]);
             }
-            return d3$1.max(subGroupValues);
+            return d3.max(subGroupValues);
         }).keys();
 
-        const valueMax = d3$1.max(allGroupValues, d => +d);
+        const valueMax = d3.max(allGroupValues, d => +d);
 
         if (maxVal == null){
             maxVal = (inputIsPercentage || displayPercentage) ? 100 : valueMax;
@@ -1485,21 +1396,21 @@ function groupedBarChart ({
         const groupHeight = barspace * subGroups.length;
         let mainHeight = (groupHeight + groupLabelMargin) * data.length;
 
-        const x = d3$1.scaleLinear()
+        const x = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([0,mainWidth]);
 
-        const groupY = d3$1.scaleOrdinal()
-            .domain(d3$1.map(data, d => d.group))
-            .range(d3$1.map(data, (d, i) => (groupHeight + groupLabelMargin) * i).keys());
+        const groupY = d3.scaleOrdinal()
+            .domain(d3.map(data, d => d.group))
+            .range(d3.map(data, (d, i) => (groupHeight + groupLabelMargin) * i).keys());
 
-        const y = d3$1.scaleOrdinal()
+        const y = d3.scaleOrdinal()
             .domain(subGroups)
-            .range(d3$1.map(subGroups, (d, i) => barspace * i).keys());
+            .range(d3.map(subGroups, (d, i) => barspace * i).keys());
 
         const xAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-xAxis sota-groupedBarChart-xAxis")
-            .call(d3$1.axisBottom(x).tickSize(-(mainHeight + xAxisTop)))
+            .call(d3.axisBottom(x).tickSize(-(mainHeight + xAxisTop)))
             .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
         mainHeight += 20 + xAxisTop;
@@ -1512,9 +1423,9 @@ function groupedBarChart ({
             .attr("class", "sota-groupedBarChart-group")
             .attr("transform", (d, i) => `translate(0 ${groupY(d.group)})`);
 
-        const classNames = d3$1.scaleOrdinal()
+        const classNames = d3.scaleOrdinal()
             .domain(subGroups)
-            .range(d3$1.map(subGroups, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(subGroups, (d, i) => "module-fill-" + (i + 1)).keys());
 
         chartGroups.selectAll(".sota-gen-bar")
             .data(d => {
@@ -1529,7 +1440,7 @@ function groupedBarChart ({
             .attr("width", (d, i) => x((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100))
             .attr("height", barHeight)
             .on("mouseover", function (d, i) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
@@ -1539,15 +1450,15 @@ function groupedBarChart ({
                         }
                         return retval;
                     })
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mousemove", () => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                tooltip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mouseout", function (d) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
             });
@@ -1604,9 +1515,9 @@ function stackedColumnChart ({
     const swatchBelowBetween = sotaConfig.swatch.belowBetween;
     const swatchBelow = sotaConfig.swatch.below;
 
-    const container = d3$1.select(selector);
+    const container = d3.select(selector);
     const svg = container.append("svg");
-    const tooltip = d3$1.select("body").append("div")
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
     const mainChart = svg.append("g")
@@ -1615,11 +1526,11 @@ function stackedColumnChart ({
     const width = document.querySelector(selector).offsetWidth;
     const mainWidth = width - margin.left - margin.right;
 
-    d3$1.csv(dataFile + ".csv").then(data => {
+    d3.csv(dataFile + ".csv").then(data => {
 
         // data processing
         const valueLabels = data.columns.slice(1);
-        const groupLabels = d3$1.map(data, d => d.group).keys();
+        const groupLabels = d3.map(data, d => d.group).keys();
 
         var stackedData = [];
 
@@ -1638,7 +1549,7 @@ function stackedColumnChart ({
         else {
             data.forEach(d => {
                 let prevPercentage = 0;
-                let total = d3$1.sum(valueLabels, k => +d[k]);
+                let total = d3.sum(valueLabels, k => +d[k]);
                 let thisData = [];
                 for (let valueLabel of valueLabels) {
                     let thisPercentage = +d[valueLabel] / total * 100;
@@ -1652,43 +1563,43 @@ function stackedColumnChart ({
         const dataset = (displayPercentage || inputIsPercentage) ? stackedData : data.map(d => +d.value);
 
         if (minVal === null) { // default setting
-            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3$1.min(dataset);
+            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
         }
         else if (minVal === true) { // specified minVal
-            minVal = d3$1.min(dataset);
+            minVal = d3.min(dataset);
         }
         else if (isNaN(minVal) || minVal === "") throw "invalid minVal for graph on " + selector;
         // else custom val
 
         if (maxVal === null) { // default setting
-            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3$1.max(dataset);
+            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(dataset);
         }
         else if (maxVal === true) { // specified maxVal
-            maxVal = d3$1.max(dataset);
+            maxVal = d3.max(dataset);
         }
         else if (isNaN(maxVal) || maxVal === "") throw "invalid maxVal for graph on " + selector;
         // else custom val
 
-        const x = d3$1.scaleBand()
+        const x = d3.scaleBand()
             .domain(groupLabels)
             .range([0, mainWidth])
             .padding([0.3]);
 
-        const y = d3$1.scaleLinear()
+        const y = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([mainHeight, 0]);
 
-        const classNames = d3$1.scaleOrdinal()
+        const classNames = d3.scaleOrdinal()
             .domain(valueLabels)
-            .range(d3$1.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
 
         const yAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-yAxis")
-            .call(d3$1.axisLeft(y).tickSize(-tickSize));
+            .call(d3.axisLeft(y).tickSize(-tickSize));
 
         const xAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-xAxis")
-            .call(d3$1.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+            .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
             .attr("transform", "translate(" + 0 + " " + (mainHeight) + ")");
 
         // legend
@@ -1713,9 +1624,9 @@ function stackedColumnChart ({
             })
             .remove();
 
-        if (d3$1.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
+        if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
             // vertical legends
-            let legendLeft = mainWidth - d3$1.max(valueLabelWidths) - swatchWidth - swatchBetween;
+            let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
             legend.selectAll(".sota-gen-legend-swatch")
                 .data(valueLabels)
@@ -1738,13 +1649,13 @@ function stackedColumnChart ({
             legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
         }
         else {
-            let legendLeft = mainWidth - (d3$1.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
+            let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
 
             legend.selectAll(".sota-gen-legend-swatch")
                 .data(valueLabels)
                 .join("rect")
                 .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
-                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", 0)
                 .attr("width", swatchWidth)
                 .attr("height", swatchHeight);
@@ -1754,7 +1665,7 @@ function stackedColumnChart ({
                 .join("text")
                 .attr("class", "sota-gen-legend-text")
                 .text(d => d)
-                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3$1.sum(valueLabelWidths.slice(0, i), d => d))
+                .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", swatchHeight / 2)
                 .attr("alignment-baseline", "central");
 
@@ -1778,7 +1689,7 @@ function stackedColumnChart ({
             .attr("width", x.bandwidth())
             .attr("height", d => mainHeight - y(d[0]))
             .on("mouseover", function (d, i) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
@@ -1788,15 +1699,15 @@ function stackedColumnChart ({
                         }
                         return retval;
                     })
-                    .style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mousemove", () => {
-                tooltip.style("left", (d3$1.event.pageX) + "px")
-                    .style("top", (d3$1.event.pageY) + "px");
+                tooltip.style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY) + "px");
             })
             .on("mouseout", function (d) {
-                d3$1.select(this)
+                d3.select(this)
                     .attr("opacity", 1.0);
                 tooltip.style("opacity", 0);
             });
@@ -1826,7 +1737,7 @@ function stackedColumnChart ({
             xAxis.selectAll("text")
                 .each(function(){textBottom.push(this.getBBox().y + this.getBBox().height);});
 
-            mainHeight += +d3$1.max(textBottom);
+            mainHeight += +d3.max(textBottom);
         }
 
 

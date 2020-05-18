@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { sotaConfig } from '../helper.js';
+import { sotaConfig, bindTooltip, toPercentage, processData } from '../helper.js';
 
 export default function ({
     selector,
@@ -57,18 +57,7 @@ export default function ({
 
         d3.csv(dataFile + ".csv").then(data => {
 
-            // process data
-            // percentages is only used for labels so we format it and add % sign
-
-            if (!inputIsPercentage) {
-                var values = data.map(d => d.value);
-                var totalResp = d3.sum(values, d => d);
-                var percentages = values.map(value => d3.format(".1f")(100 * value / totalResp) + "%");
-            }
-            else {
-                var totalResp = 100;
-                var percentages = data.map(d => d3.format(".1f")(d.value) + "%");
-            }
+            const [percentages, values, labels] = processData(data, inputIsPercentage);
             
             // since stacked, left coordinate of each bar progresses, so we need this cumulative array
 
@@ -80,7 +69,7 @@ export default function ({
             }
 
             const x = d3.scaleLinear()
-                .domain([0, totalResp])
+                .domain([0, d3.sum(data, d => +d.value)])
                 .range([0, shapeWidth]);
 
             const classNames = d3.scaleOrdinal()
@@ -98,29 +87,7 @@ export default function ({
                 .attr("width", d => x(d.value))
                 .attr("height", scaledHeight)
                 .attr("clip-path", "url(#shapeDef)")
-                .on("mouseover", function (d, i) {
-                    d3.select(this)
-                        .attr("opacity", hoverOpacity);
-                    tooltip.style("opacity", 1.0)
-                        .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${data[i].label}</span><br/>Percentage: ${percentages[i]}`;
-                            if (!inputIsPercentage) {
-                                retval += "<br/>Number of responses: " + values[i];
-                            }
-                            return retval;
-                        })
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY) + "px");
-                })
-                .on("mousemove", d => {
-                    tooltip.style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY) + "px");
-                })
-                .on("mouseout", function (d) {
-                    d3.select(this)
-                        .attr("opacity", 1.0);
-                    tooltip.style("opacity", 0);
-                })
+                .call(bindTooltip, tooltip, percentages, labels, values);
 
             mainChart.selectAll(".sota-customBarChart-separator")
                 .data(data)
@@ -141,7 +108,7 @@ export default function ({
                 .data(data)
                 .join("text")
                 .attr("class", "sota-customBarChart-label-aboveBar-text")
-                .text((d,i) => `${d.label}: ${percentages[i]}`)
+                .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
                 .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
                 .attr("y", function (d) {
                     labelRightBounds.push([this.getBBox().x, this.getBBox().width]);

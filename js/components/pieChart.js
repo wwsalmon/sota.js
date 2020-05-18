@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {sotaConfig, toPercentage} from '../helper.js';
+import {sotaConfig, toPercentage, bindTooltip, processData} from '../helper.js';
 
 export default function ({
     selector,
@@ -43,17 +43,8 @@ export default function ({
     var height = pieRad * 2 + margin.top + margin.bottom;
 
     d3.csv(dataFile + ".csv").then(data => {
-        const labels = data.map(d => d.label);
 
-        if (!inputIsPercentage) {
-            var values = data.map(d => d.value);
-            var totalResp = d3.sum(values, d => d);
-            var percentages = values.map(value => 100 * value / totalResp);
-        }
-        else {
-            var percentages = data.map(d => d.value);
-        }
-
+        const [percentages, values, labels] = processData(data, inputIsPercentage);
         const pie = d3.pie();
         const pieData = pie(percentages);
 
@@ -153,29 +144,7 @@ export default function ({
             .attr("d", arc)
             .attr("stroke", "#fff")
             .style("stroke-width", separatorStrokeWidth)
-            .on("mouseover", function (d, i) {
-                d3.select(this)
-                    .attr("opacity", hoverOpacity);
-                tooltip.style("opacity", 1.0)
-                    .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
-                        if (!inputIsPercentage) {
-                            retval += "<br/>Number of responses: " + values[i];
-                        }
-                        return retval;
-                    })
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-            })
-            .on("mousemove", d => {
-                tooltip.style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-            })
-            .on("mouseout", function (d) {
-                d3.select(this)
-                    .attr("opacity", 1.0);
-                tooltip.style("opacity", 0);
-            });
+            .call(bindTooltip, tooltip, percentages, labels, values);
         
         // following code, especially calculations part, taken more or less directly from https://www.d3-graph-gallery.com/graph/donut_label.html
 

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { sotaConfig } from '../helper.js';
+import { sotaConfig, processData, bindTooltip } from '../helper.js';
 
 export default function ({
                              selector,
@@ -27,6 +27,8 @@ export default function ({
     d3.csv(dataFile + ".csv").then(data => {
 
         // data processing
+
+        const [percentages, values, labels] = processData(data, inputIsPercentage, totalResp);
 
         // loop through to render stuff
 
