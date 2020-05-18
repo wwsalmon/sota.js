@@ -13,6 +13,8 @@ export default [
             }
         },
 
+        external: [ 'd3' ],
+
         plugins: [
             terser()
         ]
@@ -22,6 +24,7 @@ export default [
         output: {
             file: "dist/sota.node.js",
             format: "cjs"
-        }
+        },
+        external: [ 'd3' ]
     }
 ]
