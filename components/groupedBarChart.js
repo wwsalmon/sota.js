@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { toPercentage } from '../lib/helper.js';
+import {toPercentage} from "../lib/tooltip.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
 export default function ({

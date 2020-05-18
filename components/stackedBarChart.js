@@ -1,6 +1,7 @@
 import * as d3 from "d3";
-import { hideIfOOB, toPercentage } from '../lib/helper.js';
+import { hideIfOOB } from '../lib/helper.js';
 import sotaConfig from "../lib/sotaConfig.js";
+import {toPercentage} from "../lib/tooltip.js";
 
 export default function ({
                              selector,

@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phillipian/sota.js.git"
+    "url": "git+https://github.com/wwsalmon/sota.js.git"
   },
   "keywords": [
     "d3"
@@ -19,9 +19,9 @@
   "author": "Samson Zhang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/phillipian/sota.js/issues"
+    "url": "https://github.com/wwsalmon/sota.js/issues"
   },
-  "homepage": "https://github.com/phillipian/sota.js#readme",
+  "homepage": "https://github.com/wwsalmon/sota.js#readme",
   "dependencies": {
     "d3": "^5.16.0"
   },

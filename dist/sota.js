@@ -4,29 +4,6 @@
     (global = global || self, global.sota = factory(global.d3));
 }(this, (function (d3) { 'use strict';
 
-    function hideIfOOB(elems,marginLeft){
-        for (let item of elems._groups){
-            if (Array.isArray(item)){
-                for (let subitem of item) {
-                    hideIfOOBHelper(subitem, marginLeft);
-                }
-            }
-            else {
-                hideIfOOBHelper(item, marginLeft);
-            }
-        }
-    }
-
-    function hideIfOOBHelper(item,marginLeft){
-        if (item.getBBox().x < marginLeft){
-            item.style.display = "none";
-        }
-    }
-
-    function toPercentage$1(i){
-        return d3.format(".1f")(i) + "%";
-    }
-
     var sotaConfig = {
         separatorStrokeWidth: 2,
         barHeight: 32,
@@ -70,6 +47,10 @@
             return window.innerWidth - toSide;
         }
         return mouseX;
+    }
+
+    function toPercentage(i){
+        return d3.format(".1f")(i) + "%";
     }
 
     function bindTooltip(selection, tooltip, percentages, labels, values){
@@ -221,7 +202,7 @@
                 .data(dataset)
                 .join("text")
                 .attr("class", "sota-barChart-value")
-                .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage$1(d) : d)
+                .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
                 .attr("alignment-baseline", "central")
                 .attr("text-anchor", "end")
                 .attr("x", mainWidth)
@@ -409,7 +390,7 @@
                 .data(pieData)
                 .join("text")
                 .attr("class","sota-pieChart-label sota-floatingLabel")
-                .text((d, i) => toPercentage$1(percentages[i]))
+                .text((d, i) => toPercentage(percentages[i]))
                 .attr("alignment-baseline", "central")
                 .attr("transform", d => {
                     let pos = outerArc.centroid(d);
@@ -530,7 +511,7 @@
                     d3.select(this)
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
-                        .html(`<span class="sota-tooltip-label">${labels[i]}</span><br/>Value: ` + ((inputIsPercentage) ? toPercentage$1(d) : d) + "</span>")
+                        .html(`<span class="sota-tooltip-label">${labels[i]}</span><br/>Value: ` + ((inputIsPercentage) ? toPercentage(d) : d) + "</span>")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY) + "px");
                 })
@@ -558,6 +539,25 @@
                 .style("text-anchor","middle");
 
         });
+    }
+
+    function hideIfOOB(elems,marginLeft){
+        for (let item of elems._groups){
+            if (Array.isArray(item)){
+                for (let subitem of item) {
+                    hideIfOOBHelper(subitem, marginLeft);
+                }
+            }
+            else {
+                hideIfOOBHelper(item, marginLeft);
+            }
+        }
+    }
+
+    function hideIfOOBHelper(item,marginLeft){
+        if (item.getBBox().x < marginLeft){
+            item.style.display = "none";
+        }
     }
 
     function stackedBarChart ({
@@ -770,7 +770,7 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage$1(d[0])}`;
+                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d[2];
                             }
@@ -1022,7 +1022,7 @@
                     .data(data)
                     .join("text")
                     .attr("class", "sota-customBarChart-label-aboveBar-text")
-                    .text((d,i) => `${d.label}: ${toPercentage$1(percentages[i])}`)
+                    .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
                     .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
                     .attr("y", function (d) {
                         labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
@@ -1445,7 +1445,7 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage$1((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
+                            let retval = `<span class="sota-tooltip-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d;
                             }
@@ -1694,7 +1694,7 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage$1(d[0])}`;
+                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d[2];
                             }

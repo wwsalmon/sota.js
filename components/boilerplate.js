@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import bindTooltip from "../lib/tooltip.js";
+import {bindTooltip, toPercentage} from "../lib/tooltip.js";
 import processData from "../lib/processData.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
