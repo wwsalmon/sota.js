@@ -225,7 +225,7 @@ function barChart ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .attr("transform", `translate(${-overflowOffset} 0)`);
+            .style("margin-left", -overflowOffset);
     });
 }
 
@@ -926,7 +926,7 @@ function stackedBarChart ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .attr("transform", `translate(${-overflowOffset} 0)`);
+            .style("margin-left", -overflowOffset);
 
         mainChart.attr("transform",`translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
             .attr("width", mainWidth);
@@ -1406,7 +1406,7 @@ function columnChart ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .attr("transform", `translate(${-overflowOffset} 0)`);
+            .style("margin-left", -overflowOffset);
 
         mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top + legendHeight})`)
             .attr("width", mainWidth);
@@ -1568,7 +1568,7 @@ function groupedBarChart ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .attr("transform", `translate(${-overflowOffset} 0)`);
+            .style("margin-left", -overflowOffset);
 
         mainChart.attr("transform",`translate(${margin.left + overflowOffset} ${margin.top})`)
             .attr("width",mainWidth);
@@ -1836,7 +1836,7 @@ function stackedColumnChart ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .attr("transform", `translate(${-overflowOffset} 0)`);
+            .style("margin-left", -overflowOffset);
 
         mainChart.attr("transform",`translate(${margin.left+overflowOffset} ${margin.top + legendHeight})`)
             .attr("width",mainWidth);

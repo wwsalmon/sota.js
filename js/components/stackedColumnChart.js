@@ -285,7 +285,7 @@ export default function ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .attr("transform", `translate(${-overflowOffset} 0)`);
+            .style("margin-left", -overflowOffset);
 
         mainChart.attr("transform",`translate(${margin.left+overflowOffset} ${margin.top + legendHeight})`)
             .attr("width",mainWidth)
