@@ -1,6 +1,6 @@
 {
   "name": "sota.js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "d3-based charting library for The Phillipian's State of the Academy",
   "main": "dist/sota.node.js",
   "files": [
