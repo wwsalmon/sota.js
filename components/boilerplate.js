@@ -1,5 +1,7 @@
 import * as d3 from "d3";
-import { sotaConfig, processData, bindTooltip } from '../helper.js';
+import bindTooltip from "../lib/tooltip.js";
+import processData from "../lib/processData.js";
+import sotaConfig from "../lib/sotaConfig.js";
 
 export default function ({
                              selector,

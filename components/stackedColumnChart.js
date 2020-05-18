@@ -1,5 +1,6 @@
 import * as d3 from "d3";
-import { sotaConfig, toPercentage } from '../helper.js';
+import { toPercentage } from '../lib/helper.js';
+import sotaConfig from "../lib/sotaConfig.js";
 
 export default function ({
                              selector,

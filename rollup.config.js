@@ -2,7 +2,7 @@ import {terser} from "rollup-plugin-terser";
 
 export default [
     {
-        input: 'js/sota.js',
+        input: 'index.js',
         output: {
             name: "sota",
             file: 'dist/sota.js',
@@ -15,7 +15,7 @@ export default [
         external: [ 'd3' ]
     },
     {
-        input: 'js/sota.js',
+        input: 'index.js',
         output: {
             name: "sota",
             file: 'dist/sota.min.js',
@@ -33,7 +33,7 @@ export default [
         ]
     },
     {
-        input: "js/sota.js",
+        input: 'index.js',
         output: {
             file: "dist/sota.node.js",
             format: "cjs"

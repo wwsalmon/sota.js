@@ -23,58 +23,11 @@
         }
     }
 
-    function mouseXIfNotOffsreen(tooltip){
-        const toSide = tooltip.node().offsetWidth / 2;
-        const mouseX = d3.event.pageX;
-        if (mouseX - toSide < 0){
-            return toSide;
-        }
-        if (mouseX + toSide > window.innerWidth){
-            return window.innerWidth - toSide;
-        }
-        return mouseX;
-    }
-
-    function processData(data, inputIsPercentage, totalResp = null){
-        totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
-        const percentages = (inputIsPercentage) ? data.map(d => +d.value).keys : data.map(d => +d.value / totalResp * 100);
-        const values = (inputIsPercentage) ? false : data.map(d => +d.value);
-        const labels = data.map(d => d.label);
-        return [percentages, values, labels];
-    }
-
-    function toPercentage(i){
+    function toPercentage$1(i){
         return d3.format(".1f")(i) + "%";
     }
 
-    function bindTooltip(selection, tooltip, percentages, labels, values){
-        selection.on("mouseover", function (d, i){
-            d3.select(this)
-                .attr("opacity", sotaConfig.hoverOpacity);
-            tooltip.style("opacity", 1.0)
-                .html(() => {
-                    let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
-                    if (values) {
-                        retval += "<br/>Number of responses: " + values[i];
-                    }
-                    return retval;
-                })
-                .style("left", mouseXIfNotOffsreen(tooltip) + "px")
-                .style("top", (d3.event.pageY) + "px");
-        })
-        .on("mousemove", d => {
-            tooltip.style("left", mouseXIfNotOffsreen(tooltip) + "px")
-                .style("top", (d3.event.pageY) + "px");
-        })
-        .on("mouseout", function (d) {
-            d3.select(this)
-                .attr("opacity", 1.0);
-            tooltip.style("opacity", 0);
-        });
-
-    }
-
-    let sotaConfig = {
+    var sotaConfig = {
         separatorStrokeWidth: 2,
         barHeight: 32,
         barMargin: 16,
@@ -106,6 +59,52 @@
             below: 16
         }
     };
+
+    function mouseXIfNotOffsreen(tooltip){
+        const toSide = tooltip.node().offsetWidth / 2;
+        const mouseX = d3.event.pageX;
+        if (mouseX - toSide < 0){
+            return toSide;
+        }
+        if (mouseX + toSide > window.innerWidth){
+            return window.innerWidth - toSide;
+        }
+        return mouseX;
+    }
+
+    function bindTooltip(selection, tooltip, percentages, labels, values){
+        selection.on("mouseover", function (d, i){
+            d3.select(this)
+                .attr("opacity", sotaConfig.hoverOpacity);
+            tooltip.style("opacity", 1.0)
+                .html(() => {
+                    let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
+                    if (values) {
+                        retval += "<br/>Number of responses: " + values[i];
+                    }
+                    return retval;
+                })
+                .style("left", mouseXIfNotOffsreen(tooltip) + "px")
+                .style("top", (d3.event.pageY) + "px");
+        })
+            .on("mousemove", d => {
+                tooltip.style("left", mouseXIfNotOffsreen(tooltip) + "px")
+                    .style("top", (d3.event.pageY) + "px");
+            })
+            .on("mouseout", function (d) {
+                d3.select(this)
+                    .attr("opacity", 1.0);
+                tooltip.style("opacity", 0);
+            });
+    }
+
+    function processData(data, inputIsPercentage, totalResp = null){
+        totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
+        const percentages = (inputIsPercentage) ? data.map(d => +d.value).keys : data.map(d => +d.value / totalResp * 100);
+        const values = (inputIsPercentage) ? false : data.map(d => +d.value);
+        const labels = data.map(d => d.label);
+        return [percentages, values, labels];
+    }
 
     function barChart ({
         selector,
@@ -222,7 +221,7 @@
                 .data(dataset)
                 .join("text")
                 .attr("class", "sota-barChart-value")
-                .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
+                .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage$1(d) : d)
                 .attr("alignment-baseline", "central")
                 .attr("text-anchor", "end")
                 .attr("x", mainWidth)
@@ -410,7 +409,7 @@
                 .data(pieData)
                 .join("text")
                 .attr("class","sota-pieChart-label sota-floatingLabel")
-                .text((d, i) => toPercentage(percentages[i]))
+                .text((d, i) => toPercentage$1(percentages[i]))
                 .attr("alignment-baseline", "central")
                 .attr("transform", d => {
                     let pos = outerArc.centroid(d);
@@ -531,7 +530,7 @@
                     d3.select(this)
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
-                        .html(`<span class="sota-tooltip-label">${labels[i]}</span><br/>Value: ` + ((inputIsPercentage) ? toPercentage(d) : d) + "</span>")
+                        .html(`<span class="sota-tooltip-label">${labels[i]}</span><br/>Value: ` + ((inputIsPercentage) ? toPercentage$1(d) : d) + "</span>")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY) + "px");
                 })
@@ -771,7 +770,7 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
+                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage$1(d[0])}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d[2];
                             }
@@ -1023,7 +1022,7 @@
                     .data(data)
                     .join("text")
                     .attr("class", "sota-customBarChart-label-aboveBar-text")
-                    .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
+                    .text((d,i) => `${d.label}: ${toPercentage$1(percentages[i])}`)
                     .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
                     .attr("y", function (d) {
                         labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
@@ -1446,7 +1445,7 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
+                            let retval = `<span class="sota-tooltip-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage$1((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d;
                             }
@@ -1695,7 +1694,7 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
+                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage$1(d[0])}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d[2];
                             }
