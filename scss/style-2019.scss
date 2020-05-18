@@ -146,102 +146,20 @@ h1{
     font-family: "Mercury Text G1", serif;
 }
 
-#general{
-    background-color: $general-1;
-    color: $general-1;
-
-    .sota-gen-bar{
-        fill: $general-5;
-    }
-
-    .module-fill-1{
-        fill: $general-1;
-    }
-
-    .module-fill-2{
-        fill: $general-3;
-    }
-
-    .module-fill-3{
-        fill: $general-5;
-    }
-
-    .module-fill-4{
-        fill: $general-7;
-    }
-}
-
-#discipline{
-    background-color: $discipline-1;
-    color: $discipline-1;
-
-    .sota-gen-bar{
-        fill: $discipline-1;
-    }
-
-    .module-fill-1{
-        fill: $discipline-1;
-    }
-
-    .module-fill-2{
-        fill: $discipline-2;
-    }
-
-    .module-fill-3{
-        fill: $discipline-3;
-    }
-
-    .module-fill-4{
-        fill: $discipline-4;
-    }
-}
-
-#wellness{
-    background-color: $wellness-1;
-    color: $wellness-1;
-
-    .sota-gen-bar{
-        fill: $wellness-1;
-    }
-
-    .module-fill-1{
-        fill: $wellness-1;
-    }
-
-    .module-fill-2{
-        fill: $wellness-2;
-    }
-
-    .module-fill-3{
-        fill: $wellness-3;
-    }
-
-    .module-fill-4{
-        fill: $wellness-4;
-    }
-}
-
-#politics{
-    background-color: $politics-1;
-    color: $politics-1;
-
-    .sota-gen-bar{
-        fill: $politics-1;
-    }
-
-    .module-fill-1{
-        fill: $politics-1;
-    }
-
-    .module-fill-2{
-        fill: $politics-2;
-    }
-
-    .module-fill-3{
-        fill: $politics-3;
-    }
-
-    .module-fill-4{
-        fill: $politics-4;
-    }
-}
+//@each $section in $section-colors{
+//    $section-name: nth($section, 1);
+//    $section-color-list: nth($section, 2);
+//    $section-color-amount: length($section-color-list);
+//    ##{$section-name}{
+//        background-color: nth($section-color-list, 1);
+//        color: nth($section-color-list, 1);
+//        .sota-gen-bar{
+//            fill: nth($section-color-list, 1);
+//        }
+//        @for $i from 1 through $section-color-amount{
+//            .module-fill-#{$i}{
+//                fill: nth($section-color-list,$i);
+//            }
+//        }
+//    }
+//}
