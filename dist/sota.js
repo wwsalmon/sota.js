@@ -1787,7 +1787,7 @@
         document.head.appendChild(document.createElement('style')).textContent = colorStyle;
     }
 
-    function setStyles(thisSotaConfig = sotaConfig){
+    function setStyles(fontsPath, thisSotaConfig = sotaConfig){
         const mainWidth = 1500;
         const moduleMargin = 24;
         const axisStrokeWidth = thisSotaConfig.separatorStrokeWidth;
@@ -1797,78 +1797,78 @@
 @font-face {
 	font-family: "Gotham";
 	font-weight: 700;
-	src: url("../fonts/Gotham/GothamBold.ttf")
+	src: url("${fontsPath}/Gotham/GothamBold.ttf")
 }
 
 @font-face {
 	font-family: "Gotham";
 	font-weight: 700;
 	font-style: italic;
-	src: url("../fonts/Gotham/GothamBoldItalic.ttf")
+	src: url("${fontsPath}/Gotham/GothamBoldItalic.ttf")
 }
 
 @font-face {
 	font-family: "Gotham";
-	src: url("../fonts/Gotham/GothamBook.ttf")
+	src: url("${fontsPath}/Gotham/GothamBook.ttf")
 }
 
 @font-face {
 	font-family: "Gotham";
 	font-style: italic;
-	src: url("../fonts/Gotham/GothamBookItalic.ttf")
+	src: url("${fontsPath}/Gotham/GothamBookItalic.ttf")
 }
 
 @font-face {
 	font-family: "Gotham";
 	font-weight: 300;
-	src: url("../fonts/Gotham/GothamLight.ttf")
+	src: url("${fontsPath}/Gotham/GothamLight.ttf")
 }
 
 @font-face {
 	font-family: "Gotham";
 	font-weight: 300;
 	font-style: italic;
-	src: url("../fonts/Gotham/GothamLightItalic.ttf")
+	src: url("${fontsPath}/Gotham/GothamLightItalic.ttf")
 }
 
 @font-face {
 	font-family: 'Mercury Text G1';
-	src: url("../fonts/Mercury/MercuryTextG1-Roman.otf");
+	src: url("${fontsPath}/Mercury/MercuryTextG1-Roman.otf");
 	font-weight: normal;
 	font-style: normal
 }
 
 @font-face {
 	font-family: 'Mercury Text G1';
-	src: url("../fonts/Mercury/MercuryTextG1-Italic.otf");
+	src: url("${fontsPath}/Mercury/MercuryTextG1-Italic.otf");
 	font-weight: normal;
 	font-style: italic
 }
 
 @font-face {
 	font-family: 'Mercury Text G1';
-	src: url("../fonts/Mercury/MercuryTextG1-Bold.otf");
+	src: url("${fontsPath}/Mercury/MercuryTextG1-Bold.otf");
 	font-weight: bold;
 	font-style: normal
 }
 
 @font-face {
 	font-family: 'Mercury Text G1';
-	src: url("../fonts/Mercury/MercuryTextG1-BoldItalic.otf");
+	src: url("${fontsPath}/Mercury/MercuryTextG1-BoldItalic.otf");
 	font-weight: bold;
 	font-style: italic
 }
 
 @font-face {
 	font-family: 'Mercury Text G1';
-	src: url("../fonts/Mercury/MercuryTextG1-Semibold.otf");
+	src: url("${fontsPath}/Mercury/MercuryTextG1-Semibold.otf");
 	font-weight: 600;
 	font-style: normal
 }
 
 @font-face {
 	font-family: 'Mercury Text G1';
-	src: url("../fonts/Mercury/MercuryTextG1-SemiboldItalic.otf");
+	src: url("${fontsPath}/Mercury/MercuryTextG1-SemiboldItalic.otf");
 	font-weight: 600;
 	font-style: italic
 }
