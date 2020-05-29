@@ -91,6 +91,16 @@ export default function ({
             .attr("height", barHeight)
             .attr("x", 0)
             .attr("y", (d, i) => y(i))
+
+        mainChart.selectAll(".sota-barChart-hiddenBar")
+            .data(dataset)
+            .join("rect")
+            .attr("class", "sota-barChart-hiddenBar")
+            .attr("width", mainWidth)
+            .attr("height", barHeight)
+            .attr("x", 0)
+            .attr("y", (d, i) => y(i))
+            .attr("fill", "transparent")
             .call(bindTooltip, tooltip, percentages, labels, values)
 
         mainChart.selectAll(".sota-barChart-label")

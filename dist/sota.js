@@ -173,7 +173,17 @@
                 .attr("width", d => x(d))
                 .attr("height", barHeight)
                 .attr("x", 0)
+                .attr("y", (d, i) => y(i));
+
+            mainChart.selectAll(".sota-barChart-hiddenBar")
+                .data(dataset)
+                .join("rect")
+                .attr("class", "sota-barChart-hiddenBar")
+                .attr("width", mainWidth)
+                .attr("height", barHeight)
+                .attr("x", 0)
                 .attr("y", (d, i) => y(i))
+                .attr("fill", "transparent")
                 .call(bindTooltip, tooltip, percentages, labels, values);
 
             mainChart.selectAll(".sota-barChart-label")
@@ -243,16 +253,16 @@
         const swatchBelowBetween = sotaConfig.swatch.belowBetween;
         const swatchBelow = sotaConfig.swatch.below;
 
-        var container = d3.select(selector);
-        var svg = container.append("svg")
+        const container = d3.select(selector);
+        const svg = container.append("svg")
             .attr("class", "sota-pieChart");
-        var tooltip = d3.select("body").append("div")
+        const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip");
 
-        var width = document.querySelector(selector).offsetWidth;
-        var mainWidth = width - margin.left - margin.right;
+        const width = document.querySelector(selector).offsetWidth;
+        const mainWidth = width - margin.left - margin.right;
 
-        var trueWidth = width - margin.left - margin.right;
+        const trueWidth = width - margin.left - margin.right;
 
         if (trueWidth < pieRad * 2) {
             pieRad = trueWidth / 2;
@@ -1938,10 +1948,6 @@ h1 {
 .module .subtitle {
 	font-family: "Mercury Text G1", serif;
 	opacity: 0.4
-}
-
-.module text {
-	pointer-events: none
 }
 
 .tooltip {
