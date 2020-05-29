@@ -115,9 +115,8 @@ export default function ({
             .data(d => {
                 let dataset = [];
                 for (let key of subGroups){dataset.push(+d[key])}
-                console.log(dataset);
-                return dataset;}
-                )
+                return dataset;
+            })
             .join("rect")
             .attr("class",(d, i) => `sota-gen-bar ${classNames(subGroups[i])}`)
             .attr("y", (d,i) => +y(subGroups[i]) + +groupLabelMargin)

@@ -1453,9 +1453,8 @@
                 .data(d => {
                     let dataset = [];
                     for (let key of subGroups){dataset.push(+d[key]);}
-                    console.log(dataset);
-                    return dataset;}
-                    )
+                    return dataset;
+                })
                 .join("rect")
                 .attr("class",(d, i) => `sota-gen-bar ${classNames(subGroups[i])}`)
                 .attr("y", (d,i) => +y(subGroups[i]) + +groupLabelMargin)
@@ -1806,7 +1805,7 @@
 
     function setStyles(fontsPath, thisSotaConfig = sotaConfig){
         const mainWidth = 1500;
-        const moduleMargin = 24;
+        const moduleMargin = 48;
         const axisStrokeWidth = thisSotaConfig.separatorStrokeWidth;
         const axisStrokeColor = thisSotaConfig.lineColor;
         const axisTextMargin = 4;
@@ -1890,6 +1889,10 @@
 	font-style: italic
 }
 
+body{
+    margin: 0;
+}
+
 section {
 	padding: 48px 0;
 	width: 100%
@@ -1905,6 +1908,7 @@ h1 {
 }
 
 .container {
+    position: relative;
 	max-width: ${mainWidth}px;
 	box-sizing: border-box;
 	font-family: "Gotham", Arial, sans-serif;
@@ -1917,6 +1921,17 @@ h1 {
 	grid-template-columns: minmax(0, 1fr)
 }
 
+.container:before, .container:after{
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 32px;
+    height: calc(100% - 64px);
+    border-right: 1px solid rgba(0,0,0,0.1);
+    display: none;
+}
+
 .container .module-two-wide {
 	grid-column: 1/3
 }
@@ -1925,17 +1940,33 @@ h1 {
 	.container {
 		grid-template-columns: repeat(2, minmax(0, 1fr))
 	}
+
+    .container:before{
+      width: 50%;
+      display: block;
+    }
 }
 
 @media (min-width: 1200px) {
 	.container {
 		grid-template-columns: repeat(3, minmax(0, 1fr))
 	}
+
+    .container:before{
+      width: 33.3%;
+    }
+    
+    .container:after{
+      width: 66.6%;
+      display: block;
+    }
 }
 
 .module {
 	position: relative;
-	width: 100%
+	width: 100%;
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+	margin-bottom: 32px;
 }
 
 .module>svg {
