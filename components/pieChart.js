@@ -12,9 +12,8 @@ export default function ({
     margin = sotaConfig.margin
 }) {
 
-    const hoverOpacity = 0.8;
-    const polylineColor = "#999";
-    const polylineStrokeWidth = 2;
+    const polylineColor = sotaConfig.lineColor;
+    const polylineStrokeWidth = sotaConfig.separatorStrokeWidth;
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
     const swatchBetween = sotaConfig.swatch.between;
     const swatchRight = sotaConfig.swatch.right;
@@ -92,7 +91,7 @@ export default function ({
             legend.selectAll(".sota-gen-legend-text")
                 .data(labels)
                 .join("text")
-                .attr("class", "sota-gen-legend-text")
+                .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("x", legendLeft + swatchWidth + swatchBetween)
                 .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -115,7 +114,7 @@ export default function ({
             legend.selectAll(".sota-gen-legend-text")
                 .data(labels)
                 .join("text")
-                .attr("class", "sota-gen-legend-text")
+                .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", swatchHeight / 2)
@@ -169,7 +168,7 @@ export default function ({
         g.selectAll(".sota-pieChart-label")
             .data(pieData)
             .join("text")
-            .attr("class","sota-pieChart-label sota-floatingLabel")
+            .attr("class","sota-pieChart-label sota-num-label")
             .text((d, i) => toPercentage(percentages[i]))
             .attr("alignment-baseline", "central")
             .attr("transform", d => {

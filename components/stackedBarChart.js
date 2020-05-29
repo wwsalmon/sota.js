@@ -117,7 +117,7 @@ export default function ({
 
         if (showXAxis) {
             mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .attr("class", "sota-gen-axis sota-gen-xAxis sota-num-axis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
@@ -163,7 +163,7 @@ export default function ({
                 legend.selectAll(".sota-gen-legend-text")
                     .data(valueLabels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                     .text(d => d)
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -186,7 +186,7 @@ export default function ({
                 legend.selectAll(".sota-gen-legend-text")
                     .data(valueLabels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                     .text(d => d)
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
@@ -218,10 +218,11 @@ export default function ({
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
+                        let retval = `<span class="sota-text-label"><span class="sota-heavy-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                         if (!inputIsPercentage) {
                             retval += "<br/>Number of responses: " + d[2];
                         }
+                        retval += "</span>";
                         return retval;
                     })
                     .style("left", (d3.event.pageX) + "px")
@@ -260,7 +261,7 @@ export default function ({
             mainChart.selectAll(".sota-stackedBarChart-groupLabel-onBar")
                 .data(groupLabels)
                 .join("text")
-                .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-gen-groupLabel")
+                .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-text-label")
                 .text(d => d)
                 .attr("alignment-baseline", "bottom")
                 .attr("x", 0)
@@ -275,7 +276,7 @@ export default function ({
             chartGroups.selectAll(".sota-stackedBarChart-label-onBar")
                 .data(d => d)
                 .join("text")
-                .attr("class","sota-stackedBarChart-label-onBar")
+                .attr("class","sota-stackedBarChart-label-onBar sota-num-label")
                 .text(d => d3.format(".1f")(d[0]) + "%")
                 .attr("alignment-baseline", "central")
                 .attr("text-anchor", "end")
@@ -293,7 +294,7 @@ export default function ({
             chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-text")
                 .data(d => d)
                 .join("text")
-                .attr("class", "sota-stackedBarChart-label-aboveBar-text")
+                .attr("class", "sota-stackedBarChart-label-aboveBar-text sota-num-label")
                 .text((d, i) => `${valueLabels[i]}: ${d3.format(".1f")(d[0])}%`)
                 .attr("x", d => x(d[1]) + x(d[0]) / 2)
                 .attr("y", function(d){

@@ -93,7 +93,7 @@ export default function ({
             .range(d3.map(subGroups, (d, i) => barspace * i).keys())
 
         const xAxis = mainChart.append("g")
-            .attr("class", "sota-gen-axis sota-gen-xAxis sota-groupedBarChart-xAxis")
+            .attr("class", "sota-gen-axis sota-gen-xAxis sota-groupedBarChart-xAxis sota-num-axis")
             .call(d3.axisBottom(x).tickSize(-(mainHeight + xAxisTop)))
             .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
@@ -115,6 +115,7 @@ export default function ({
             .data(d => {
                 let dataset = [];
                 for (let key of subGroups){dataset.push(+d[key])}
+                console.log(dataset);
                 return dataset;}
                 )
             .join("rect")
@@ -128,10 +129,11 @@ export default function ({
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
+                        let retval = `<span class="sota-text-label"><span class="sota-heavy-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
                         if (!inputIsPercentage) {
                             retval += "<br/>Number of responses: " + d;
                         }
+                        retval += "</span>";
                         return retval;
                     })
                     .style("left", (d3.event.pageX) + "px")
@@ -150,7 +152,7 @@ export default function ({
         mainChart.selectAll(".sota-gen-groupLabel")
             .data(groupLabels)
             .join("text")
-            .attr("class","sota-gen-groupLabel")
+            .attr("class","sota-gen-groupLabel sota-text-label sota-heavy-label")
             .text(d => d)
             .attr("alignment-baseline", "bottom")
             .attr("x", 0)

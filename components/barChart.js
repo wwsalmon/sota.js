@@ -74,8 +74,8 @@ export default function ({
 
         if (showXAxis) {
             xAxis = mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis")
-                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                .attr("class", "sota-gen-axis sota-gen-xAxis sota-num-axis")
+                .call(d3.axisBottom(x).tickSize(-tickSize))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
         }
 
@@ -106,7 +106,7 @@ export default function ({
         mainChart.selectAll(".sota-barChart-label")
             .data(data)
             .join("text")
-            .attr("class", "sota-barChart-label")
+            .attr("class", "sota-barChart-label sota-text-label sota-heavy-label")
             .html(d => d.label)
             .attr("alignment-baseline", "central")
             .attr("x", labelLeft)
@@ -128,7 +128,7 @@ export default function ({
         mainChart.selectAll(".sota-barChart-value")
             .data(dataset)
             .join("text")
-            .attr("class", "sota-barChart-value")
+            .attr("class", "sota-barChart-value sota-num-label")
             .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
             .attr("alignment-baseline", "central")
             .attr("text-anchor", "end")

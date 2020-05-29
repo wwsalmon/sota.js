@@ -1,3 +1,5 @@
+// OUTDATED DON'T USE FOR NOWgi
+
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
 import processData from "../lib/processData.js";

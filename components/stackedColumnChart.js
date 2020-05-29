@@ -7,7 +7,6 @@ export default function ({
                              dataFile,
                              inputIsPercentage = false,
                              displayPercentage = true,
-                             totalResp = null,
                              maxVal = null,
                              minVal = null,
                              mainHeight = sotaConfig.mainHeight,
@@ -115,11 +114,11 @@ export default function ({
             .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys())
 
         const yAxis = mainChart.append("g")
-            .attr("class", "sota-gen-axis sota-gen-yAxis")
+            .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
             .call(d3.axisLeft(y).tickSize(-tickSize));
 
         const xAxis = mainChart.append("g")
-            .attr("class", "sota-gen-axis sota-gen-xAxis")
+            .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
             .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
             .attr("transform", "translate(" + 0 + " " + (mainHeight) + ")");
 
@@ -139,7 +138,7 @@ export default function ({
             .data(valueLabels)
             .enter()
             .append("text")
-            .attr("class", "sota-gen-legend-text")
+            .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
             .text(d => d)
             .attr("x", function () {
                 valueLabelWidths.push(this.getBBox().width);
@@ -162,7 +161,7 @@ export default function ({
             legend.selectAll(".sota-gen-legend-text")
                 .data(valueLabels)
                 .join("text")
-                .attr("class", "sota-gen-legend-text")
+                .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("x", legendLeft + swatchWidth + swatchBetween)
                 .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -185,7 +184,7 @@ export default function ({
             legend.selectAll(".sota-gen-legend-text")
                 .data(valueLabels)
                 .join("text")
-                .attr("class", "sota-gen-legend-text")
+                .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", swatchHeight / 2)
@@ -215,10 +214,11 @@ export default function ({
                     .attr("opacity", hoverOpacity);
                 tooltip.style("opacity", 1.0)
                     .html(() => {
-                        let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
+                        let retval = `<span class="sota-text-label"><span class="sota-heavy-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                         if (!inputIsPercentage) {
                             retval += "<br/>Number of responses: " + d[2];
                         }
+                        retval += "</span>";
                         return retval;
                     })
                     .style("left", (d3.event.pageX) + "px")

@@ -69,12 +69,12 @@ export default function ({
             .range([height - margin.bottom, margin.top]);
 
         svg.append("g")
-            .attr("class", "sota-gen-axis sota-gen-xAxis")
+            .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
             .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
             .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
         svg.append("g")
-            .attr("class", "sota-gen-axis sota-gen-YAxis")
+            .attr("class", "sota-gen-axis sota-gen-YAxis sota-num-axis")
             .call(d3.axisLeft(y).tickSize(-tickSize))
             .style("transform","translateX(" + margin.left + "px)");
 
@@ -131,7 +131,7 @@ export default function ({
         svg.selectAll(".sota-lineGraph-label")
             .data(values)
             .join("text")
-            .attr("class", "sota-lineGraph-label sota-floatingLabel")
+            .attr("class", "sota-lineGraph-label sota-num-label")
             .text((d, i) => {
                 if (inputIsPercentage){
                     return d + "%";

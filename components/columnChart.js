@@ -121,7 +121,7 @@ export default function ({
                 legend.selectAll(".sota-gen-legend-text")
                     .data(labels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label")
                     .text(d => d)
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -144,7 +144,7 @@ export default function ({
                 legend.selectAll(".sota-gen-legend-text")
                     .data(labels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label")
                     .text(d => d)
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
@@ -155,7 +155,7 @@ export default function ({
         }
         else {
             xAxis = mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
                 .call(d3.axisBottom(x).tickSize(0))
                 .attr("transform", `translate(0 ${mainHeight})`);
 
@@ -174,11 +174,12 @@ export default function ({
             if (overlap){
                 xText.attr("text-anchor","end")
                     .style("transform",`translateY(4px) rotate(-${labelAngle}deg)`)
+                    .node().classList.add("angled-label")
             }
         }
 
         const yAxis = mainChart.append("g")
-            .attr("class", "sota-gen-axis sota-gen-yAxis")
+            .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
             .call(d3.axisLeft(y).tickSize(-tickSize));
 
         // loop through to render stuff

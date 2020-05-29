@@ -110,7 +110,7 @@ export default function ({
                 .data(data)
                 .join("text")
                 .attr("class", "sota-customBarChart-label-aboveBar-text")
-                .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
+                .html((d,i) => `<tspan class="sota-text-label sota-heavy-label">${d.label}:</tspan><tspan class="sota-num-label"> ${toPercentage(percentages[i])}</tspan>`)
                 .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
                 .attr("y", function (d) {
                     labelRightBounds.push([this.getBBox().x, this.getBBox().width]);

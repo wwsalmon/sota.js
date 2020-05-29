@@ -5,7 +5,7 @@
 }(this, (function (d3) { 'use strict';
 
     var sotaConfig = {
-        separatorStrokeWidth: 2,
+        separatorStrokeWidth: 1,
         barHeight: 32,
         barMargin: 16,
         labelLeft: 6,
@@ -13,9 +13,10 @@
         groupLabelMargin: 32,
         xAxisTop: 24,
         overflowOffset: 24,
-        lineColor: "#999999",
+        lineColor: "#777777",
+        labelColor: "#777777",
         mainHeight: 300,
-        tickSize: 8,
+        tickSize: 4,
         labelAngle: 30,
         groupedBarChart: {
             barHeight: 24,
@@ -59,10 +60,11 @@
                 .attr("opacity", sotaConfig.hoverOpacity);
             tooltip.style("opacity", 1.0)
                 .html(() => {
-                    let retval = `<span class="sota-tooltip-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
+                    let retval = `<span class="sota-text-label"></span><span class="sota-heavy-label">${labels[i]}</span><br/>Percentage: ${toPercentage(percentages[i])}`;
                     if (values) {
                         retval += "<br/>Number of responses: " + values[i];
                     }
+                    retval += "</span>";
                     return retval;
                 })
                 .style("left", mouseXIfNotOffsreen(tooltip) + "px")
@@ -157,8 +159,8 @@
 
             if (showXAxis) {
                 xAxis = mainChart.append("g")
-                    .attr("class", "sota-gen-axis sota-gen-xAxis")
-                    .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
+                    .attr("class", "sota-gen-axis sota-gen-xAxis sota-num-axis")
+                    .call(d3.axisBottom(x).tickSize(-tickSize))
                     .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
             }
 
@@ -189,7 +191,7 @@
             mainChart.selectAll(".sota-barChart-label")
                 .data(data)
                 .join("text")
-                .attr("class", "sota-barChart-label")
+                .attr("class", "sota-barChart-label sota-text-label sota-heavy-label")
                 .html(d => d.label)
                 .attr("alignment-baseline", "central")
                 .attr("x", labelLeft)
@@ -211,7 +213,7 @@
             mainChart.selectAll(".sota-barChart-value")
                 .data(dataset)
                 .join("text")
-                .attr("class", "sota-barChart-value")
+                .attr("class", "sota-barChart-value sota-num-label")
                 .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
                 .attr("alignment-baseline", "central")
                 .attr("text-anchor", "end")
@@ -243,8 +245,9 @@
         pieThick = 80,
         margin = sotaConfig.margin
     }) {
-        const polylineColor = "#999";
-        const polylineStrokeWidth = 2;
+
+        const polylineColor = sotaConfig.lineColor;
+        const polylineStrokeWidth = sotaConfig.separatorStrokeWidth;
         const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const swatchBetween = sotaConfig.swatch.between;
         const swatchRight = sotaConfig.swatch.right;
@@ -322,7 +325,7 @@
                 legend.selectAll(".sota-gen-legend-text")
                     .data(labels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                     .text(d => d)
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -345,7 +348,7 @@
                 legend.selectAll(".sota-gen-legend-text")
                     .data(labels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                     .text(d => d)
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
@@ -399,7 +402,7 @@
             g.selectAll(".sota-pieChart-label")
                 .data(pieData)
                 .join("text")
-                .attr("class","sota-pieChart-label sota-floatingLabel")
+                .attr("class","sota-pieChart-label sota-num-label")
                 .text((d, i) => toPercentage(percentages[i]))
                 .attr("alignment-baseline", "central")
                 .attr("transform", d => {
@@ -485,12 +488,12 @@
                 .range([height - margin.bottom, margin.top]);
 
             svg.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
             svg.append("g")
-                .attr("class", "sota-gen-axis sota-gen-YAxis")
+                .attr("class", "sota-gen-axis sota-gen-YAxis sota-num-axis")
                 .call(d3.axisLeft(y).tickSize(-tickSize))
                 .style("transform","translateX(" + margin.left + "px)");
 
@@ -538,7 +541,7 @@
             svg.selectAll(".sota-lineGraph-label")
                 .data(values)
                 .join("text")
-                .attr("class", "sota-lineGraph-label sota-floatingLabel")
+                .attr("class", "sota-lineGraph-label sota-num-label")
                 .text((d, i) => {
                     if (inputIsPercentage){
                         return d + "%";
@@ -679,7 +682,7 @@
 
             if (showXAxis) {
                 mainChart.append("g")
-                    .attr("class", "sota-gen-axis sota-gen-xAxis")
+                    .attr("class", "sota-gen-axis sota-gen-xAxis sota-num-axis")
                     .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                     .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
@@ -725,7 +728,7 @@
                     legend.selectAll(".sota-gen-legend-text")
                         .data(valueLabels)
                         .join("text")
-                        .attr("class", "sota-gen-legend-text")
+                        .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                         .text(d => d)
                         .attr("x", legendLeft + swatchWidth + swatchBetween)
                         .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -748,7 +751,7 @@
                     legend.selectAll(".sota-gen-legend-text")
                         .data(valueLabels)
                         .join("text")
-                        .attr("class", "sota-gen-legend-text")
+                        .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                         .text(d => d)
                         .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                         .attr("y", swatchHeight / 2)
@@ -780,10 +783,11 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
+                            let retval = `<span class="sota-text-label"><span class="sota-heavy-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d[2];
                             }
+                            retval += "</span>";
                             return retval;
                         })
                         .style("left", (d3.event.pageX) + "px")
@@ -822,7 +826,7 @@
                 mainChart.selectAll(".sota-stackedBarChart-groupLabel-onBar")
                     .data(groupLabels)
                     .join("text")
-                    .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-gen-groupLabel")
+                    .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-text-label")
                     .text(d => d)
                     .attr("alignment-baseline", "bottom")
                     .attr("x", 0)
@@ -837,7 +841,7 @@
                 chartGroups.selectAll(".sota-stackedBarChart-label-onBar")
                     .data(d => d)
                     .join("text")
-                    .attr("class","sota-stackedBarChart-label-onBar")
+                    .attr("class","sota-stackedBarChart-label-onBar sota-num-label")
                     .text(d => d3.format(".1f")(d[0]) + "%")
                     .attr("alignment-baseline", "central")
                     .attr("text-anchor", "end")
@@ -855,7 +859,7 @@
                 chartGroups.selectAll(".sota-stackedBarChart-label-aboveBar-text")
                     .data(d => d)
                     .join("text")
-                    .attr("class", "sota-stackedBarChart-label-aboveBar-text")
+                    .attr("class", "sota-stackedBarChart-label-aboveBar-text sota-num-label")
                     .text((d, i) => `${valueLabels[i]}: ${d3.format(".1f")(d[0])}%`)
                     .attr("x", d => x(d[1]) + x(d[0]) / 2)
                     .attr("y", function(d){
@@ -1032,7 +1036,7 @@
                     .data(data)
                     .join("text")
                     .attr("class", "sota-customBarChart-label-aboveBar-text")
-                    .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
+                    .html((d,i) => `<tspan class="sota-text-label sota-heavy-label">${d.label}:</tspan><tspan class="sota-num-label"> ${toPercentage(percentages[i])}</tspan>`)
                     .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
                     .attr("y", function (d) {
                         labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
@@ -1214,7 +1218,7 @@
                     legend.selectAll(".sota-gen-legend-text")
                         .data(labels)
                         .join("text")
-                        .attr("class", "sota-gen-legend-text")
+                        .attr("class", "sota-gen-legend-text sota-text-label")
                         .text(d => d)
                         .attr("x", legendLeft + swatchWidth + swatchBetween)
                         .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -1237,7 +1241,7 @@
                     legend.selectAll(".sota-gen-legend-text")
                         .data(labels)
                         .join("text")
-                        .attr("class", "sota-gen-legend-text")
+                        .attr("class", "sota-gen-legend-text sota-text-label")
                         .text(d => d)
                         .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                         .attr("y", swatchHeight / 2)
@@ -1248,7 +1252,7 @@
             }
             else {
                 xAxis = mainChart.append("g")
-                    .attr("class", "sota-gen-axis sota-gen-xAxis")
+                    .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
                     .call(d3.axisBottom(x).tickSize(0))
                     .attr("transform", `translate(0 ${mainHeight})`);
 
@@ -1266,12 +1270,13 @@
 
                 if (overlap){
                     xText.attr("text-anchor","end")
-                        .style("transform",`translateY(4px) rotate(-${labelAngle}deg)`);
+                        .style("transform",`translateY(4px) rotate(-${labelAngle}deg)`)
+                        .node().classList.add("angled-label");
                 }
             }
 
             const yAxis = mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-yAxis")
+                .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
                 .call(d3.axisLeft(y).tickSize(-tickSize));
 
             // loop through to render stuff
@@ -1426,7 +1431,7 @@
                 .range(d3.map(subGroups, (d, i) => barspace * i).keys());
 
             const xAxis = mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis sota-groupedBarChart-xAxis")
+                .attr("class", "sota-gen-axis sota-gen-xAxis sota-groupedBarChart-xAxis sota-num-axis")
                 .call(d3.axisBottom(x).tickSize(-(mainHeight + xAxisTop)))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight + xAxisTop) + ")");
 
@@ -1448,6 +1453,7 @@
                 .data(d => {
                     let dataset = [];
                     for (let key of subGroups){dataset.push(+d[key]);}
+                    console.log(dataset);
                     return dataset;}
                     )
                 .join("rect")
@@ -1461,10 +1467,11 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
+                            let retval = `<span class="sota-text-label"><span class="sota-heavy-label">${subGroups[i]}</span><br/>Percentage: ${toPercentage((inputIsPercentage) ? d : d / totalResp[subGroups[i]] * 100)}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d;
                             }
+                            retval += "</span>";
                             return retval;
                         })
                         .style("left", (d3.event.pageX) + "px")
@@ -1483,7 +1490,7 @@
             mainChart.selectAll(".sota-gen-groupLabel")
                 .data(groupLabels)
                 .join("text")
-                .attr("class","sota-gen-groupLabel")
+                .attr("class","sota-gen-groupLabel sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("alignment-baseline", "bottom")
                 .attr("x", 0)
@@ -1509,7 +1516,6 @@
                                  dataFile,
                                  inputIsPercentage = false,
                                  displayPercentage = true,
-                                 totalResp = null,
                                  maxVal = null,
                                  minVal = null,
                                  mainHeight = sotaConfig.mainHeight,
@@ -1611,11 +1617,11 @@
                 .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
 
             const yAxis = mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-yAxis")
+                .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
                 .call(d3.axisLeft(y).tickSize(-tickSize));
 
             const xAxis = mainChart.append("g")
-                .attr("class", "sota-gen-axis sota-gen-xAxis")
+                .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
                 .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
                 .attr("transform", "translate(" + 0 + " " + (mainHeight) + ")");
 
@@ -1634,7 +1640,7 @@
                 .data(valueLabels)
                 .enter()
                 .append("text")
-                .attr("class", "sota-gen-legend-text")
+                .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("x", function () {
                     valueLabelWidths.push(this.getBBox().width);
@@ -1657,7 +1663,7 @@
                 legend.selectAll(".sota-gen-legend-text")
                     .data(valueLabels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                     .text(d => d)
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
@@ -1680,7 +1686,7 @@
                 legend.selectAll(".sota-gen-legend-text")
                     .data(valueLabels)
                     .join("text")
-                    .attr("class", "sota-gen-legend-text")
+                    .attr("class", "sota-gen-legend-text sota-text-label sota-heavy-label")
                     .text(d => d)
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
@@ -1710,10 +1716,11 @@
                         .attr("opacity", hoverOpacity);
                     tooltip.style("opacity", 1.0)
                         .html(() => {
-                            let retval = `<span class="sota-tooltip-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
+                            let retval = `<span class="sota-text-label"><span class="sota-heavy-label">${valueLabels[i]}</span><br/>Percentage: ${toPercentage(d[0])}`;
                             if (!inputIsPercentage) {
                                 retval += "<br/>Number of responses: " + d[2];
                             }
+                            retval += "</span>";
                             return retval;
                         })
                         .style("left", (d3.event.pageX) + "px")
@@ -1883,10 +1890,6 @@
 	font-style: italic
 }
 
-body {
-	margin: 0
-}
-
 section {
 	padding: 48px 0;
 	width: 100%
@@ -1950,6 +1953,29 @@ h1 {
 	opacity: 0.4
 }
 
+text{
+    fill: red;
+}
+
+.sota-heavy-label{
+    font-weight: 700;
+}
+
+.sota-num-label, .sota-num-axis .tick text{
+    font-family: "Gotham", sans-serif;
+    font-size: 14px;
+    fill: ${sotaConfig.labelColor};
+}
+
+.sota-text-label, .sota-text-axis .tick text{
+    font-family: "Mercury Text G1", serif;
+    fill: black;
+}
+
+.sota-num-label.sota-stackedBarChart-label-onBar{
+    fill: rgba(255,255,255,0.6);
+}
+
 .tooltip {
 	background-color: #222;
 	color: #fff;
@@ -1961,19 +1987,8 @@ h1 {
 	white-space: nowrap
 }
 
-.tooltip .sota-tooltip-label {
-	font-weight: 700
-}
-
-.sota-barChart-label,
-.sota-pieChart-label,
-.sota-gen-groupLabel {
-	font-family: 'Mercury Text G1', serif;
-	font-weight: 700
-}
-
-.sota-floatingLabel {
-	font-weight: 700
+.sota-gen-axis{
+    opacity: 0.4;
 }
 
 .sota-gen-axis.sota-gen-xAxis .tick text {
@@ -1985,11 +2000,12 @@ h1 {
 	text-anchor: end
 }
 
-.sota-gen-axis .tick text {
-	color: #999;
-	font-size: 16px;
-	font-family: 'Gotham', sans-serif;
-	font-weight: 700
+.sota-gen-xAxis:not(.sota-text-axis) g.tick:first-of-type text:not(.angled-label){
+    text-anchor: start;
+}
+
+.sota-gen-xAxis:not(.sota-text-axis) g.tick:last-of-type text:not(.angled-label){
+    text-anchor: end;
 }
 
 .sota-gen-axis .tick line,
