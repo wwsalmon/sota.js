@@ -9,7 +9,7 @@ let colorsArray = {
 
 sota.setColors(colorsArray);
 
-sota.setStyles(sota.sotaConfig); // for custom sotaConfig; for default options, don't pass any params
+sota.setStyles("../fonts",sota.sotaConfig); // for custom sotaConfig; for default options, don't pass any params
 
 sota.barChart({ selector: "#module-general-ethnicity-d3", dataFile: "data/ethnicity", totalResp: 1052, maxVal: true, displayPercentage: true });
 
@@ -21,7 +21,7 @@ sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "da
 
 sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "data/parents-college", labelStyle: "aboveBar", showLegend: false })
 
-sota.customBarChart({ selector: "#wellness-cloud-svg", dataFile: "data/happiness", shapeFile: "cloud" })
+sota.customColumnChart({ selector: "#wellness-cloud-svg", dataFile: "data/happiness", shapeFile: "cloud", shapeHeight:100 })
 
 sota.columnChart({ selector: "#wellness-support", dataFile: "data/support", totalResp: 1052 })
 
