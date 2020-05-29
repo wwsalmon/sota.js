@@ -21,20 +21,23 @@ export default function ({
     const swatchHeight = sotaConfig.swatch.height;
     const swatchBelowBetween = sotaConfig.swatch.belowBetween;
     const swatchBelow = sotaConfig.swatch.below;
+    const overflowOffset = sotaConfig.overflowOffset;
 
     const container = d3.select(selector);
-    const svg = container.append("svg")
-        .attr("class", "sota-pieChart");
+    const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
-    const width = document.querySelector(selector).offsetWidth;
+    const width = container.node().offsetWidth;
     const mainWidth = width - margin.left - margin.right;
 
-    const trueWidth = width - margin.left - margin.right;
+    const mainChart = svg.append("g")
+        .attr("class", "sota-barChart-mainChart")
+        .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
+        .attr("width", mainWidth);
 
-    if (trueWidth < pieRad * 2) {
-        pieRad = trueWidth / 2;
+    if (mainWidth < pieRad * 2) {
+        pieRad = mainWidth / 2;
     }
 
     if (pieThick > pieRad) {
@@ -59,7 +62,7 @@ export default function ({
             .domain(labels)
             .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys())
 
-        const legend = svg.append("g")
+        const legend = mainChart.append("g")
             .lower()
             .attr("class", "sota-gen-legend")
             .attr("transform", `translate(0 ${margin.top})`)
@@ -125,8 +128,8 @@ export default function ({
 
         // centered g to place chart in
 
-        const g = svg.append("g")
-            .attr("transform", "translate(" + (trueWidth / 2) + "," + (pieRad + margin.top + legendHeight) + ")");
+        const g = mainChart.append("g")
+            .attr("transform", "translate(" + (mainWidth / 2) + "," + (pieRad + legendHeight) + ")");
 
         // create subgroups for labels eventually
 
@@ -182,7 +185,11 @@ export default function ({
                 return (midangle < Math.PI ? 'start' : 'end')
             })
 
-        svg.attr("height", height + legendHeight);
+        const height = 2 * pieRad + legendHeight + margin.top + margin.bottom;
+
+        svg.style("width", width + 2 * overflowOffset + "px")
+            .attr("height", height)
+            .style("margin-left", -overflowOffset);
 
     });
 }
