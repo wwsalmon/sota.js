@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import { hideIfOOB } from '../lib/helper.js';
 import sotaConfig from "../lib/sotaConfig.js";
 import {toPercentage} from "../lib/tooltip.js";
 
@@ -282,7 +281,12 @@ export default function ({
                 .attr("text-anchor", "end")
                 .attr("x", d => x(d[1]) + x(d[0]) - labelLeft)
                 .attr("y", barHeight / 2)
-                .call(hideIfOOB,margin.left)
+                .style("display", function(d, i){
+                    if (this.getBBox().x < (i > 0 ? x(d[1]) : margin.left)){
+                        return "none";
+                    }
+                    return "";
+                })
         }
          
         // aboveBar value label

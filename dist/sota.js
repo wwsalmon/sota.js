@@ -600,25 +600,6 @@
         });
     }
 
-    function hideIfOOB(elems,marginLeft){
-        for (let item of elems._groups){
-            if (Array.isArray(item)){
-                for (let subitem of item) {
-                    hideIfOOBHelper(subitem, marginLeft);
-                }
-            }
-            else {
-                hideIfOOBHelper(item, marginLeft);
-            }
-        }
-    }
-
-    function hideIfOOBHelper(item,marginLeft){
-        if (item.getBBox().x < marginLeft){
-            item.style.display = "none";
-        }
-    }
-
     function stackedBarChart ({
                                  selector,
                                  dataFile,
@@ -893,7 +874,12 @@
                     .attr("text-anchor", "end")
                     .attr("x", d => x(d[1]) + x(d[0]) - labelLeft)
                     .attr("y", barHeight / 2)
-                    .call(hideIfOOB,margin.left);
+                    .style("display", function(d, i){
+                        if (this.getBBox().x < (i > 0 ? x(d[1]) : margin.left)){
+                            return "none";
+                        }
+                        return "";
+                    });
             }
              
             // aboveBar value label
