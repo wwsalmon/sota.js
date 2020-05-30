@@ -53,14 +53,14 @@ export default function ({
 
         svg.append("defs")
             .append("clipPath")
-            .attr("id","shapeDef")
+            .attr("id","shapeDef"+selector.substring(1))
             .append(() => firstPath)
             .attr("transform", `scale(${scaleFactor})`)
 
         d3.csv(dataFile + ".csv").then(data => {
 
             const [percentages, values, labels] = processData(data, inputIsPercentage);
-            
+
             // since stacked, left coordinate of each bar progresses, so we need this cumulative array
 
             let prevValue = 0;
@@ -79,7 +79,7 @@ export default function ({
                 .range(d3.map(data, (d, i) => "module-fill-" + (i + 1)).keys())
 
             // main loop
-                
+
             mainChart.selectAll(".sota-customBarChart-bar")
                 .data(data)
                 .join("rect")
@@ -88,7 +88,7 @@ export default function ({
                 .attr("y", 0)
                 .attr("width", d => x(d.value))
                 .attr("height", scaledHeight)
-                .attr("clip-path", "url(#shapeDef)")
+                .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
                 .call(bindTooltip, tooltip, percentages, labels, values);
 
             mainChart.selectAll(".sota-customBarChart-separator")
@@ -100,7 +100,7 @@ export default function ({
                 .attr("width", separatorStrokeWidth)
                 .attr("height", scaledHeight)
                 .attr("fill", "white")
-                .attr("clip-path", "url(#shapeDef)")
+                .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
 
             // draw labels. Code taken just about verbatim from stackedBarChart aboveBar label
 

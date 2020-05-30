@@ -1,6 +1,6 @@
 # sota.js
 
-Charting library for *The Phillipian*'s [annual State of the Academy survey project](http://pdf.phillipian.net/2019/05102019.pdf) by Samson Zhang EDE CXLII (@wwsalmon). Built on d3. Currently WIP.
+Charting library for *The Phillipian*'s [annual State of the Academy survey project](http://pdf.phillipian.net/2019/05102019.pdf) by Samson Zhang EDE CXLII (@wwsalmon) and Anthony Kim Digital Editor CXLII,CXLIII (@createandbuild). Built on d3. Currently WIP.
 
 # Installation
 
@@ -13,7 +13,7 @@ Charting library for *The Phillipian*'s [annual State of the Academy survey proj
 2. Download `dist/sota.min.js` (eventually this will be in releases...) and include it in your project:
 
         <script src="PATH/TO/sota.min.js"></script>
-    
+
 3. In your app or index js, you can now access the `sota` object with functions like `sota.barChart()`.
 
 ## Using npm:
