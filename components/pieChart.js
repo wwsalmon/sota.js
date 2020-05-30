@@ -58,9 +58,11 @@ export default function ({
 
         let valueLabelWidths = [];
 
+        console.log(labels.length);
+
         const classNames = d3.scaleOrdinal()
             .domain(labels)
-            .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys())
+            .range(d3.map(labels, (d, i) => "module-fill-" + (labels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
 
         const legend = mainChart.append("g")
             .lower()
@@ -144,7 +146,7 @@ export default function ({
         g.selectAll(".sota-pieChart-slice")
             .data(pieData)
             .join("path")
-            .attr("class", (d, i) => "sota-pieChart-slice module-fill-" + (i + 1))
+            .attr("class", (d, i) => "sota-pieChart-slice " + classNames(i))
             .attr("d", arc)
             .attr("stroke", "#fff")
             .style("stroke-width", separatorStrokeWidth)

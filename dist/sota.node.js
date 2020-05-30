@@ -290,9 +290,11 @@ function pieChart ({
 
         let valueLabelWidths = [];
 
+        console.log(labels.length);
+
         const classNames = d3.scaleOrdinal()
             .domain(labels)
-            .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(labels, (d, i) => "module-fill-" + (labels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
         const legend = mainChart.append("g")
             .lower()
@@ -376,7 +378,7 @@ function pieChart ({
         g.selectAll(".sota-pieChart-slice")
             .data(pieData)
             .join("path")
-            .attr("class", (d, i) => "sota-pieChart-slice module-fill-" + (i + 1))
+            .attr("class", (d, i) => "sota-pieChart-slice " + classNames(i))
             .attr("d", arc)
             .attr("stroke", "#fff")
             .style("stroke-width", separatorStrokeWidth)
@@ -683,7 +685,7 @@ function stackedBarChart ({
 
         const classNames = d3.scaleOrdinal()
             .domain(valueLabels)
-            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
         if (showXAxis) {
             mainChart.append("g")
@@ -1618,7 +1620,7 @@ function stackedColumnChart ({
 
         const classNames = d3.scaleOrdinal()
             .domain(valueLabels)
-            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (i + 1)).keys());
+            .range(d3.map(valueLabels, (d, i) => "module-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
         const yAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
@@ -1792,7 +1794,7 @@ function setColors(colorsArray){
             color: ${colorsArray[section][0]};
             }
             #${section} .sota-gen-bar{
-                fill: ${colorsArray[section][0]};
+                fill: ${colorsArray[section][3]};
             }
             `;
 
