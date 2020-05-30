@@ -261,7 +261,7 @@ export default function ({
             mainChart.selectAll(".sota-stackedBarChart-groupLabel-onBar")
                 .data(groupLabels)
                 .join("text")
-                .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-text-label")
+                .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("alignment-baseline", "bottom")
                 .attr("x", 0)

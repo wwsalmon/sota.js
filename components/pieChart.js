@@ -21,6 +21,7 @@ export default function ({
     const swatchHeight = sotaConfig.swatch.height;
     const swatchBelowBetween = sotaConfig.swatch.belowBetween;
     const swatchBelow = sotaConfig.swatch.below;
+    const legendMargin = sotaConfig.legendMargin;
     const overflowOffset = sotaConfig.overflowOffset;
 
     const container = d3.select(selector);
@@ -48,17 +49,18 @@ export default function ({
 
     d3.csv(dataFile + ".csv").then(data => {
 
-        const [percentages, values, labels] = processData(data, inputIsPercentage);
+        const [unsortedPercentages, unsortedValues, labels] = processData(data, inputIsPercentage);
+        const percentages = unsortedPercentages.sort((a, b) => b - a);
+        const values = unsortedValues.sort((a, b) => b - a);
+
         const pie = d3.pie();
-        const pieData = pie(percentages);
+        const pieData = pie(percentages).sort((a, b) => b.value - a.value);
 
         // generate legend
 
         let legendHeight = 0;
 
         let valueLabelWidths = [];
-
-        console.log(labels.length);
 
         const classNames = d3.scaleOrdinal()
             .domain(labels)
@@ -102,7 +104,7 @@ export default function ({
                 .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
                 .attr("alignment-baseline", "central")
 
-            legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
+            legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow + legendMargin;
         }
         else {
             let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
@@ -125,7 +127,7 @@ export default function ({
                 .attr("y", swatchHeight / 2)
                 .attr("alignment-baseline", "central")
 
-            legendHeight = swatchHeight + swatchBelow;
+            legendHeight = swatchHeight + swatchBelow + legendMargin;
         }
 
         // centered g to place chart in
@@ -152,7 +154,9 @@ export default function ({
             .style("stroke-width", separatorStrokeWidth)
             .call(bindTooltip, tooltip, percentages, labels, values);
         
-        // following code, especially calculations part, taken more or less directly from https://www.d3-graph-gallery.com/graph/donut_label.html
+        // following code uses https://www.d3-graph-gallery.com/graph/donut_label.html as starting point. Used to be just about verbatim, now modified quite a bit
+
+        let prevOverlap = false;
 
         g.selectAll(".sota-pieChart-polyline")
             .data(pieData)
@@ -161,14 +165,25 @@ export default function ({
             .attr("stroke", polylineColor)
             .style("fill", "none")
             .attr("stroke-width", polylineStrokeWidth)
-            .attr("points", d => {
+            .attr("points", (d, i) => {
                 let posA = arc.centroid(d);
                 let posB = outerArc.centroid(d);
                 let posC = outerArc.centroid(d);
-                let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                posC[0] = pieRad * 0.95 * (midangle < Math.PI ? 1: -1);
+                const pos = outerArc.centroid(d);
+                const prevPos = i > 0 && outerArc.centroid(pieData[i-1]);
+                const midangle = (d.endAngle + d.startAngle) / 2;
+                const isRight = midangle < Math.PI;
+                if (i > 0 && Math.sign(pos[0]) == Math.sign(prevPos[0]) && Math.abs(prevPos[1] - pos[1]) < 20){
+                    posC[0] = pieRad * 0.95 * ((prevOverlap ? isRight : !isRight) ? 1 : -1);
+                    prevOverlap = true;
+                } else{
+                    posC[0] = pieRad * 0.95 * ((!prevOverlap ? isRight : !isRight) ? 1: -1);
+                    prevOverlap = false;
+                }
                 return [posA, posB, posC];
             })
+
+        prevOverlap = false;
 
         g.selectAll(".sota-pieChart-label")
             .data(pieData)
@@ -176,15 +191,36 @@ export default function ({
             .attr("class","sota-pieChart-label sota-num-label")
             .text((d, i) => toPercentage(percentages[i]))
             .attr("alignment-baseline", "central")
-            .attr("transform", d => {
-                let pos = outerArc.centroid(d);
-                let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                pos[0] = pieRad * 0.99 * (midangle < Math.PI ? 1 : -1);
+            .attr("transform", (d, i) => {
+                const pos = outerArc.centroid(d);
+                const prevPos = i > 0 && outerArc.centroid(pieData[i-1]);
+                const midangle = (d.endAngle + d.startAngle) / 2;
+                const isRight = midangle < Math.PI;
+                if (i > 0 && Math.sign(pos[0]) == Math.sign(prevPos[0]) && Math.abs(prevPos[1] - pos[1]) < 20){
+                    pos[0] = pieRad * 0.99 * ((prevOverlap ? isRight : !isRight) ? 1 : -1);
+                    prevOverlap = true;
+                    console.log("overlap");
+                } else{
+                    pos[0] = pieRad * 0.99 * ((!prevOverlap ? isRight : !isRight) ? 1 : -1);
+                    prevOverlap = false;
+                }
+                if (i == pieData.length - 1) prevOverlap = false;
                 return 'translate(' + pos + ')';
             })
-            .style("text-anchor", d => {
-                let midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                return (midangle < Math.PI ? 'start' : 'end')
+            .style("text-anchor", (d, i) => {
+                const pos = outerArc.centroid(d);
+                const prevPos = i > 0 && outerArc.centroid(pieData[i-1]);
+                const midangle = (d.endAngle + d.startAngle) / 2;
+                const isRight = midangle < Math.PI;
+                if (i > 0 && Math.sign(pos[0]) == Math.sign(prevPos[0]) && Math.abs(prevPos[1] - pos[1]) < 20){
+                    const retval = (prevOverlap ? isRight : !isRight) ? 'start' : 'end';
+                    prevOverlap = true;
+                    return retval;
+                } else{
+                    const retval = (!prevOverlap ? isRight : !isRight) ? 'start' : 'end';
+                    prevOverlap = false;
+                    return retval;
+                }
             })
 
         const height = 2 * pieRad + legendHeight + margin.top + margin.bottom;
