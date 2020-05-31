@@ -119,13 +119,30 @@ export default function ({
 
         const xAxis = mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
-            .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
-            .attr("transform", "translate(" + 0 + " " + (mainHeight) + ")");
+            .call(d3.axisBottom(x).tickSize(0))
+            .attr("transform", `translate(0 ${mainHeight})`);
+
+        let overlap = false;
+
+        const xText = xAxis.selectAll("text");
+        const xTextNodes = xText.nodes();
+
+        for (let i in xTextNodes){
+            if (i == xTextNodes.length - 1) continue;
+            let curr = xTextNodes[+i].getBBox();
+            let next = xTextNodes[+i+1].getBBox();
+            if (curr.x + curr.width > next.x){ overlap = true; break;}
+        }
+
+        if (overlap){
+            xText.attr("text-anchor","end")
+                .style("transform",`translateY(4px) rotate(-${labelAngle}deg)`)
+                .node().classList.add("angled-label")
+        }
 
         // legend
 
         let legendHeight = 0;
-        let overlap = false;
 
         let valueLabelWidths = [];
 
@@ -145,7 +162,7 @@ export default function ({
             })
             .remove();
 
-        if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
+        if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > (mainWidth)) {
             // vertical legends
             let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
@@ -250,7 +267,6 @@ export default function ({
                 }
             })
             .attr("width", x.bandwidth())
-
 
         mainHeight += legendHeight;
         if (overlap){
