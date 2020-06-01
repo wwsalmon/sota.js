@@ -15,18 +15,19 @@ sota.barChart({ selector: "#module-general-ethnicity-d3", dataFile: "data/ethnic
 
 sota.pieChart({ selector: "#module-general-community-d3", dataFile: "data/community"});
 
-sota.lineGraph({ selector: "#module-discipline-time-d3", dataFile: "data/disc-time", inputIsPercentage: true, maxVal: 8 })
+sota.lineGraph({ selector: "#module-discipline-time-d3", dataFile: "data/disc-time", inputIsPercentage: true, maxVal: 8 });
 
-sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "data/room-visit-policy", groupLabelStyle: "onBar" })
+sota.stackedBarChart({ selector: "#module-discipline-room-visits", dataFile: "data/room-visit-policy", groupLabelStyle: "onBar" });
 
-sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "data/parents-college", labelStyle: "aboveBar", showLegend: false })
+sota.stackedBarChart({ selector: "#module-general-parents-college", dataFile: "data/parents-college", labelStyle: "aboveBar", showLegend: false });
 
-sota.customColumnChart({ selector: "#wellness-cloud-svg", dataFile: "data/happiness", shapeFile: "cloud", shapeHeight:100 })
+sota.customColumnChart({ selector: "#wellness-cloud-svg", dataFile: "data/happiness", shapeFile: "cloud", shapeHeight:100 });
 
-sota.columnChart({ selector: "#wellness-support", dataFile: "data/support", totalResp: 1052 })
+sota.columnChart({ selector: "#wellness-support", dataFile: "data/support", totalResp: 1052});
 
-sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "data/wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} })
+sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "data/wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} });
 
+<<<<<<< HEAD
 sota.stackedColumnChart({ selector: "#module-politics-reverse-racism-gender", dataFile: "data/reverse-racism-gender", totalResp: 1032 })
 
 const sections = document.querySelectorAll(".container");
@@ -38,3 +39,8 @@ sections.forEach((e) => {
         gutter: 48
     })
 })
+=======
+sota.stackedColumnChart({ selector: "#module-politics-reverse-racism-gender", dataFile: "data/reverse-racism-gender", totalResp: 1032});
+
+sota.stackedColumnChart({ selector: "#module-politics-abortionXgender-d3", dataFile: "data/abortionXgender", totalResp: 1015 });
+>>>>>>> f08f0da5b258fde98446ae28e564e45e93283b89

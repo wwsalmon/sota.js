@@ -1575,6 +1575,7 @@
         const tickSize = sotaConfig.tickSize;
         const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
         const overflowOffset = sotaConfig.overflowOffset;
+        const labelAngle = sotaConfig.labelAngle;
         const swatchBetween = sotaConfig.swatch.between;
         const swatchRight = sotaConfig.swatch.right;
         const swatchWidth = sotaConfig.swatch.width;
@@ -1666,8 +1667,26 @@
 
             const xAxis = mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
-                .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
-                .attr("transform", "translate(" + 0 + " " + (mainHeight) + ")");
+                .call(d3.axisBottom(x).tickSize(0))
+                .attr("transform", `translate(0 ${mainHeight})`);
+
+            let overlap = false;
+
+            const xText = xAxis.selectAll("text");
+            const xTextNodes = xText.nodes();
+
+            for (let i in xTextNodes){
+                if (i == xTextNodes.length - 1) continue;
+                let curr = xTextNodes[+i].getBBox();
+                let next = xTextNodes[+i+1].getBBox();
+                if (curr.x + curr.width > next.x){ overlap = true; break;}
+            }
+
+            if (overlap){
+                xText.attr("text-anchor","end")
+                    .style("transform",`translateY(4px) rotate(-${labelAngle}deg)`)
+                    .node().classList.add("angled-label");
+            }
 
             // legend
 
@@ -1691,7 +1710,7 @@
                 })
                 .remove();
 
-            if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
+            if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > (mainWidth)) {
                 // vertical legends
                 let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
@@ -1797,9 +1816,25 @@
                 })
                 .attr("width", x.bandwidth());
 
-
             mainHeight += legendHeight;
-            {
+            if (overlap){
+                let textWidth = [];
+
+                const textElem = xAxis.select("text").node().getBBox();
+                const textTop = textElem.y;
+                const textHeight = textElem.height;
+
+                xAxis.selectAll("text")
+                    .each(function(){textWidth.push(this.getBBox().width);});
+
+                const maxTextWidth = d3.max(textWidth);
+                const rotatedHeight = maxTextWidth * Math.sin(labelAngle * Math.PI / 180);
+                const rotatedTextHeight = textHeight * Math.cos(labelAngle * Math.PI / 180);
+
+                mainHeight += textTop + rotatedHeight + rotatedTextHeight;
+
+            }
+            else {
                 let textBottom = [];
 
                 xAxis.selectAll("text")
