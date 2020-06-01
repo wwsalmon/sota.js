@@ -28,3 +28,13 @@ sota.columnChart({ selector: "#wellness-support", dataFile: "data/support", tota
 sota.groupedBarChart({ selector: "#wellness-social-media", dataFile: "data/wellness-social-media", totalResp: {2022:214,2021:275,2020:271,2019:286} })
 
 sota.stackedColumnChart({ selector: "#module-politics-reverse-racism-gender", dataFile: "data/reverse-racism-gender", totalResp: 1032 })
+
+const sections = document.querySelectorAll(".container");
+
+sections.forEach((e) => {
+    const msnry = new Masonry(e, {
+        itemSelector: ".module",
+        columnWidth: ".module",
+        gutter: 48
+    })
+})

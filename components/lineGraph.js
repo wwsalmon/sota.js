@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import {toPercentage} from "../lib/tooltip.js";
 import sotaConfig from "../lib/sotaConfig.js";
+import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
     selector,
@@ -141,5 +142,6 @@ export default function ({
             .attr("y", d => y(d) - 16)
             .style("text-anchor","middle")
 
+        chartRendered(container.node());
     });
 }

@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import sotaConfig from "../lib/sotaConfig.js";
 import {toPercentage} from "../lib/tooltip.js";
+import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
                              selector,
@@ -366,5 +367,6 @@ export default function ({
         mainChart.attr("transform",`translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
             .attr("width", mainWidth)
 
+        chartRendered(container.node());
     });
 }

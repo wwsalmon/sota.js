@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
 import processData from "../lib/processData.js";
 import sotaConfig from "../lib/sotaConfig.js";
+import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
     selector,
@@ -229,5 +230,6 @@ export default function ({
             .attr("height", height)
             .style("margin-left", -overflowOffset);
 
+        chartRendered(container.node());
     });
 }

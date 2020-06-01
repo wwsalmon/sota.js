@@ -90,6 +90,11 @@
         return [percentages, values, labels];
     }
 
+    function chartRendered(thisModule){
+        const chartRendered = new Event("sotaChartRendered");
+        thisModule.closest(".container").dispatchEvent(chartRendered);
+    }
+
     function barChart ({
         selector,
         dataFile,
@@ -235,6 +240,8 @@
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
                 .style("margin-left", -overflowOffset);
+
+            chartRendered(container.node());
         });
     }
 
@@ -464,6 +471,7 @@
                 .attr("height", height)
                 .style("margin-left", -overflowOffset);
 
+            chartRendered(container.node());
         });
     }
 
@@ -597,6 +605,7 @@
                 .attr("y", d => y(d) - 16)
                 .style("text-anchor","middle");
 
+            chartRendered(container.node());
         });
     }
 
@@ -959,6 +968,7 @@
             mainChart.attr("transform",`translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
                 .attr("width", mainWidth);
 
+            chartRendered(container.node());
         });
     }
 
@@ -1133,6 +1143,7 @@
 
             });
 
+            chartRendered(container.node());
         });
     }
 
@@ -1370,6 +1381,7 @@
             mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top + legendHeight})`)
                 .attr("width", mainWidth);
 
+            chartRendered(container.node());
         });
     }
 
@@ -1539,6 +1551,7 @@
             mainChart.attr("transform",`translate(${margin.left + overflowOffset} ${margin.top})`)
                 .attr("width",mainWidth);
 
+            chartRendered(container.node());
         });
     }
 
@@ -1807,6 +1820,7 @@
             mainChart.attr("transform",`translate(${margin.left+overflowOffset} ${margin.top + legendHeight})`)
                 .attr("width",mainWidth);
 
+            chartRendered(container.node());
         });
     }
 
@@ -1980,6 +1994,7 @@
 
             });
 
+            chartRendered(container.node());
         });
     }
 
@@ -2120,58 +2135,56 @@ h1 {
 	width: 100%;
 	padding: 48px 24px;
 	margin: 0 auto;
-	display: grid;
-	column-gap: ${moduleMargin}px;
 	background-color: #fff;
 	grid-template-columns: minmax(0, 1fr)
 }
 
-.container:before, .container:after{
+.container:before{
     pointer-events: none;
     content: "";
     position: absolute;
     left: 0;
     top: 32px;
-    height: calc(100% - 64px);
-    border-right: 1px solid rgba(0,0,0,0.1);
     display: none;
+    height: calc(100% - 64px);
 }
 
-.container .module-two-wide {
-	grid-column: 1/3
-}
-
-@media (min-width: 800px) {
-	.container {
-		grid-template-columns: repeat(2, minmax(0, 1fr))
-	}
-
-    .container:before{
-      width: 50%;
-      display: block;
-    }
-}
-
-@media (min-width: 1200px) {
-	.container {
-		grid-template-columns: repeat(3, minmax(0, 1fr))
-	}
-
-    .container:before{
-      width: 33.3%;
-    }
-    
-    .container:after{
-      width: 66.6%;
-      display: block;
-    }
+.container:after{
+    content: "";
+    clear: both;
+    display: table;    
 }
 
 .module {
 	position: relative;
+	float: left;
 	width: 100%;
 	border-bottom: 1px solid rgba(0,0,0,0.2);
 	margin-bottom: 32px;
+}
+
+@media (min-width: 800px) {
+    .container:before{
+      width: 50%;
+      display: block;
+        border-right: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .module {
+        width: calc(50% - ${24 + moduleMargin / 2}px);
+    }
+}
+
+@media (min-width: 1200px) {    
+    .module {
+        width: calc(33% - ${16 + 2 * moduleMargin / 3}px);
+    }
+
+    .container:before{
+        width: 33.3%;
+        left: 33.3%;
+        border-left: 1px solid rgba(0,0,0,0.1);
+    }
 }
 
 .module>svg {
