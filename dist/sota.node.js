@@ -2372,6 +2372,15 @@ section {
 	width: 100%
 }
 
+section > p{
+  color: #fff;
+  font-family: "Mercury Text G1";
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 64px auto;
+  padding: 0 24px;
+}
+
 h1 {
 	font-size: 56px;
 	font-family: 'Gotham', sans-serif;
