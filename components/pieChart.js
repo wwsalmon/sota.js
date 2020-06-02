@@ -50,12 +50,12 @@ export default function ({
 
     d3.csv(dataFile + ".csv").then(data => {
 
-        const [unsortedPercentages, unsortedValues, labels] = processData(data, inputIsPercentage);
-        const percentages = unsortedPercentages.sort((a, b) => b - a);
-        const values = unsortedValues && unsortedValues.sort((a, b) => b - a);
+        data = data.sort((a, b) => b[1] - a[1]);
+
+        const [percentages, values, labels] = processData(data, inputIsPercentage);
 
         const pie = d3.pie();
-        const pieData = pie(percentages).sort((a, b) => b.value - a.value);
+        const pieData = pie(percentages);
 
         // generate legend
 
