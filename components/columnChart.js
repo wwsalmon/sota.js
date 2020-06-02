@@ -108,7 +108,7 @@ export default function ({
 
             if (d3.sum(valueLabelWidths, d => d) + valueLabelWidths.length * swatchBetween + (valueLabelWidths.length - 1) * swatchRight > mainWidth) {
                 // vertical legends
-                let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
+                let legendLeft = width - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(labels)
@@ -132,7 +132,7 @@ export default function ({
                 legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
             }
             else {
-                let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
+                let legendLeft = width - (d3.sum(valueLabelWidths, d => d) + labels.length * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight);
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(labels)

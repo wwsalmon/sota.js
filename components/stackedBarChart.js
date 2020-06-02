@@ -147,9 +147,9 @@ export default function ({
                 })
                 .remove();
 
-            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth){
+            if (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight > mainWidth){
                 // vertical legends
-                let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
+                let legendLeft = width + overflowOffset - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(valueLabels)
@@ -173,7 +173,7 @@ export default function ({
                 legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
             }
             else{
-                let legendLeft = mainWidth - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
+                let legendLeft = width + overflowOffset - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(valueLabels)
