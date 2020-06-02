@@ -494,22 +494,31 @@ function lineGraph ({
         "right": 0
     } }) {
 
+    const lineColor = "#bbb";
+    const lineWidth = 3;
+    const tickSize = 8;
+    const circleRad = 4;
+    const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
+    const hoverOpacity = 0.8;
+    const overflowOffset = sotaConfig.overflowOffset;
+
     const container = d3.select(selector);
-    const svg = container.append("svg")
-        .attr("class", "sota-lineGraph");
+    const svg = container.append("svg");
+
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
-    const width = document.querySelector(selector).offsetWidth;
 
-    svg.attr("height", height);
+    const width = container.node().offsetWidth;
+    const mainWidth = width - margin.left - margin.right;
+
+    console.log(width, mainWidth);
+
+    const mainChart = svg.append("g")
+        .attr("class", "sota-lineGraph-mainChart")
+        .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
+        .attr("width", mainWidth);
 
     d3.csv(dataFile + ".csv").then(data => {
-        const lineColor = "#bbb";
-        const lineWidth = 3;
-        const tickSize = 8;
-        const circleRad = 9;
-        const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
-        const hoverOpacity = 0.8;
         // define styling variables here
 
         const labels = data.map(d => d.label);
@@ -537,25 +546,24 @@ function lineGraph ({
 
         const x = d3.scaleBand()
             .domain(labels.map(d => d))
-            .range([margin.left, width - margin.right]);
+            .range([0, mainWidth]);
 
         const y = d3.scaleLinear()
             .domain([minVal, maxVal])
             .range([height - margin.bottom, margin.top]);
 
-        svg.append("g")
+        mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-xAxis sota-text-axis")
             .call(d3.axisBottom(x).ticks(data.length).tickSize(-tickSize))
             .style("transform","translateY(" + (height - margin.bottom) + "px)");
 
-        svg.append("g")
+        mainChart.append("g")
             .attr("class", "sota-gen-axis sota-gen-YAxis sota-num-axis")
-            .call(d3.axisLeft(y).tickSize(-tickSize))
-            .style("transform","translateX(" + margin.left + "px)");
+            .call(d3.axisLeft(y).tickSize(-tickSize));
 
         // run main loop here
 
-        svg.selectAll(".sota-lineGraph-path")
+        mainChart.selectAll(".sota-lineGraph-path")
             .data([values])
             .join("path")
             .attr("class", "sota-lineGraph-path")
@@ -566,7 +574,7 @@ function lineGraph ({
             .attr("stroke",lineColor)
             .style("stroke-width",lineWidth);
 
-        svg.selectAll(".sota-lineGraph-circle")
+        mainChart.selectAll(".sota-lineGraph-circle")
             .data(values)
             .join("circle")
             .attr("class", "sota-lineGraph-circle")
@@ -594,7 +602,7 @@ function lineGraph ({
                 tooltip.style("opacity", 0);
             });
 
-        svg.selectAll(".sota-lineGraph-label")
+        mainChart.selectAll(".sota-lineGraph-label")
             .data(values)
             .join("text")
             .attr("class", "sota-lineGraph-label sota-num-label")
@@ -606,6 +614,10 @@ function lineGraph ({
             .attr("x", (d, i) => x(labels[i]) + x.bandwidth() / 2)
             .attr("y", d => y(d) - 16)
             .style("text-anchor","middle");
+
+        svg.style("width", width + 2 * overflowOffset + "px")
+            .attr("height", height)
+            .style("margin-left", -overflowOffset + "px");
 
         chartRendered(container.node());
     });
