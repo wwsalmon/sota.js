@@ -2248,6 +2248,8 @@
 
             mainChart.attr("transform", `translate(${margin.left} ${margin.top + legendHeight})`)
                 .attr("width", mainWidth);
+
+            chartRendered(container.node());
         });
     }
 

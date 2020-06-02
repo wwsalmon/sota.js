@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
 import sotaConfig from "../lib/sotaConfig.js";
+import chartRendered from "../lib/chartRendered";
 
 export default function ({
                              selector,
@@ -199,5 +200,7 @@ export default function ({
 
         mainChart.attr("transform", `translate(${margin.left} ${margin.top + legendHeight})`)
             .attr("width", mainWidth);
+
+        chartRendered(container.node());
     });
 }
