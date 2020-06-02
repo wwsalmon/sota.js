@@ -168,6 +168,7 @@ export default function ({
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
                     .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
 
                 legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
             }
@@ -191,6 +192,7 @@ export default function ({
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
                     .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
 
                 legendHeight = swatchHeight + swatchBelow;
             }
@@ -279,6 +281,7 @@ export default function ({
                 .attr("class","sota-stackedBarChart-label-onBar sota-num-label")
                 .text(d => d3.format(".1f")(d[0]) + "%")
                 .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
                 .attr("text-anchor", "end")
                 .attr("x", d => x(d[1]) + x(d[0]) - labelLeft)
                 .attr("y", barHeight / 2)
@@ -362,7 +365,7 @@ export default function ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .style("margin-left", -overflowOffset);
+            .style("margin-left", -overflowOffset + "px");
 
         mainChart.attr("transform",`translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
             .attr("width", mainWidth)

@@ -33,7 +33,7 @@ export default function ({
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip");
 
-    const width = document.querySelector(selector).offsetWidth;
+    const width = container.node().offsetWidth;
     const mainWidth = width - margin.left - margin.right;
 
     const mainChart = svg.append("g")
@@ -110,6 +110,7 @@ export default function ({
             .attr("class", "sota-barChart-label sota-text-label sota-heavy-label")
             .html(d => d.label)
             .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
             .attr("x", labelLeft)
             .attr("y", (d, i) => y(i) + barHeight / 2);
 
@@ -132,6 +133,7 @@ export default function ({
             .attr("class", "sota-barChart-value sota-num-label")
             .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
             .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
             .attr("text-anchor", "end")
             .attr("x", mainWidth)
             .attr("y", (d, i) => y(i) + barHeight / 2);
@@ -149,7 +151,7 @@ export default function ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .style("margin-left", -overflowOffset);
+            .style("margin-left", -overflowOffset + "px");
 
         chartRendered(container.node());
     });

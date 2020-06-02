@@ -123,7 +123,7 @@
         const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip");
 
-        const width = document.querySelector(selector).offsetWidth;
+        const width = container.node().offsetWidth;
         const mainWidth = width - margin.left - margin.right;
 
         const mainChart = svg.append("g")
@@ -200,6 +200,7 @@
                 .attr("class", "sota-barChart-label sota-text-label sota-heavy-label")
                 .html(d => d.label)
                 .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central")
                 .attr("x", labelLeft)
                 .attr("y", (d, i) => y(i) + barHeight / 2);
 
@@ -222,6 +223,7 @@
                 .attr("class", "sota-barChart-value sota-num-label")
                 .html((d, i) => (inputIsPercentage || displayPercentage) ? toPercentage(d) : d)
                 .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central")
                 .attr("text-anchor", "end")
                 .attr("x", mainWidth)
                 .attr("y", (d, i) => y(i) + barHeight / 2);
@@ -239,7 +241,7 @@
 
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
-                .style("margin-left", -overflowOffset);
+                .style("margin-left", -overflowOffset + "px");
 
             chartRendered(container.node());
         });
@@ -344,7 +346,8 @@
                     .text(d => d)
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
-                    .attr("alignment-baseline", "central");
+                    .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                 legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow + legendMargin;
             }
@@ -367,7 +370,8 @@
                     .text(d => d)
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
-                    .attr("alignment-baseline", "central");
+                    .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                 legendHeight = swatchHeight + swatchBelow + legendMargin;
             }
@@ -433,6 +437,7 @@
                 .attr("class","sota-pieChart-label sota-num-label")
                 .text((d, i) => toPercentage(percentages[i]))
                 .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central")
                 .attr("transform", (d, i) => {
                     const pos = outerArc.centroid(d);
                     const prevPos = i > 0 && outerArc.centroid(pieData[i-1]);
@@ -441,7 +446,6 @@
                     if (i > 0 && Math.sign(pos[0]) == Math.sign(prevPos[0]) && Math.abs(prevPos[1] - pos[1]) < 20){
                         pos[0] = pieRad * 0.99 * ((prevOverlap ? isRight : !isRight) ? 1 : -1);
                         prevOverlap = true;
-                        console.log("overlap");
                     } else {
                         pos[0] = pieRad * 0.99 * ((!prevOverlap ? isRight : !isRight) ? 1 : -1);
                         prevOverlap = false;
@@ -469,7 +473,7 @@
 
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
-                .style("margin-left", -overflowOffset);
+                .style("margin-left", -overflowOffset + "px");
 
             chartRendered(container.node());
         });
@@ -768,7 +772,8 @@
                         .text(d => d)
                         .attr("x", legendLeft + swatchWidth + swatchBetween)
                         .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
-                        .attr("alignment-baseline", "central");
+                        .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                     legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
                 }
@@ -791,7 +796,8 @@
                         .text(d => d)
                         .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                         .attr("y", swatchHeight / 2)
-                        .attr("alignment-baseline", "central");
+                        .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                     legendHeight = swatchHeight + swatchBelow;
                 }
@@ -880,6 +886,7 @@
                     .attr("class","sota-stackedBarChart-label-onBar sota-num-label")
                     .text(d => d3.format(".1f")(d[0]) + "%")
                     .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central")
                     .attr("text-anchor", "end")
                     .attr("x", d => x(d[1]) + x(d[0]) - labelLeft)
                     .attr("y", barHeight / 2)
@@ -963,7 +970,7 @@
 
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
-                .style("margin-left", -overflowOffset);
+                .style("margin-left", -overflowOffset + "px");
 
             mainChart.attr("transform",`translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
                 .attr("width", mainWidth);
@@ -1265,7 +1272,8 @@
                         .text(d => d)
                         .attr("x", legendLeft + swatchWidth + swatchBetween)
                         .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
-                        .attr("alignment-baseline", "central");
+                        .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                     legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
                 }
@@ -1288,7 +1296,8 @@
                         .text(d => d)
                         .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                         .attr("y", swatchHeight / 2)
-                        .attr("alignment-baseline", "central");
+                        .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                     legendHeight = swatchHeight + swatchBelow;
                 }
@@ -1376,7 +1385,7 @@
 
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
-                .style("margin-left", -overflowOffset);
+                .style("margin-left", -overflowOffset + "px");
 
             mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top + legendHeight})`)
                 .attr("width", mainWidth);
@@ -1546,7 +1555,7 @@
 
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
-                .style("margin-left", -overflowOffset);
+                .style("margin-left", -overflowOffset + "px");
 
             mainChart.attr("transform",`translate(${margin.left + overflowOffset} ${margin.top})`)
                 .attr("width",mainWidth);
@@ -1730,7 +1739,8 @@
                     .text(d => d)
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
-                    .attr("alignment-baseline", "central");
+                    .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                 legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
             }
@@ -1753,7 +1763,8 @@
                     .text(d => d)
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
-                    .attr("alignment-baseline", "central");
+                    .attr("alignment-baseline", "central")
+    .attr("dominant-baseline", "central");
 
                 legendHeight = swatchHeight + swatchBelow;
             }
@@ -1850,7 +1861,7 @@
 
             svg.style("width", width + 2 * overflowOffset + "px")
                 .attr("height", height)
-                .style("margin-left", -overflowOffset);
+                .style("margin-left", -overflowOffset + "px");
 
             mainChart.attr("transform",`translate(${margin.left+overflowOffset} ${margin.top + legendHeight})`)
                 .attr("width",mainWidth);
@@ -2191,10 +2202,11 @@ h1 {
 }
 
 .module {
-	position: relative;
+	position: absolute;
 	float: left;
-	width: 100%;
+	width: calc(100% - 48px);
 	border-bottom: 1px solid rgba(0,0,0,0.2);
+	padding-bottom: 32px;
 	margin-bottom: 32px;
 }
 
@@ -2312,6 +2324,7 @@ text{
     `;
 
         document.head.appendChild(document.createElement('style')).textContent = styleSheet;
+        console.log("styles set");
     }
 
     let sota = {};

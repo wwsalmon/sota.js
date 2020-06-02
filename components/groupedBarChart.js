@@ -165,7 +165,7 @@ export default function ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .style("margin-left", -overflowOffset);
+            .style("margin-left", -overflowOffset + "px");
 
         mainChart.attr("transform",`translate(${margin.left + overflowOffset} ${margin.top})`)
             .attr("width",mainWidth)

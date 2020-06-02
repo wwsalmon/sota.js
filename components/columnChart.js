@@ -127,6 +127,7 @@ export default function ({
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
                     .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
 
                 legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow;
             }
@@ -150,6 +151,7 @@ export default function ({
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
                     .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
 
                 legendHeight = swatchHeight + swatchBelow;
             }
@@ -237,7 +239,7 @@ export default function ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .style("margin-left", -overflowOffset);
+            .style("margin-left", -overflowOffset + "px");
 
         mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top + legendHeight})`)
             .attr("width", mainWidth)

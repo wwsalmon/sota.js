@@ -104,6 +104,7 @@ export default function ({
                 .attr("x", legendLeft + swatchWidth + swatchBetween)
                 .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
                 .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
 
             legendHeight = labels.length * swatchHeight + (labels.length - 1) * swatchBelowBetween + swatchBelow + legendMargin;
         }
@@ -127,6 +128,7 @@ export default function ({
                 .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                 .attr("y", swatchHeight / 2)
                 .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
 
             legendHeight = swatchHeight + swatchBelow + legendMargin;
         }
@@ -192,6 +194,7 @@ export default function ({
             .attr("class","sota-pieChart-label sota-num-label")
             .text((d, i) => toPercentage(percentages[i]))
             .attr("alignment-baseline", "central")
+.attr("dominant-baseline", "central")
             .attr("transform", (d, i) => {
                 const pos = outerArc.centroid(d);
                 const prevPos = i > 0 && outerArc.centroid(pieData[i-1]);
@@ -200,7 +203,6 @@ export default function ({
                 if (i > 0 && Math.sign(pos[0]) == Math.sign(prevPos[0]) && Math.abs(prevPos[1] - pos[1]) < 20){
                     pos[0] = pieRad * 0.99 * ((prevOverlap ? isRight : !isRight) ? 1 : -1);
                     prevOverlap = true;
-                    console.log("overlap");
                 } else{
                     pos[0] = pieRad * 0.99 * ((!prevOverlap ? isRight : !isRight) ? 1 : -1);
                     prevOverlap = false;
@@ -228,7 +230,7 @@ export default function ({
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)
-            .style("margin-left", -overflowOffset);
+            .style("margin-left", -overflowOffset + "px");
 
         chartRendered(container.node());
     });
