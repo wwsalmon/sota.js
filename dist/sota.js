@@ -84,7 +84,7 @@
 
     function processData(data, inputIsPercentage, totalResp = null){
         totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
-        const percentages = (inputIsPercentage) ? data.map(d => +d.value).keys : data.map(d => +d.value / totalResp * 100);
+        const percentages = (inputIsPercentage) ? data.map(d => +d.value) : data.map(d => +d.value / totalResp * 100);
         const values = (inputIsPercentage) ? false : data.map(d => +d.value);
         const labels = data.map(d => d.label);
         return [percentages, values, labels];
@@ -295,7 +295,7 @@
 
             const [unsortedPercentages, unsortedValues, labels] = processData(data, inputIsPercentage);
             const percentages = unsortedPercentages.sort((a, b) => b - a);
-            const values = unsortedValues.sort((a, b) => b - a);
+            const values = unsortedValues && unsortedValues.sort((a, b) => b - a);
 
             const pie = d3.pie();
             const pieData = pie(percentages).sort((a, b) => b.value - a.value);
@@ -2253,12 +2253,18 @@ h1 {
 .module h3 {
 	font-family: 'Gotham', sans-serif;
 	font-weight: 700;
-	text-transform: uppercase
+	text-transform: uppercase;
+	line-height: 1.1;
+}
+
+.module p{
+    line-height: 1.4;
 }
 
 .module .subtitle {
 	font-family: "Mercury Text G1", serif;
-	opacity: 0.4
+	opacity: 0.4;
+	line-height: 1.1;
 }
 
 text{

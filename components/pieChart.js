@@ -52,7 +52,7 @@ export default function ({
 
         const [unsortedPercentages, unsortedValues, labels] = processData(data, inputIsPercentage);
         const percentages = unsortedPercentages.sort((a, b) => b - a);
-        const values = unsortedValues.sort((a, b) => b - a);
+        const values = unsortedValues && unsortedValues.sort((a, b) => b - a);
 
         const pie = d3.pie();
         const pieData = pie(percentages).sort((a, b) => b.value - a.value);
