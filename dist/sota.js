@@ -278,7 +278,7 @@
 
         const mainChart = svg.append("g")
             .attr("class", "sota-barChart-mainChart")
-            .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
+            .attr("transform", `translate(${margin.left + overflowOffset} ${margin.top})`)
             .attr("width", mainWidth);
 
         if (mainWidth < pieRad * 2) {
@@ -288,8 +288,6 @@
         if (pieThick > pieRad) {
             pieThick = 50;
         }
-
-        var height = pieRad * 2 + margin.top + margin.bottom;
 
         d3.csv(dataFile + ".csv").then(data => {
 
@@ -326,7 +324,7 @@
                 })
                 .remove();
 
-            if (d3.sum(valueLabelWidths, d => d) + 3 * swatchBetween + 2 * swatchRight > mainWidth) {
+            if (d3.sum(valueLabelWidths, d => d) + (labels.length) * (swatchWidth + swatchBetween) + (labels.length - 1) * swatchRight > mainWidth) {
                 // vertical legends
                 let legendLeft = mainWidth - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
