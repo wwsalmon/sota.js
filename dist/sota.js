@@ -251,6 +251,7 @@
         selector,
         dataFile,
         inputIsPercentage = false,
+        sorted = true,
         pieRad = 150,
         pieThick = 80,
         margin = sotaConfig.margin
@@ -291,11 +292,9 @@
 
         d3.csv(dataFile + ".csv").then(data => {
 
-            data = data.sort((a, b) => b[1] - a[1]);
-
             const [percentages, values, labels] = processData(data, inputIsPercentage);
 
-            const pie = d3.pie();
+            const pie = sorted ? d3.pie() : d3.pie().sort(null);
             const pieData = pie(percentages);
 
             // generate legend
