@@ -2283,42 +2283,7 @@ function setStyles(fontsPath, thisSotaConfig = sotaConfig){
     const axisStrokeColor = thisSotaConfig.lineColor;
     const axisTextMargin = 4;
     let styleSheet = `
-@font-face {
-	font-family: "Gotham";
-	font-weight: 700;
-	src: url("${fontsPath}/Gotham/GothamBold.ttf")
-}
-
-@font-face {
-	font-family: "Gotham";
-	font-weight: 700;
-	font-style: italic;
-	src: url("${fontsPath}/Gotham/GothamBoldItalic.ttf")
-}
-
-@font-face {
-	font-family: "Gotham";
-	src: url("${fontsPath}/Gotham/GothamBook.ttf")
-}
-
-@font-face {
-	font-family: "Gotham";
-	font-style: italic;
-	src: url("${fontsPath}/Gotham/GothamBookItalic.ttf")
-}
-
-@font-face {
-	font-family: "Gotham";
-	font-weight: 300;
-	src: url("${fontsPath}/Gotham/GothamLight.ttf")
-}
-
-@font-face {
-	font-family: "Gotham";
-	font-weight: 300;
-	font-style: italic;
-	src: url("${fontsPath}/Gotham/GothamLightItalic.ttf")
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
 
 @font-face {
 	font-family: 'Mercury Text G1';
@@ -2382,7 +2347,7 @@ section > p{
 
 h1 {
 	font-size: 56px;
-	font-family: 'Gotham', sans-serif;
+	font-family: 'Montserrat', sans-serif;
 	text-transform: uppercase;
 	font-weight: 700;
 	text-align: center;
@@ -2393,7 +2358,7 @@ h1 {
     position: relative;
 	max-width: ${mainWidth}px;
 	box-sizing: border-box;
-	font-family: "Gotham", Arial, sans-serif;
+	font-family: "Montserrat", Arial, sans-serif;
 	width: 100%;
 	padding: 48px 24px;
 	margin: 0 auto;
@@ -2455,7 +2420,7 @@ h1 {
 }
 
 .module h3 {
-	font-family: 'Gotham', sans-serif;
+	font-family: 'Montserrat', sans-serif;
 	font-weight: 700;
 	text-transform: uppercase;
 	line-height: 1.1;
@@ -2480,7 +2445,7 @@ text{
 }
 
 .sota-num-label, .sota-num-axis .tick text{
-    font-family: "Gotham", sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 14px;
     fill: ${sotaConfig.labelColor};
 }
