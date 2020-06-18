@@ -8,12 +8,9 @@ import groupedBarChart from "./components/groupedBarChart.js";
 import stackedColumnChart from "./components/stackedColumnChart.js";
 import customColumnChart from "./components/customColumnChart.js";
 import multiLineGraph from "./components/multiLineGraph.js";
-import setColors from "./lib/setColors.js";
-import setStyles from "./lib/setStyles.js";
 import sotaConfig from "./lib/sotaConfig.js";
-import colorInterpolate from "./lib/colorInterpolate.js";
-import sotaMasonry from "./lib/sotaMasonry.js";
-import sotaNavbar from "./lib/sotaNavbar.js";
+import {setColors, setStyles, colorInterpolate} from "./lib/sotaStyles.js";
+import {sotaNavbar, sotaMasonry} from "./lib/sotaLayout.js";
 
 let sota = {};
 

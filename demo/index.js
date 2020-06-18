@@ -1,5 +1,5 @@
 sota.sotaConfig.sections = [
-    {"slug": "sotajs", "name": "sota.js", "colors": sota.colorInterpolate("#000000")},
+    {"slug": "sotajs", "name": "sota.js", "colors": sota.colorInterpolate("#222222")},
     {"slug": "politics", "name": "Politics & Worldview", "colors": sota.colorInterpolate("#660066", "#dac7d8", 5, true)},
     {"slug": "wellness", "name": "Health & Wellness", "colors": sota.colorInterpolate("#6cb643", "#cae3cb", 5, true)},
     // {"slug": "sex", "name": "Sex", "colors": sota.colorInterpolate("#c6307c", "#f0d3dc", 5, true)},
@@ -13,6 +13,18 @@ sota.setStyles(sota.sotaConfig); // for custom sotaConfig; for default options, 
 sota.sotaNavbar(sota.sotaConfig, "sota.js Demo", "szlogo.png", false, "https://www.samsonzhang.com/");
 
 window.onload = () => {
+
+    // sota.createSections(sota.sotaConfig);
+    //
+    // sota.barChart({
+    //     title: "What does a graph look like?",
+    //     subtitle: "Here's a bar chart",
+    //     section: "sotajs",
+    //     dataFile: "data/ethnicity",
+    //     totalResp: 1052,
+    //     maxVal: true,
+    //     displayPercentage: true
+    // });
 
     // sota.multiLineGraph({selector: "#module-general-income-d3", dataFile: "data/gpaXincome"});
 
