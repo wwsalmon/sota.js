@@ -43,7 +43,7 @@ window.onload = () => {
 
     sota.stackedBarChart({ section: "sotajs", title: "How many of your parents graduated from college?", dataFile: "data/parents-college", labelStyle: "aboveBar", showLegend: false });
 
-    sota.customColumnChart({ section: "wellness", title: "Happiness on Campus", subtitle: "In general, do you think that Andover students are happy?", dataFile: "data/happiness", shapeFile: "cloud", shapeHeight:100 });
+    sota.customColumnChart({ section: "wellness", title: "Happiness on Campus", subtitle: "In general, do you think that Andover students are happy?", dataFile: "data/happiness", shapeFile: "shapes/cloud", shapeHeight:100 });
 
     sota.columnChart({ section: "wellness", title: "What is your mental and/or emotional support system on campus? Select all that apply", dataFile: "data/support", totalResp: 1052});
 
