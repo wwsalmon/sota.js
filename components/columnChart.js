@@ -38,7 +38,7 @@ export default function ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const mainChart = svg.append("g")
         .attr("class", "sota-mainChart");

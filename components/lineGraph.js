@@ -32,7 +32,7 @@ export default function ({
     const svg = container.append("svg");
 
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const width = container.node().offsetWidth;
     const mainWidth = width - margin.left - margin.right;

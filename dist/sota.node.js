@@ -3,6 +3,8 @@
 var d3 = require('d3');
 
 var sotaConfig = {
+    numberFont: "Montserrat",
+    labelFont: "Lora",
     separatorStrokeWidth: 1,
     barHeight: 32,
     barMargin: 16,
@@ -119,7 +121,7 @@ function barChart ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const width = container.node().offsetWidth;
     const mainWidth = width - margin.left - margin.right;
@@ -270,7 +272,7 @@ function pieChart ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const width = container.node().offsetWidth;
     const mainWidth = width - margin.left - margin.right;
@@ -503,7 +505,7 @@ function lineGraph ({
     const svg = container.append("svg");
 
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const width = container.node().offsetWidth;
     const mainWidth = width - margin.left - margin.right;
@@ -654,7 +656,7 @@ function stackedBarChart ({
     var container = d3.select(selector);
     var svg = container.append("svg");
     var tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     var width = document.querySelector(selector).offsetWidth;
     var mainWidth = width - margin.left - margin.right;
@@ -998,7 +1000,7 @@ function customBarChart ({
     var container = d3.select(selector);
     var svg = container.append("svg");
     var tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const mainChart = svg.append("g")
         .attr("class", "sota-mainChart");
@@ -1191,7 +1193,7 @@ function columnChart ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const mainChart = svg.append("g")
         .attr("class", "sota-mainChart");
@@ -1430,7 +1432,7 @@ function groupedBarChart ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const mainChart = svg.append("g")
         .attr("class", "sota-mainChart");
@@ -1602,7 +1604,7 @@ function stackedColumnChart ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const mainChart = svg.append("g")
         .attr("class", "sota-stackedColumnChart-mainChart");
@@ -1889,7 +1891,7 @@ function customColumnChart ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const mainChart = svg.append("g")
         .attr("class", "sota-mainChart");
@@ -2077,7 +2079,7 @@ function multiLineGraph ({
     const container = d3.select(selector);
     const svg = container.append("svg");
     const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip");
+        .attr("class", "sota-tooltip");
 
     const width = document.querySelector(selector).offsetWidth;
     const mainWidth = width - margin.left - margin.right;
@@ -2276,61 +2278,15 @@ function setColors(colorsArray){
     document.head.appendChild(document.createElement('style')).textContent = colorStyle;
 }
 
-function setStyles(fontsPath, thisSotaConfig = sotaConfig){
+function setStyles(thisSotaConfig = sotaConfig){
     const mainWidth = 1500;
     const moduleMargin = 48;
+    const numberFont = thisSotaConfig.numberFont;
+    const labelFont = thisSotaConfig.labelFont;
     const axisStrokeWidth = thisSotaConfig.separatorStrokeWidth;
     const axisStrokeColor = thisSotaConfig.lineColor;
     const axisTextMargin = 4;
     let styleSheet = `
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
-
-@font-face {
-	font-family: 'Mercury Text G1';
-	src: url("${fontsPath}/Mercury/MercuryTextG1-Roman.otf");
-	font-weight: normal;
-	font-style: normal
-}
-
-@font-face {
-	font-family: 'Mercury Text G1';
-	src: url("${fontsPath}/Mercury/MercuryTextG1-Italic.otf");
-	font-weight: normal;
-	font-style: italic
-}
-
-@font-face {
-	font-family: 'Mercury Text G1';
-	src: url("${fontsPath}/Mercury/MercuryTextG1-Bold.otf");
-	font-weight: bold;
-	font-style: normal
-}
-
-@font-face {
-	font-family: 'Mercury Text G1';
-	src: url("${fontsPath}/Mercury/MercuryTextG1-BoldItalic.otf");
-	font-weight: bold;
-	font-style: italic
-}
-
-@font-face {
-	font-family: 'Mercury Text G1';
-	src: url("${fontsPath}/Mercury/MercuryTextG1-Semibold.otf");
-	font-weight: 600;
-	font-style: normal
-}
-
-@font-face {
-	font-family: 'Mercury Text G1';
-	src: url("${fontsPath}/Mercury/MercuryTextG1-SemiboldItalic.otf");
-	font-weight: 600;
-	font-style: italic
-}
-
-body{
-    margin: 0;
-}
-
 .sota-section {
 	padding: 48px 0;
 	width: 100%
@@ -2338,7 +2294,7 @@ body{
 
 .sota-section > p{
   color: #fff;
-  font-family: "Mercury Text G1";
+  font-family: ${labelFont};
   line-height: 1.5;
   max-width: 800px;
   margin: 64px auto;
@@ -2347,7 +2303,7 @@ body{
 
 .sota-section h1 {
 	font-size: 56px;
-	font-family: 'Montserrat', sans-serif;
+	font-family: ${numberFont}, sans-serif;
 	text-transform: uppercase;
 	font-weight: 700;
 	text-align: center;
@@ -2420,7 +2376,7 @@ body{
 }
 
 .sota-module h3 {
-	font-family: 'Montserrat', sans-serif;
+	font-family: ${numberFont}, sans-serif;
 	font-weight: 700;
 	text-transform: uppercase;
 	line-height: 1.1;
@@ -2431,13 +2387,9 @@ body{
 }
 
 .sota-module .subtitle {
-	font-family: "Mercury Text G1", serif;
+	font-family: ${labelFont}, serif;
 	opacity: 0.4;
 	line-height: 1.1;
-}
-
-text{
-    fill: red;
 }
 
 .sota-heavy-label{
@@ -2451,7 +2403,7 @@ text{
 }
 
 .sota-text-label, .sota-text-axis .tick text{
-    font-family: "Mercury Text G1", serif;
+    font-family: ${labelFont}, serif;
     fill: black;
 }
 
@@ -2459,7 +2411,7 @@ text{
     fill: rgba(255,255,255,0.6);
 }
 
-.tooltip {
+.sota-tooltip {
 	background-color: #222;
 	color: #fff;
 	padding: 12px;
@@ -2506,7 +2458,7 @@ text{
 	font-size: 96px;
 	line-height: 1.0;
 	margin-top: -8px;
-	font-family: "Mercury Text G1", serif
+	font-family: ${labelFont}, serif
 }
 
 .sota-section-inner.hide .module{
