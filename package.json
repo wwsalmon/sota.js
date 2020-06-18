@@ -7,7 +7,8 @@
     "dist/sota.node.js"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "docs": "jsdoc2md --template readme.hbs ./components/*.js > readme.md"
   },
   "repository": {
     "type": "git",
