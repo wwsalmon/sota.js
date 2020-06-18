@@ -2,13 +2,17 @@
 
 var d3 = require('d3');
 
-function setStyles(thisSotaConfig = sotaConfig){
+/**
+ * Function to inject inline styling for sota charts, navbar, layout, etc.
+ * @param sotaConfig - sotaConfig object
+ */
+function setStyles(sotaConfig = sotaConfig){
     const mainWidth = 1500;
     const moduleMargin = 48;
-    const numberFont = thisSotaConfig.numberFont;
-    const labelFont = thisSotaConfig.labelFont;
-    const axisStrokeWidth = thisSotaConfig.separatorStrokeWidth;
-    const axisStrokeColor = thisSotaConfig.lineColor;
+    const numberFont = sotaConfig.numberFont;
+    const labelFont = sotaConfig.labelFont;
+    const axisStrokeWidth = sotaConfig.separatorStrokeWidth;
+    const axisStrokeColor = sotaConfig.lineColor;
     const axisTextMargin = 4;
     let styleSheet = `
 .sota-section {
@@ -285,6 +289,10 @@ function setStyles(thisSotaConfig = sotaConfig){
     console.log("styles set");
 }
 
+/**
+ * Function to set colors for sota charts, layout, navbar, etc.
+ * @param sotaConfig - sotaConfig object
+ */
 function setColors(sotaConfig){
     let colorStyle = "";
 
@@ -421,6 +429,11 @@ var sotaConfig = {
     }
 };
 
+/**
+ * Returns either mouseX value for tooltip position or value so tooltip is at edge of screen and not cut off. Called on mouseMove event
+ * @param tooltip
+ * @returns {number}
+ */
 function mouseXIfNotOffsreen(tooltip){
     const toSide = tooltip.node().offsetWidth / 2;
     const mouseX = d3.event.pageX;
@@ -433,10 +446,23 @@ function mouseXIfNotOffsreen(tooltip){
     return mouseX;
 }
 
+/**
+ * Helper function, returns formatted string from input number
+ * @param {number} i
+ * @returns {string}
+ */
 function toPercentage(i){
     return d3.format(".1f")(i) + "%";
 }
 
+/**
+ * Helper function to bind tooltip to d3 selection
+ * @param selection - chart data d3 selection, i.e. bars, the things you want to hover over to bring up the tooltip
+ * @param tooltip - tooltip d3 selection
+ * @param percentages - percentages data
+ * @param labels - labels data
+ * @param values - values data
+ */
 function bindTooltip(selection, tooltip, percentages, labels, values){
     selection.on("mouseover", function (d, i){
         d3.select(this)
@@ -464,6 +490,16 @@ function bindTooltip(selection, tooltip, percentages, labels, values){
         });
 }
 
+/**
+ * Helper function for setting up container variables based on inputs
+ * @param {(string|boolean)} selector
+ * @param {(string|boolean)} section
+ * @param {(string|boolean)} title
+ * @param {(string|boolean)} subtitle
+ * @param {{top: number, left: number, bottom: number, right: number}} margin - margin object from component input
+ * @param overflowOffset
+ * @returns {{container: *, svg, tooltip: *, width: number, mainChart, mainWidth: number}}
+ */
 function containerSetup(selector, section, title, subtitle, margin, overflowOffset){
     if (!(selector || section)) throw `No selector or section specified for chart with "${dataFile}" dataFile parameter.`;
 
@@ -494,6 +530,13 @@ function containerSetup(selector, section, title, subtitle, margin, overflowOffs
     return {container, svg, tooltip, width, mainWidth, mainChart};
 }
 
+/**
+ * Helper function for processing data
+ * @param data
+ * @param {boolean} inputIsPercentage
+ * @param {number} totalResp
+ * @returns {(*|boolean)[]}
+ */
 function processData(data, inputIsPercentage, totalResp = null){
     totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
     const percentages = (inputIsPercentage) ? data.map(d => +d.value) : data.map(d => +d.value / totalResp * 100);
@@ -502,13 +545,21 @@ function processData(data, inputIsPercentage, totalResp = null){
     return [percentages, values, labels];
 }
 
+/**
+ * Helper function for dispatching event when chart finishes rendering, for sotaLayout functions to catch
+ * @param thisModule
+ */
 function chartRendered(thisModule){
     const chartRendered = new Event("sotaChartRendered");
     const container = thisModule.closest(".sota-section-inner");
     if (container !== null) container.dispatchEvent(chartRendered);
 }
 
-function uuidv4() { // from https://stackoverflow.com/a/2117523/4517586
+/**
+ * Helper function to generate UUIDv4. Code from https://stackoverflow.com/a/2117523/4517586
+ * @returns {*}
+ */
+function uuidv4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
@@ -2772,6 +2823,9 @@ function bigNumber({
         .text(subtitle);
 }
 
+/**
+ * Function to generate masonry layout on sota containers and modules
+ */
 function sotaMasonry(){
     const sections = document.querySelectorAll(".sota-section-inner");
 
@@ -2810,6 +2864,14 @@ function sotaMasonry(){
     });
 }
 
+/**
+ * Function to render navbar. *Run after createSections*
+ * @param sotaConfig - sotaConfig object
+ * @param {string|boolean} [text=false] - Text to display in navbar
+ * @param {string|boolean} [logo=false] - Relative path to logo to display in navbar
+ * @param {string|boolean} [textLink=false] - Link for navbar text
+ * @param {string|boolean} [logoLink=false] - Link for navbar logo
+ */
 function sotaNavbar(sotaConfig, text="", logo=false, textLink=false, logoLink = false){
     const container = document.getElementById("sota-navbar");
     container.classList.add("sz-navbar");
@@ -2885,6 +2947,10 @@ function sotaNavbar(sotaConfig, text="", logo=false, textLink=false, logoLink = 
     }
 }
 
+/**
+ * Function to render sections. *Run before sotaNavbar*
+ * @param sotaConfig - sotaConfig object
+ */
 function createSections(sotaConfig){
     for (const section of sotaConfig.sections){
         const sectionSlug = section.slug;

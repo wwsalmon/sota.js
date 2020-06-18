@@ -67,6 +67,24 @@ And now you have access to the `sota` object with functions like `sota.barChart(
 <dt><a href="#stackedColumnChart">stackedColumnChart(dataFile, [selector], [section], [title], [subtitle], [inputIsPercentage], [displayPercentage], [maxVal], [minVal], [mainHeight], [margin])</a></dt>
 <dd><p>Render sota.js stacked column chart</p>
 </dd>
+<dt><a href="#sotaMasonry">sotaMasonry()</a></dt>
+<dd><p>Function to generate masonry layout on sota containers and modules</p>
+</dd>
+<dt><a href="#sotaNavbar">sotaNavbar(sotaConfig, [text], [logo], [textLink], [logoLink])</a></dt>
+<dd><p>Function to render navbar. <em>Run after createSections</em></p>
+</dd>
+<dt><a href="#createSections">createSections(sotaConfig)</a></dt>
+<dd><p>Function to render sections. <em>Run before sotaNavbar</em></p>
+</dd>
+<dt><a href="#setStyles">setStyles(sotaConfig)</a></dt>
+<dd><p>Function to inject inline styling for sota charts, navbar, layout, etc.</p>
+</dd>
+<dt><a href="#setColors">setColors(sotaConfig)</a></dt>
+<dd><p>Function to set colors for sota charts, layout, navbar, etc.</p>
+</dd>
+<dt><a href="#colorInterpolate">colorInterpolate(start, [end], [steps], [includeLast])</a></dt>
+<dd><p>Function that generates an array of hex codes interpolating between start and end hex codes</p>
+</dd>
 </dl>
 
 <a name="barChart"></a>
@@ -287,4 +305,72 @@ Render sota.js stacked column chart
 | [minVal] | <code>number</code> \| <code>boolean</code> |  | By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min. |
 | [mainHeight] | <code>number</code> |  | Height of the chart. Defaults to value from sotaConfig |
 | [margin] | <code>Object</code> |  | Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig |
+
+<a name="sotaMasonry"></a>
+
+## sotaMasonry()
+Function to generate masonry layout on sota containers and modules
+
+**Kind**: global function  
+<a name="sotaNavbar"></a>
+
+## sotaNavbar(sotaConfig, [text], [logo], [textLink], [logoLink])
+Function to render navbar. *Run after createSections*
+
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| sotaConfig |  |  | sotaConfig object |
+| [text] | <code>string</code> \| <code>boolean</code> | <code>false</code> | Text to display in navbar |
+| [logo] | <code>string</code> \| <code>boolean</code> | <code>false</code> | Relative path to logo to display in navbar |
+| [textLink] | <code>string</code> \| <code>boolean</code> | <code>false</code> | Link for navbar text |
+| [logoLink] | <code>string</code> \| <code>boolean</code> | <code>false</code> | Link for navbar logo |
+
+<a name="createSections"></a>
+
+## createSections(sotaConfig)
+Function to render sections. *Run before sotaNavbar*
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| sotaConfig | sotaConfig object |
+
+<a name="setStyles"></a>
+
+## setStyles(sotaConfig)
+Function to inject inline styling for sota charts, navbar, layout, etc.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| sotaConfig | sotaConfig object |
+
+<a name="setColors"></a>
+
+## setColors(sotaConfig)
+Function to set colors for sota charts, layout, navbar, etc.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| sotaConfig | sotaConfig object |
+
+<a name="colorInterpolate"></a>
+
+## colorInterpolate(start, [end], [steps], [includeLast])
+Function that generates an array of hex codes interpolating between start and end hex codes
+
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| start | <code>string</code> |  | 6-digit hex code for starting color, including "#" at beginning |
+| [end] | <code>string</code> | <code>&quot;#ffffff&quot;</code> | 6-digit hex code for ending color, including "#" at beginning |
+| [steps] | <code>number</code> | <code>8</code> | Number of steps, equal to the length of the returned array |
+| [includeLast] | <code>boolean</code> | <code>false</code> | Whether or not to include the given end value in the final array |
 

@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "docs": "jsdoc2md --template readme.hbs ./components/*.js > readme.md"
+    "docs": "jsdoc2md --template readme.hbs ./components/*.js ./lib/sotaLayout.js ./lib/sotaStyles.js > readme.md"
   },
   "repository": {
     "type": "git",
