@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
-import {containerSetup, processData, chartRendered} from "../lib/sotaChartHelpers.js";
+import {containerSetup, processData, chartRendered, uuidv4} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
 export default function ({
@@ -47,9 +47,11 @@ export default function ({
         let scaleFactor = shapeHeight / firstPathHeight;
         let scaledWidth = firstPathWidth * scaleFactor;
 
+        const uniqueID = uuidv4();
+
         svg.append("defs")
             .append("clipPath")
-            .attr("id","shapeDef"+selector.substring(1))
+            .attr("id","shapeDef"+uniqueID)
             .append(() => firstPath)
             .attr("transform", `scale(${scaleFactor})`)
 
@@ -84,7 +86,7 @@ export default function ({
                 .attr("y", (d,i) => y(prevValues[i]))
                 .attr("width", scaledWidth)
                 .attr("height", d => y(d.value))
-                .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
+                .attr("clip-path", "url(#shapeDef"+uniqueID+")")
                 .call(bindTooltip, tooltip, percentages, labels, values);
 
             mainChart.selectAll(".sota-customColumnChart-separator")
@@ -96,7 +98,7 @@ export default function ({
                 .attr("width", scaledWidth)
                 .attr("height", separatorStrokeHeight)
                 .attr("fill", "white")
-                .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
+                .attr("clip-path", "url(#shapeDef"+uniqueID+")")
 
             // draw labels - horizontal lines to the left and right from the center of the rectangle
 

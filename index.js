@@ -8,9 +8,10 @@ import groupedBarChart from "./components/groupedBarChart.js";
 import stackedColumnChart from "./components/stackedColumnChart.js";
 import customColumnChart from "./components/customColumnChart.js";
 import multiLineGraph from "./components/multiLineGraph.js";
+import bigNumber from "./components/bigNumber.js";
 import sotaConfig from "./lib/sotaConfig.js";
 import {setColors, setStyles, colorInterpolate} from "./lib/sotaStyles.js";
-import {sotaNavbar, sotaMasonry} from "./lib/sotaLayout.js";
+import {sotaNavbar, sotaMasonry, createSections} from "./lib/sotaLayout.js";
 
 let sota = {};
 
@@ -24,12 +25,14 @@ sota.groupedBarChart = groupedBarChart;
 sota.stackedColumnChart = stackedColumnChart;
 sota.customColumnChart = customColumnChart;
 sota.multiLineGraph = multiLineGraph;
+sota.bigNumber = bigNumber;
 sota.setColors = setColors;
 sota.setStyles = setStyles;
 sota.sotaConfig = sotaConfig;
 sota.colorInterpolate = colorInterpolate;
 sota.sotaMasonry = sotaMasonry;
 sota.sotaNavbar = sotaNavbar;
+sota.createSections = createSections;
 
 sota.setParam = function(prop, value){
     this.sotaConfig[prop] = value;

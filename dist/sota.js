@@ -510,6 +510,12 @@
       if (container !== null) container.dispatchEvent(chartRendered);
   }
 
+  function uuidv4() { // from https://stackoverflow.com/a/2117523/4517586
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+          (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+  }
+
   function barChart ({
       dataFile,
       selector = false,
@@ -1413,9 +1419,11 @@
           let scaleFactor = shapeWidth / firstPathWidth;
           let scaledHeight = firstPathHeight * scaleFactor;
 
+          const uniqueID = uuidv4();
+
           svg.append("defs")
               .append("clipPath")
-              .attr("id","shapeDef"+selector.substring(1))
+              .attr("id","shapeDef"+uniqueID)
               .append(() => firstPath)
               .attr("transform", `scale(${scaleFactor})`);
 
@@ -1450,7 +1458,7 @@
                   .attr("y", 0)
                   .attr("width", d => x(d.value))
                   .attr("height", scaledHeight)
-                  .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
+                  .attr("clip-path", "url(#shapeDef"+uniqueID+")")
                   .call(bindTooltip, tooltip, percentages, labels, values);
 
               mainChart.selectAll(".sota-customBarChart-separator")
@@ -1462,7 +1470,7 @@
                   .attr("width", separatorStrokeWidth)
                   .attr("height", scaledHeight)
                   .attr("fill", "white")
-                  .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")");
+                  .attr("clip-path", "url(#shapeDef"+uniqueID+")");
 
               // draw labels. Code taken just about verbatim from stackedBarChart aboveBar label
 
@@ -2280,9 +2288,11 @@
           let scaleFactor = shapeHeight / firstPathHeight;
           let scaledWidth = firstPathWidth * scaleFactor;
 
+          const uniqueID = uuidv4();
+
           svg.append("defs")
               .append("clipPath")
-              .attr("id","shapeDef"+selector.substring(1))
+              .attr("id","shapeDef"+uniqueID)
               .append(() => firstPath)
               .attr("transform", `scale(${scaleFactor})`);
 
@@ -2317,7 +2327,7 @@
                   .attr("y", (d,i) => y(prevValues[i]))
                   .attr("width", scaledWidth)
                   .attr("height", d => y(d.value))
-                  .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
+                  .attr("clip-path", "url(#shapeDef"+uniqueID+")")
                   .call(bindTooltip, tooltip, percentages, labels, values);
 
               mainChart.selectAll(".sota-customColumnChart-separator")
@@ -2329,7 +2339,7 @@
                   .attr("width", scaledWidth)
                   .attr("height", separatorStrokeHeight)
                   .attr("fill", "white")
-                  .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")");
+                  .attr("clip-path", "url(#shapeDef"+uniqueID+")");
 
               // draw labels - horizontal lines to the left and right from the center of the rectangle
 
@@ -2601,6 +2611,30 @@
       });
   }
 
+  function bigNumber ({
+                               title, number, subtitle,
+                               selector = false,
+                               section = false
+                           }){
+      if (!(selector || section)) throw `No selector or section specified for chart with "${title}" title parameter.`;
+
+      const container = selector ? d3.select(selector) : d3.select(`#sota-section-${section} .sota-section-inner`)
+          .append("div")
+          .attr("class", "sota-module");
+
+      container.append("h3").text(title);
+
+      container.append("div")
+          .attr("class","sota-big")
+          .append("span")
+          .text(number);
+
+      container.append("div")
+          .attr("class","subtitle")
+          .append("span")
+          .text(subtitle);
+  }
+
   function sotaMasonry(){
       const sections = document.querySelectorAll(".sota-section-inner");
 
@@ -2714,6 +2748,27 @@
       }
   }
 
+  function createSections(sotaConfig){
+      for (const section of sotaConfig.sections){
+          const sectionSlug = section.slug;
+
+          if (d3.select("body").select(`#sota-section-${sectionSlug}`).size() > 0){
+              continue;
+          }
+
+          const container = d3.select("body")
+              .append("div")
+              .attr("id", `sota-section-${sectionSlug}`)
+              .attr("class", "sota-section");
+
+          container.append("h1").text(section.name);
+
+          if (section.blurb !== undefined) container.append("p").text(section.blurb);
+
+          container.append("div").attr("class", "sota-section-inner");
+      }
+  }
+
   let sota = {};
 
   sota.barChart = barChart;
@@ -2726,12 +2781,14 @@
   sota.stackedColumnChart = stackedColumnChart;
   sota.customColumnChart = customColumnChart;
   sota.multiLineGraph = multiLineGraph;
+  sota.bigNumber = bigNumber;
   sota.setColors = setColors;
   sota.setStyles = setStyles;
   sota.sotaConfig = sotaConfig;
   sota.colorInterpolate = colorInterpolate;
   sota.sotaMasonry = sotaMasonry;
   sota.sotaNavbar = sotaNavbar;
+  sota.createSections = createSections;
 
   sota.setParam = function(prop, value){
       this.sotaConfig[prop] = value;

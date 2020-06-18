@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
-import {containerSetup, processData, chartRendered} from "../lib/sotaChartHelpers.js";
+import {containerSetup, processData, chartRendered, uuidv4} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
 export default function ({
@@ -46,9 +46,11 @@ export default function ({
         let scaleFactor = shapeWidth / firstPathWidth;
         let scaledHeight = firstPathHeight * scaleFactor;
 
+        const uniqueID = uuidv4();
+
         svg.append("defs")
             .append("clipPath")
-            .attr("id","shapeDef"+selector.substring(1))
+            .attr("id","shapeDef"+uniqueID)
             .append(() => firstPath)
             .attr("transform", `scale(${scaleFactor})`)
 
@@ -83,7 +85,7 @@ export default function ({
                 .attr("y", 0)
                 .attr("width", d => x(d.value))
                 .attr("height", scaledHeight)
-                .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
+                .attr("clip-path", "url(#shapeDef"+uniqueID+")")
                 .call(bindTooltip, tooltip, percentages, labels, values);
 
             mainChart.selectAll(".sota-customBarChart-separator")
@@ -95,7 +97,7 @@ export default function ({
                 .attr("width", separatorStrokeWidth)
                 .attr("height", scaledHeight)
                 .attr("fill", "white")
-                .attr("clip-path", "url(#shapeDef"+selector.substring(1)+")")
+                .attr("clip-path", "url(#shapeDef"+uniqueID+")")
 
             // draw labels. Code taken just about verbatim from stackedBarChart aboveBar label
 
