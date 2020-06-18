@@ -15,18 +15,18 @@ sota.sotaNavbar(sota.sotaConfig, "sota.js Demo", "szlogo.png", false, "https://w
 window.onload = () => {
 
     // sota.createSections(sota.sotaConfig);
-    //
-    // sota.barChart({
-    //     title: "What does a graph look like?",
-    //     subtitle: "Here's a bar chart",
-    //     section: "sotajs",
-    //     dataFile: "data/ethnicity",
-    //     totalResp: 1052,
-    //     maxVal: true,
-    //     displayPercentage: true
-    // });
 
-    // sota.multiLineGraph({selector: "#module-general-income-d3", dataFile: "data/gpaXincome"});
+    sota.barChart({
+        title: "What does a graph look like?",
+        subtitle: "Here's a bar chart",
+        section: "sotajs",
+        dataFile: "data/ethnicity",
+        totalResp: 1052,
+        maxVal: true,
+        displayPercentage: true
+    });
+
+    sota.multiLineGraph({section: "sotajs", title: "Multilinegraph", dataFile: "data/gpaXincome"});
 
     // sota.barChart({
     //     selector: "#demo-ethnicity-d3",

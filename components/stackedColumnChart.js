@@ -1,11 +1,14 @@
 import * as d3 from "d3";
 import {toPercentage} from "../lib/tooltip.js";
+import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
-import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
-                             selector,
                              dataFile,
+                             selector = false,
+                             title = false,
+                             subtitle = false,
+                             section = false,
                              inputIsPercentage = false,
                              displayPercentage = true,
                              maxVal = null,
@@ -31,16 +34,8 @@ export default function ({
     const swatchBelowBetween = sotaConfig.swatch.belowBetween;
     const swatchBelow = sotaConfig.swatch.below;
 
-    const container = d3.select(selector);
-    const svg = container.append("svg");
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "sota-tooltip");
-
-    const mainChart = svg.append("g")
-        .attr("class", "sota-stackedColumnChart-mainChart");
-
-    const width = document.querySelector(selector).offsetWidth;
-    const mainWidth = width - margin.left - margin.right;
+    const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+        selector, section, title, subtitle, margin, 0);
 
     d3.csv(dataFile + ".csv").then(data => {
 

@@ -1,11 +1,14 @@
 import * as d3 from "d3";
 import {toPercentage} from "../lib/tooltip.js";
+import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
-import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
-    selector,
     dataFile,
+    selector = false,
+    title = false,
+    subtitle = false,
+    section = false,
     inputIsPercentage = false,
     minVal = null,
     maxVal = null,
@@ -28,21 +31,8 @@ export default function ({
     const hoverOpacity = 0.8;
     const overflowOffset = sotaConfig.overflowOffset;
 
-    const container = d3.select(selector);
-    const svg = container.append("svg");
-
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "sota-tooltip");
-
-    const width = container.node().offsetWidth;
-    const mainWidth = width - margin.left - margin.right;
-
-    console.log(width, mainWidth);
-
-    const mainChart = svg.append("g")
-        .attr("class", "sota-lineGraph-mainChart")
-        .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
-        .attr("width", mainWidth);
+    const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+        selector, section, title, subtitle, margin, overflowOffset);
 
     d3.csv(dataFile + ".csv").then(data => {
         // define styling variables here

@@ -1,12 +1,14 @@
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
-import processData from "../lib/processData.js";
+import {containerSetup, processData, chartRendered} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
-import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
-    selector,
     dataFile,
+    selector = false,
+    title = false,
+    subtitle = false,
+    section = false,
     inputIsPercentage = false,
     sorted = true,
     pieRad = 150,
@@ -26,18 +28,8 @@ export default function ({
     const legendMargin = sotaConfig.legendMargin;
     const overflowOffset = sotaConfig.overflowOffset;
 
-    const container = d3.select(selector);
-    const svg = container.append("svg");
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "sota-tooltip");
-
-    const width = container.node().offsetWidth;
-    const mainWidth = width - margin.left - margin.right;
-
-    const mainChart = svg.append("g")
-        .attr("class", "sota-barChart-mainChart")
-        .attr("transform", `translate(${margin.left + overflowOffset} ${margin.top})`)
-        .attr("width", mainWidth);
+    const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+        selector, section, title, subtitle, margin, overflowOffset);
 
     if (mainWidth < pieRad * 2) {
         pieRad = mainWidth / 2;

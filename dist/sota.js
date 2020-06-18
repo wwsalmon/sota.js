@@ -466,6 +466,36 @@
           });
   }
 
+  function containerSetup(selector, section, title, subtitle, margin, overflowOffset){
+      if (!(selector || section)) throw `No selector or section specified for chart with "${dataFile}" dataFile parameter.`;
+
+      const container = selector ? d3.select(selector) : d3.select(`#sota-section-${section} .sota-section-inner`)
+          .append("div")
+          .attr("class", "sota-module");
+
+      if (section && title) container.append("h3")
+          .text(title);
+
+      if (section && subtitle) container.append("div")
+          .attr("class","subtitle")
+          .append("span")
+          .text(subtitle);
+
+      const svg = container.append("svg");
+      const tooltip = d3.select("body").append("div")
+          .attr("class", "sota-tooltip");
+
+      const width = container.node().offsetWidth;
+      const mainWidth = width - margin.left - margin.right;
+
+      const mainChart = svg.append("g")
+          .attr("class", "sota-mainChart")
+          .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
+          .attr("width", mainWidth);
+
+      return {container, svg, tooltip, width, mainWidth, mainChart};
+  }
+
   function processData(data, inputIsPercentage, totalResp = null){
       totalResp = (totalResp == null) ? d3.sum(data, d => +d.value) : totalResp;
       const percentages = (inputIsPercentage) ? data.map(d => +d.value) : data.map(d => +d.value / totalResp * 100);
@@ -481,8 +511,11 @@
   }
 
   function barChart ({
-      selector,
       dataFile,
+      selector = false,
+      title = false,
+      subtitle = false,
+      section = false,
       inputIsPercentage = false,
       showXAxis = true,
       showSeparators = true,
@@ -503,18 +536,7 @@
       const overflowOffset = sotaConfig.overflowOffset;
       const xAxisTop = sotaConfig.xAxisTop;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const width = container.node().offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-barChart-mainChart")
-          .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
-          .attr("width", mainWidth);
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(selector, section, title, subtitle, margin, overflowOffset);
 
       d3.csv(dataFile + ".csv").then(data => {
 
@@ -633,8 +655,11 @@
   }
 
   function pieChart ({
-      selector,
       dataFile,
+      selector = false,
+      title = false,
+      subtitle = false,
+      section = false,
       inputIsPercentage = false,
       sorted = true,
       pieRad = 150,
@@ -654,18 +679,8 @@
       const legendMargin = sotaConfig.legendMargin;
       const overflowOffset = sotaConfig.overflowOffset;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const width = container.node().offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-barChart-mainChart")
-          .attr("transform", `translate(${margin.left + overflowOffset} ${margin.top})`)
-          .attr("width", mainWidth);
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
 
       if (mainWidth < pieRad * 2) {
           pieRad = mainWidth / 2;
@@ -862,8 +877,11 @@
   }
 
   function lineGraph ({
-      selector,
       dataFile,
+      selector = false,
+      title = false,
+      subtitle = false,
+      section = false,
       inputIsPercentage = false,
       minVal = null,
       maxVal = null,
@@ -886,21 +904,8 @@
       const hoverOpacity = 0.8;
       const overflowOffset = sotaConfig.overflowOffset;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const width = container.node().offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
-
-      console.log(width, mainWidth);
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-lineGraph-mainChart")
-          .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
-          .attr("width", mainWidth);
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
 
       d3.csv(dataFile + ".csv").then(data => {
           // define styling variables here
@@ -1008,8 +1013,11 @@
   }
 
   function stackedBarChart ({
-                               selector,
                                dataFile,
+                               selector = false,
+                               title = false,
+                               subtitle = false,
+                               section = false,
                                inputIsPercentage = false,
                                showXAxis = true,
                                labelStyle = "onBar", // "none" | "onBar" | "aboveBar"
@@ -1038,18 +1046,8 @@
       const swatchBelow = sotaConfig.swatch.below;
       const xAxisTop = sotaConfig.xAxisTop;
 
-      var container = d3.select(selector);
-      var svg = container.append("svg");
-      var tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      var width = document.querySelector(selector).offsetWidth;
-      var mainWidth = width - margin.left - margin.right;
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-stackedBarChart-mainChart")
-          .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
-          .attr("width", mainWidth);
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
 
       d3.csv(dataFile + ".csv").then(data => {
           
@@ -1374,23 +1372,18 @@
   }
 
   function customBarChart ({
-      selector,
       dataFile,
+      selector = false,
+      title = false,
+      subtitle = false,
+      section = false,
       shapeFile,
       shapeWidth = 300,
       inputIsPercentage = false,
       margin = sotaConfig.margin
   }) {
-
-      var container = d3.select(selector);
-      var svg = container.append("svg");
-      var tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-mainChart");
-
-      var width = document.querySelector(selector).offsetWidth;
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
 
       const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
       const labelLeft = sotaConfig.labelLeft;
@@ -1539,8 +1532,7 @@
 
               svg.attr("height", height);
 
-              mainChart.attr("transform",`translate(${margin.left} ${margin.top})`)
-                  .attr("width",width - margin.left - margin.right);
+              mainChart.attr("transform",`translate(${margin.left} ${margin.top})`);
 
           });
 
@@ -1549,8 +1541,11 @@
   }
 
   function columnChart ({
-                               selector,
                                dataFile,
+                               selector = false,
+                               title = false,
+                               subtitle = false,
+                               section = false,
                                inputIsPercentage = false,
                                displayPercentage = true,
                                totalResp = null,
@@ -1575,16 +1570,8 @@
       const swatchBelowBetween = sotaConfig.swatch.belowBetween;
       const swatchBelow = sotaConfig.swatch.below;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-mainChart");
-
-      const width = document.querySelector(selector).offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
 
       d3.csv(dataFile + ".csv").then(data => {
 
@@ -1789,8 +1776,11 @@
   }
 
   function groupedBarChart ({
-                               selector,
                                dataFile,
+                               selector = false,
+                               title = false,
+                               subtitle = false,
+                               section = false,
                                totalResp = null, // dictionary: subgroup -- total
                                inputIsPercentage = false,
                                displayPercentage = true,
@@ -1814,16 +1804,8 @@
       const swatchBelow = sotaConfig.swatch.below;
       const xAxisTop = sotaConfig.xAxisTop;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-mainChart");
-
-      const width = document.querySelector(selector).offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
 
       d3.csv(dataFile + ".csv").then(data => {
 
@@ -1959,8 +1941,11 @@
   }
 
   function stackedColumnChart ({
-                               selector,
                                dataFile,
+                               selector = false,
+                               title = false,
+                               subtitle = false,
+                               section = false,
                                inputIsPercentage = false,
                                displayPercentage = true,
                                maxVal = null,
@@ -1986,16 +1971,8 @@
       const swatchBelowBetween = sotaConfig.swatch.belowBetween;
       const swatchBelow = sotaConfig.swatch.below;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-stackedColumnChart-mainChart");
-
-      const width = document.querySelector(selector).offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, 0);
 
       d3.csv(dataFile + ".csv").then(data => {
 
@@ -2265,23 +2242,19 @@
   }
 
   function customColumnChart ({
-      selector,
       dataFile,
+      selector = false,
+      title = false,
+      subtitle = false,
+      section = false,
       shapeFile,
       shapeHeight = 300,
       inputIsPercentage = false,
       margin = sotaConfig.margin
   }) {
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-mainChart");
-
-      const width = document.querySelector(selector).offsetWidth;
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, 0);
 
       const separatorStrokeHeight = sotaConfig.separatorStrokeWidth;
 
@@ -2439,8 +2412,11 @@
   }
 
   function multiLineGraph ({
-                               selector,
                                dataFile,
+                               selector = false,
+                               title = false,
+                               subtitle = false,
+                               section = false,
                               height = 300,
       showLegend = true,
                                inputIsPercentage = false,
@@ -2461,19 +2437,9 @@
       const swatchBelowBetween = sotaConfig.swatch.belowBetween;
       const swatchBelow = sotaConfig.swatch.below;
 
-      const container = d3.select(selector);
-      const svg = container.append("svg");
-      const tooltip = d3.select("body").append("div")
-          .attr("class", "sota-tooltip");
-
-      const width = document.querySelector(selector).offsetWidth;
-      const mainWidth = width - margin.left - margin.right;
+      const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+          selector, section, title, subtitle, margin, overflowOffset);
       const mainHeight = height - margin.top - margin.bottom;
-
-      const mainChart = svg.append("g")
-          .attr("class", "sota-stackedBarChart-mainChart")
-          .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
-          .attr("width", mainWidth);
 
       d3.csv(dataFile + ".csv").then(data => {
           // DATA PROCESSING

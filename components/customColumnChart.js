@@ -1,27 +1,22 @@
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
-import processData from "../lib/processData.js";
+import {containerSetup, processData, chartRendered} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
-import chartRendered from "../lib/chartRendered.js";
 
 export default function ({
-    selector,
     dataFile,
+    selector = false,
+    title = false,
+    subtitle = false,
+    section = false,
     shapeFile,
     shapeHeight = 300,
     inputIsPercentage = false,
     margin = sotaConfig.margin
 }) {
 
-    const container = d3.select(selector);
-    const svg = container.append("svg");
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "sota-tooltip");
-
-    const mainChart = svg.append("g")
-        .attr("class", "sota-mainChart");
-
-    const width = document.querySelector(selector).offsetWidth;
+    const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+        selector, section, title, subtitle, margin, 0);
 
     const separatorStrokeHeight = sotaConfig.separatorStrokeWidth;
     const hoverOpacity = 0.8;

@@ -1,11 +1,14 @@
 import * as d3 from "d3";
 import {bindTooltip, toPercentage} from "../lib/tooltip.js";
 import sotaConfig from "../lib/sotaConfig.js";
-import chartRendered from "../lib/chartRendered";
+import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
 
 export default function ({
-                             selector,
                              dataFile,
+                             selector = false,
+                             title = false,
+                             subtitle = false,
+                             section = false,
                             height = 300,
     showLegend = true,
                              inputIsPercentage = false,
@@ -30,19 +33,9 @@ export default function ({
     const swatchBelow = sotaConfig.swatch.below;
     const xAxisTop = sotaConfig.xAxisTop;
 
-    const container = d3.select(selector);
-    const svg = container.append("svg");
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "sota-tooltip");
-
-    const width = document.querySelector(selector).offsetWidth;
-    const mainWidth = width - margin.left - margin.right;
+    const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
+        selector, section, title, subtitle, margin, overflowOffset);
     const mainHeight = height - margin.top - margin.bottom;
-
-    const mainChart = svg.append("g")
-        .attr("class", "sota-stackedBarChart-mainChart")
-        .attr("transform", `translate(${margin.left + overflowOffset} ${margin.right})`)
-        .attr("width", mainWidth);
 
     d3.csv(dataFile + ".csv").then(data => {
         // DATA PROCESSING
