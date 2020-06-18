@@ -2454,8 +2454,15 @@ function setStyles(thisSotaConfig = sotaConfig){
 	line-height: 1.1;
 }
 
-.sota-module p{
+.sota-module p, ul, ol{
+    font-size: 20px;
     line-height: 1.4;
+    font-family: ${labelFont};
+}
+
+.sota-module img{
+    max-width: 100%;
+    margin: 32px 0;
 }
 
 .sota-module .subtitle {

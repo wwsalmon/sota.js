@@ -19,15 +19,53 @@
 <!--        <h3>GPA x income or something or other</h3>-->
 <!--    </div>-->
 <!--</div>-->
-<section class="sota-section" id="sota-section-general">
-    <h1>General</h1>
+<section class="sota-section" id="sota-section-sotajs">
+    <h1>sota.js</h1>
+    <p style="text-align: center; font-size: 24px;">An easy-to-use, beautiful, d3.js-based charting library</p>
     <div class="sota-section-inner">
+        <div class="sota-module">
+            <h3>What is sota.js?</h3>
+            <p>sota.js is a charting library originally made for <i>The Phillipian's</i> State of the Academy survery (hence SOTA). Based on d3.js, it's designed to be:</p>
+            <ul>
+                <li>Beautiful</li>
+                <li>Super easy to use for future Phillipian boards and other publications</li>
+            </ul>
+        </div>
+        <div class="sota-module">
+            <h3>Why was sota.js made?</h3>
+            <p><i>The Phillipian</i> is Phillips Academy's student newspaper, and State of the Academy is an extensive survey of the student body that the paper conducts each year, with analyzed results published in print and online.</p>
+            <p>The print paper is painstakingly put together each year by a team of talented designers, following the lead of then Executive Digital Editor <a href="https://allyklionsky.com/">Ally Klionksy's</a> 2016 design:</p>
+            <a href="http://pdf.phillipian.net/2016/05132016.pdf"><img src="sota2016.png"></a>
+            <p>The online edition in past years, on the other hand, has looked something like this:</p>
+            <a href="https://sota.phillipian.net/year/2019"><img src="sota2019.png"></a>
+            <p>Functional, but a far cry from the visual craftsmanship of the print designs. On top of this, the code for the site was rebuilt almost every year, costing lots of unnecessary time and introducing technical issues.</p>
+            <p>sota.js aims to provide a better solution, building not only a SOTA 2020 site as beautiful as the print paper, but also a framework that could be easily used by future Phillipian developers or even other publications.</p>
+        </div>
+        <div class="sota-module">
+            <h3>sota.js in action</h3>
+            <p>The 2020 edition of State of the Academy uses sota.js:</p>
+            <a href="https://sota.phillipian.net/"><img src="sota2020.jpg"></a>
+        </div>
+        <div class="sota-module">
+            <h3>What does a graph look like?</h3>
+            <div id="module-general-ethnicity-d3"></div>
+            <h3>What does the code for that graph look like?</h3>
+            <pre>
+sota.barChart({
+    selector: "#module-general-ethnicity-d3",
+    dataFile: "data/ethnicity",
+    totalResp: 1052,
+    maxVal: true,
+    displayPercentage: true
+});
+            </pre>
+        </div>
         <div class="sota-module" id="module-general-income-d3">
             <h3>GPA x income or something or other</h3>
         </div>
-        <div class="sota-module" id="module-general-ethnicity-d3">
-            <h3>GPA x income or something or other</h3>
-        </div>
+<!--        <div class="sota-module" id="module-general-ethnicity-d3">-->
+<!--            <h3>GPA x income or something or other</h3>-->
+<!--        </div>-->
         <div class="sota-module" id="module-general-community-d3">
             <h3>What type of community do you currently live in?</h3>
         </div>
