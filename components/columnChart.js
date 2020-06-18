@@ -19,7 +19,7 @@ import {containerSetup, processData, chartRendered} from "../lib/sotaChartHelper
  * @param {boolean} [showLegend = false] - Whether to show legend or bottom text labels
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
  */
-export default function ({
+function columnChart({
                              dataFile,
                              selector = false,
                              title = false,
@@ -257,3 +257,5 @@ export default function ({
         chartRendered(container.node());
     });
 }
+
+export default columnChart;

@@ -16,8 +16,7 @@ import sotaConfig from "../lib/sotaConfig.js";
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
  * @param {number} [height = 300] - Height of the chart. Defaults to 300
  */
-
-export default function ({
+function lineGraph({
     dataFile,
     selector = false,
     title = false,
@@ -149,3 +148,5 @@ export default function ({
         chartRendered(container.node());
     });
 }
+
+export default lineGraph;

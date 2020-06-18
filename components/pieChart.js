@@ -16,7 +16,7 @@ import sotaConfig from "../lib/sotaConfig.js";
  * @param {number} [pieThick = 80] - Thickness of pie slices (this is actually a donut chart)
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
  */
-export default function ({
+function pieChart({
     dataFile,
     selector = false,
     title = false,
@@ -237,3 +237,5 @@ export default function ({
         chartRendered(container.node());
     });
 }
+
+export default pieChart;

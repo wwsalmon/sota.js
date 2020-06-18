@@ -15,7 +15,7 @@ import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
  * @param {boolean} [showLegend = true] - Whether or not to show legend
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
  */
-export default function ({
+function multiLineGraph({
                              dataFile,
                              selector = false,
                              title = false,
@@ -209,3 +209,5 @@ export default function ({
         chartRendered(container.node());
     });
 }
+
+export default multiLineGraph;

@@ -8,8 +8,7 @@ import * as d3 from "d3";
  * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
  * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
  */
-
-export default function ({
+function bigNumber({
                              title, number, subtitle,
                              selector = false,
                              section = false
@@ -32,3 +31,5 @@ export default function ({
         .append("span")
         .text(subtitle);
 }
+
+export default bigNumber;

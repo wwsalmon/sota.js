@@ -19,7 +19,7 @@ import sotaConfig from "../lib/sotaConfig.js";
  * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
  */
-export default function ({
+function barChart({
     dataFile,
     selector = false,
     title = false,
@@ -163,3 +163,5 @@ export default function ({
         chartRendered(container.node());
     });
 }
+
+export default barChart;

@@ -532,7 +532,7 @@
    * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function barChart ({
+  function barChart({
       dataFile,
       selector = false,
       title = false,
@@ -689,7 +689,7 @@
    * @param {number} [pieThick = 80] - Thickness of pie slices (this is actually a donut chart)
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function pieChart ({
+  function pieChart({
       dataFile,
       selector = false,
       title = false,
@@ -924,8 +924,7 @@
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    * @param {number} [height = 300] - Height of the chart. Defaults to 300
    */
-
-  function lineGraph ({
+  function lineGraph({
       dataFile,
       selector = false,
       title = false,
@@ -1072,8 +1071,7 @@
    * @param {boolean} [showLegend = true] - Whether or not to show legend
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-
-  function stackedBarChart ({
+  function stackedBarChart({
                                dataFile,
                                selector = false,
                                title = false,
@@ -1442,7 +1440,7 @@
    * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function customBarChart ({
+  function customBarChart({
       dataFile,
       selector = false,
       title = false,
@@ -1629,7 +1627,7 @@
    * @param {boolean} [showLegend = false] - Whether to show legend or bottom text labels
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function columnChart ({
+  function columnChart({
                                dataFile,
                                selector = false,
                                title = false,
@@ -1865,7 +1863,8 @@
   }
 
   /**
-   * Render sota.js grouped bar chart * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * Render sota.js grouped bar chart
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
    * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
    * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
    * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
@@ -1877,7 +1876,7 @@
    * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function groupedBarChart ({
+  function groupedBarChart({
                                dataFile,
                                selector = false,
                                title = false,
@@ -2056,7 +2055,7 @@
    * @param {number} [mainHeight] - Height of the chart. Defaults to value from sotaConfig
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function stackedColumnChart ({
+  function stackedColumnChart({
                                dataFile,
                                selector = false,
                                title = false,
@@ -2369,7 +2368,7 @@
    * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function customColumnChart ({
+  function customColumnChart({
       dataFile,
       selector = false,
       title = false,
@@ -2553,7 +2552,7 @@
    * @param {boolean} [showLegend = true] - Whether or not to show legend
    * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
    */
-  function multiLineGraph ({
+  function multiLineGraph({
                                dataFile,
                                selector = false,
                                title = false,
@@ -2751,8 +2750,7 @@
    * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
    * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
    */
-
-  function bigNumber ({
+  function bigNumber({
                                title, number, subtitle,
                                selector = false,
                                section = false
