@@ -77,7 +77,7 @@ export default function ({
 
             const classNames = d3.scaleOrdinal()
                 .domain(labels)
-                .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys())
+                .range(d3.map(labels, (d, i) => "sota-fill-" + (i + 1)).keys())
 
             // main loop
 

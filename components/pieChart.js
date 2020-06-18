@@ -62,7 +62,7 @@ export default function ({
 
         const classNames = d3.scaleOrdinal()
             .domain(labels)
-            .range(d3.map(labels, (d, i) => "module-fill-" + (labels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
+            .range(d3.map(labels, (d, i) => "sota-fill-" + (labels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
 
         const legend = mainChart.append("g")
             .lower()

@@ -12,6 +12,7 @@ import setColors from "./lib/setColors.js";
 import setStyles from "./lib/setStyles.js";
 import sotaConfig from "./lib/sotaConfig.js";
 import colorInterpolate from "./lib/colorInterpolate.js";
+import sotaMasonry from "./lib/sotaMasonry.js";
 
 let sota = {};
 
@@ -29,6 +30,7 @@ sota.setColors = setColors;
 sota.setStyles = setStyles;
 sota.sotaConfig = sotaConfig;
 sota.colorInterpolate = colorInterpolate;
+sota.sotaMasonry = sotaMasonry;
 
 sota.setParam = function(prop, value){
     this.sotaConfig[prop] = value;

@@ -92,7 +92,7 @@
 
     function chartRendered(thisModule){
         const chartRendered = new Event("sotaChartRendered");
-        thisModule.closest(".container").dispatchEvent(chartRendered);
+        thisModule.closest(".sota-section-inner").dispatchEvent(chartRendered);
     }
 
     function barChart ({
@@ -305,7 +305,7 @@
 
             const classNames = d3.scaleOrdinal()
                 .domain(labels)
-                .range(d3.map(labels, (d, i) => "module-fill-" + (labels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
+                .range(d3.map(labels, (d, i) => "sota-fill-" + (labels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
             const legend = mainChart.append("g")
                 .lower()
@@ -727,7 +727,7 @@
 
             const classNames = d3.scaleOrdinal()
                 .domain(valueLabels)
-                .range(d3.map(valueLabels, (d, i) => "module-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
+                .range(d3.map(valueLabels, (d, i) => "sota-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
             if (showXAxis) {
                 mainChart.append("g")
@@ -1060,7 +1060,7 @@
 
                 const classNames = d3.scaleOrdinal()
                     .domain(d3.map(data, d=>d.label))
-                    .range(d3.map(data, (d, i) => "module-fill-" + (i + 1)).keys());
+                    .range(d3.map(data, (d, i) => "sota-fill-" + (i + 1)).keys());
 
                 // main loop
 
@@ -1235,7 +1235,7 @@
 
             const classNames = d3.scaleOrdinal()
                 .domain(labels)
-                .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
+                .range(d3.map(labels, (d, i) => "sota-fill-" + (i + 1)).keys());
 
             let legendHeight = 0;
             let overlap = false;
@@ -1509,7 +1509,7 @@
 
             const classNames = d3.scaleOrdinal()
                 .domain(subGroups)
-                .range(d3.map(subGroups, (d, i) => "module-fill-" + (i + 1)).keys());
+                .range(d3.map(subGroups, (d, i) => "sota-fill-" + (i + 1)).keys());
 
             chartGroups.selectAll(".sota-gen-bar")
                 .data(d => {
@@ -1677,7 +1677,7 @@
 
             const classNames = d3.scaleOrdinal()
                 .domain(valueLabels)
-                .range(d3.map(valueLabels, (d, i) => "module-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
+                .range(d3.map(valueLabels, (d, i) => "sota-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
             const yAxis = mainChart.append("g")
                 .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
@@ -1947,7 +1947,7 @@
 
                 const classNames = d3.scaleOrdinal()
                     .domain(labels)
-                    .range(d3.map(labels, (d, i) => "module-fill-" + (i + 1)).keys());
+                    .range(d3.map(labels, (d, i) => "sota-fill-" + (i + 1)).keys());
 
                 // main loop
 
@@ -2133,11 +2133,11 @@
 
             const fillClassNames = d3.scaleOrdinal()
                 .domain(groupLabels)
-                .range(d3.map(groupLabels, (d, i) => "module-fill-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
+                .range(d3.map(groupLabels, (d, i) => "sota-fill-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
             const strokeClassNames = d3.scaleOrdinal()
                 .domain(groupLabels)
-                .range(d3.map(groupLabels, (d, i) => "module-stroke-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
+                .range(d3.map(groupLabels, (d, i) => "sota-stroke-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
 
             // LEGEND
 
@@ -2254,24 +2254,24 @@
         let colorStyle = "";
 
         for (const section in colorsArray){
-            colorStyle += `#${section}{
+            colorStyle += `#sota-section-${section}{
             background-color: ${colorsArray[section][0]};
             color: ${colorsArray[section][0]};
-            }
-            #${section} .sota-gen-bar{
-                fill: ${colorsArray[section][3]};
-            }
-            `;
+        }
+        #sota-section-${section} .sota-gen-bar{
+            fill: ${colorsArray[section][3]};
+        }
+        `;
 
             for (const i in colorsArray[section]){
-                colorStyle+= `
-            #${section} .module-fill-${+i+1}{
-                fill: ${colorsArray[section][i]};
-            }
-            #${section} .module-stroke-${+i+1}{
-                stroke: ${colorsArray[section][i]};
-            }
-            `;
+            colorStyle+= `
+        #sota-section-${section} .sota-fill-${+i+1}{
+            fill: ${colorsArray[section][i]};
+        }
+        #sota-section-${section} .sota-stroke-${+i+1}{
+            stroke: ${colorsArray[section][i]};
+        }
+        `;
             }
         }
 
@@ -2333,12 +2333,12 @@ body{
     margin: 0;
 }
 
-section {
+.sota-section {
 	padding: 48px 0;
 	width: 100%
 }
 
-section > p{
+.sota-section > p{
   color: #fff;
   font-family: "Mercury Text G1";
   line-height: 1.5;
@@ -2347,7 +2347,7 @@ section > p{
   padding: 0 24px;
 }
 
-h1 {
+.sota-section h1 {
 	font-size: 56px;
 	font-family: 'Montserrat', sans-serif;
 	text-transform: uppercase;
@@ -2356,7 +2356,7 @@ h1 {
 	color: #fff
 }
 
-.container {
+.sota-section-inner {
     position: relative;
 	max-width: ${mainWidth}px;
 	box-sizing: border-box;
@@ -2368,7 +2368,7 @@ h1 {
 	grid-template-columns: minmax(0, 1fr)
 }
 
-.container:before{
+.sota-section-inner:before{
     pointer-events: none;
     content: "";
     position: absolute;
@@ -2378,13 +2378,13 @@ h1 {
     height: calc(100% - 64px);
 }
 
-.container:after{
+.sota-section-inner:after{
     content: "";
     clear: both;
     display: table;    
 }
 
-.module {
+.sota-module {
 	position: absolute;
 	float: left;
 	width: calc(100% - 48px);
@@ -2394,45 +2394,45 @@ h1 {
 }
 
 @media (min-width: 800px) {
-    .container:before{
+    .sota-section-inner:before{
       width: 50%;
       display: block;
         border-right: 1px solid rgba(0,0,0,0.1);
     }
     
-    .module {
+    .sota-module {
         width: calc(50% - ${24 + moduleMargin / 2}px);
     }
 }
 
 @media (min-width: 1200px) {    
-    .module {
+    .sota-module {
         width: calc(33% - ${16 + 2 * moduleMargin / 3}px);
     }
 
-    .container:before{
+    .sota-section-inner:before{
         width: 33.3%;
         left: 33.3%;
         border-left: 1px solid rgba(0,0,0,0.1);
     }
 }
 
-.module>svg {
+.sota-module>svg {
 	width: 100%
 }
 
-.module h3 {
+.sota-module h3 {
 	font-family: 'Montserrat', sans-serif;
 	font-weight: 700;
 	text-transform: uppercase;
 	line-height: 1.1;
 }
 
-.module p{
+.sota-module p{
     line-height: 1.4;
 }
 
-.module .subtitle {
+.sota-module .subtitle {
 	font-family: "Mercury Text G1", serif;
 	opacity: 0.4;
 	line-height: 1.1;
@@ -2510,6 +2510,18 @@ text{
 	margin-top: -8px;
 	font-family: "Mercury Text G1", serif
 }
+
+.sota-section-inner.hide .module{
+    border-bottom: none;
+}
+
+.sota-section-inner.hide .module > *{
+    visibility: hidden;
+}
+
+.sota-section-inner:not(.hide) .loading{
+    display: none;
+}
     `;
 
         document.head.appendChild(document.createElement('style')).textContent = styleSheet;
@@ -2521,9 +2533,10 @@ text{
      * @param {string} start - 6-digit hex code for starting color, including "#" at beginning
      * @param {string} [end=#ffffff] - 6-digit hex code for ending color, including "#" at beginning
      * @param {number} [steps=8] - Number of steps, equal to the length of the returned array
+     * @param {boolean} [includeLast=false] - Whether or not to include the given end value in the final array
      */
 
-    function colorInterpolate(start,end="#ffffff",steps=8){
+    function colorInterpolate(start,end="#ffffff",steps=8, includeLast=false){
 
         const startHex = start.substr(1);
         const startR = parseInt("0x" + startHex.substr(0,2));
@@ -2538,10 +2551,12 @@ text{
         const diffR = endR - startR;
         const diffG = endG - startG;
         const diffB = endB - startB;
+
+        const calcSteps = includeLast ? steps : steps + 1;
         
-        const incR = diffR / steps;
-        const incG = diffG / steps;
-        const incB = diffB / steps;
+        const incR = diffR / calcSteps;
+        const incG = diffG / calcSteps;
+        const incB = diffB / calcSteps;
 
         let colorsArray = [start];
         
@@ -2555,9 +2570,58 @@ text{
             colorsArray.push(newHexString);
         }
 
-        colorsArray.push(end);
+        let lastColor;
+
+        if (includeLast){
+            lastColor = end;
+        } else {
+            const newR = startR + incR * steps;
+            const newG = startG + incG * steps;
+            const newB = startB + incB * steps;
+            lastColor = "#" + Math.round(newR).toString(16) + Math.round(newG).toString(16) + Math.round(newB).toString(16);
+        }
+
+        colorsArray.push(lastColor);
 
         return colorsArray;
+    }
+
+    function sotaMasonry(){
+        const sections = document.querySelectorAll(".sota-section-inner");
+
+        sections.forEach((e) => {
+            let count = 0;
+            const total = e.querySelectorAll(".sota-module svg").length;
+
+            if (total === 0){
+                const msnry = new Masonry(e, {
+                    itemSelector: ".sota-module",
+                    columnWidth: ".sota-module",
+                    gutter: 48
+                });
+                return;
+            }
+
+            const loading = document.createElement("p");
+            loading.innerHTML = "Loading...";
+            loading.classList.add("loading");
+
+            e.prepend(loading);
+
+            e.addEventListener("sotaChartRendered", () => {
+                count++;
+
+                if (count === total) {
+                    e.classList.remove("hide");
+
+                    const msnry = new Masonry(e, {
+                        itemSelector: ".sota-module",
+                        columnWidth: ".sota-module",
+                        gutter: 48
+                    });
+                }
+            });
+        });
     }
 
     let sota = {};
@@ -2576,6 +2640,7 @@ text{
     sota.setStyles = setStyles;
     sota.sotaConfig = sotaConfig;
     sota.colorInterpolate = colorInterpolate;
+    sota.sotaMasonry = sotaMasonry;
 
     sota.setParam = function(prop, value){
         this.sotaConfig[prop] = value;

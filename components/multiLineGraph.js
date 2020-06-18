@@ -88,11 +88,11 @@ export default function ({
 
         const fillClassNames = d3.scaleOrdinal()
             .domain(groupLabels)
-            .range(d3.map(groupLabels, (d, i) => "module-fill-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
+            .range(d3.map(groupLabels, (d, i) => "sota-fill-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
 
         const strokeClassNames = d3.scaleOrdinal()
             .domain(groupLabels)
-            .range(d3.map(groupLabels, (d, i) => "module-stroke-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
+            .range(d3.map(groupLabels, (d, i) => "sota-stroke-" + (groupLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys())
 
         // LEGEND
 

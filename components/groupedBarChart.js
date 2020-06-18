@@ -110,7 +110,7 @@ export default function ({
 
         const classNames = d3.scaleOrdinal()
             .domain(subGroups)
-            .range(d3.map(subGroups, (d, i) => "module-fill-" + (i + 1)).keys())
+            .range(d3.map(subGroups, (d, i) => "sota-fill-" + (i + 1)).keys())
 
         chartGroups.selectAll(".sota-gen-bar")
             .data(d => {
