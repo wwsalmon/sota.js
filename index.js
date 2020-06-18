@@ -11,6 +11,7 @@ import multiLineGraph from "./components/multiLineGraph.js";
 import setColors from "./lib/setColors.js";
 import setStyles from "./lib/setStyles.js";
 import sotaConfig from "./lib/sotaConfig.js";
+import colorInterpolate from "./lib/colorInterpolate.js";
 
 let sota = {};
 
@@ -27,6 +28,7 @@ sota.multiLineGraph = multiLineGraph;
 sota.setColors = setColors;
 sota.setStyles = setStyles;
 sota.sotaConfig = sotaConfig;
+sota.colorInterpolate = colorInterpolate;
 
 sota.setParam = function(prop, value){
     this.sotaConfig[prop] = value;

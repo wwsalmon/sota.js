@@ -26,6 +26,7 @@
     "d3": "^5.16.0"
   },
   "devDependencies": {
+    "jsdoc-to-markdown": "^6.0.1",
     "rollup": "^2.8.2",
     "rollup-plugin-terser": "^5.3.0"
   }
