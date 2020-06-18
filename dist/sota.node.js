@@ -2258,17 +2258,17 @@ function setColors(colorsArray){
             background-color: ${colorsArray[section][0]};
             color: ${colorsArray[section][0]};
         }
-        #sota-section-${section} .sota-gen-bar{
+        #sota-section-${section} .sota-gen-bar, .sota-section-${section} .sota-gen-bar{
             fill: ${colorsArray[section][3]};
         }
         `;
 
         for (const i in colorsArray[section]){
         colorStyle+= `
-        #sota-section-${section} .sota-fill-${+i+1}{
+        #sota-section-${section} .sota-fill-${+i+1}, .sota-section-${section} .sota-fill-${+i+1}{
             fill: ${colorsArray[section][i]};
         }
-        #sota-section-${section} .sota-stroke-${+i+1}{
+        #sota-section-${section} .sota-stroke-${+i+1}, .sota-section-${section} .sota-stroke-${+i+1}{
             stroke: ${colorsArray[section][i]};
         }
         `;
@@ -2338,7 +2338,7 @@ function setStyles(thisSotaConfig = sotaConfig){
     display: table;    
 }
 
-.sota-module {
+.sota-section .sota-module {
 	position: absolute;
 	float: left;
 	width: calc(100% - 48px);
@@ -2354,13 +2354,13 @@ function setStyles(thisSotaConfig = sotaConfig){
         border-right: 1px solid rgba(0,0,0,0.1);
     }
     
-    .sota-module {
+    .sota-section .sota-module {
         width: calc(50% - ${24 + moduleMargin / 2}px);
     }
 }
 
 @media (min-width: 1200px) {    
-    .sota-module {
+    .sota-section .sota-module {
         width: calc(33% - ${16 + 2 * moduleMargin / 3}px);
     }
 
