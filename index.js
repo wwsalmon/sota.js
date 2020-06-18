@@ -26,6 +26,14 @@ window.onload = () => {
     sota.multiLineGraph({selector: "#module-general-income-d3", dataFile: "data/gpaXincome"});
 
     sota.barChart({
+        selector: "#demo-ethnicity-d3",
+        dataFile: "data/ethnicity",
+        totalResp: 1052,
+        maxVal: true,
+        displayPercentage: true
+    });
+
+    sota.barChart({
         selector: "#module-general-ethnicity-d3",
         dataFile: "data/ethnicity",
         totalResp: 1052,
