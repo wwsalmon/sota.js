@@ -119,7 +119,7 @@
     margin: 32px 0;
 }
 
-.sota-module .subtitle {
+.sota-module .sota-subtitle {
 	font-family: ${labelFont}, serif;
 	opacity: 0.4;
 	line-height: 1.1;
@@ -477,7 +477,7 @@
           .text(title);
 
       if (section && subtitle) container.append("div")
-          .attr("class","subtitle")
+          .attr("class","sota-subtitle")
           .append("span")
           .text(subtitle);
 
@@ -516,6 +516,22 @@
       );
   }
 
+  /**
+   * Render sota.js bar chart
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {boolean} [showXAxis = true] - Whether or not to render x axis
+   * @param {boolean} [showSeparators = true] - Whether or not to show separators between bars
+   * @param {boolean} [displayPercentage = true] - Whether to display percentage or value on bar
+   * @param {number} [totalResp] - Number of total responses. Specify if categories are non-exclusive, i.e. if there are less total items than the sum of data points.
+   * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+   * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function barChart ({
       dataFile,
       selector = false,
@@ -660,6 +676,19 @@
       });
   }
 
+  /**
+   * Render sota.js pie chart
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {boolean} [sorted = true] - Whether or not to sort order of slices by size
+   * @param {number} [pieRad = 150] - Radius of pie in chart
+   * @param {number} [pieThick = 80] - Thickness of pie slices (this is actually a donut chart)
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function pieChart ({
       dataFile,
       selector = false,
@@ -882,6 +911,20 @@
       });
   }
 
+  /**
+   * Render sota.js line graph
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+   * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   * @param {number} [height = 300] - Height of the chart. Defaults to 300
+   */
+
   function lineGraph ({
       dataFile,
       selector = false,
@@ -892,9 +935,6 @@
       minVal = null,
       maxVal = null,
       height = 300,
-      customTooltipAppend = "",
-      prop5 = "value5",
-      prop6 = "value6",
       margin = {
           "top": 20,
           "bottom": 20,
@@ -1018,6 +1058,21 @@
       });
   }
 
+  /**
+   * Render sota.js stacked bar chart
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {boolean} [showXAxis = true] - Whether or not to render x axis
+   * @param {("none" | "onBar" | "aboveBar")} [labelStyle = "onBar"] - Style of labels for sub-groups (slices of bars). None hides all labels. onBar displays values on the bars, and hides any that don’t fit. aboveBar draws labels above the bar with pointing lines
+   * @param {("none" | "onBar")} [groupLabelStyle = "none"] - Style of labels for groups. None hides all labels. onBar displays labels above bars
+   * @param {boolean} [showLegend = true] - Whether or not to show legend
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
+
   function stackedBarChart ({
                                dataFile,
                                selector = false,
@@ -1027,10 +1082,8 @@
                                inputIsPercentage = false,
                                showXAxis = true,
                                labelStyle = "onBar", // "none" | "onBar" | "aboveBar"
-                               groupLabelStyle = "none", // "none" | "onBar" | "left"
+                               groupLabelStyle = "none", // "none" | "onBar"
                                showLegend = true,
-                               prop5 = "value5",
-                               prop6 = "value6",
                                margin = sotaConfig.margin
                            }) {
 
@@ -1377,6 +1430,18 @@
       });
   }
 
+  /**
+   * Render sota.js custom bar chart, using an SVG path as the base
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {string} shapeFile - Relative path to svg shape file, excluding file extension, i.e. "shapes/shapefile"
+   * @param {number} shapeWidth - Width of shape for chart
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function customBarChart ({
       dataFile,
       selector = false,
@@ -1397,7 +1462,7 @@
       const lineColor = sotaConfig.lineColor;
       const coeffLabelBelow = 3;
 
-      d3.xml("shapes/" + shapeFile + ".svg").then(shape => {
+      d3.xml(shapeFile + ".svg").then(shape => {
 
           // import shape and make it a definition
 
@@ -1548,6 +1613,22 @@
       });
   }
 
+  /**
+   * Render sota.js column chart
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {boolean} [displayPercentage = true] - Whether to display percentage or values on axis
+   * @param {number} [totalResp] - Number of total responses. Specify if categories are non-exclusive, i.e. if there are less total items than the sum of data points.
+   * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+   * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
+   * @param {number} [mainHeight] - Height of the chart. Defaults to value from sotaConfig
+   * @param {boolean} [showLegend = false] - Whether to show legend or bottom text labels
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function columnChart ({
                                dataFile,
                                selector = false,
@@ -1783,6 +1864,19 @@
       });
   }
 
+  /**
+   * Render sota.js grouped bar chart * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {boolean} [displayPercentage = true] - Whether to display percentage or value on axis
+   * @param {number} [totalResp] - Number of total responses. Specify if categories are non-exclusive, i.e. if there are less total items than the sum of data points.
+   * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+   * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function groupedBarChart ({
                                dataFile,
                                selector = false,
@@ -1948,6 +2042,20 @@
       });
   }
 
+  /**
+   * Render sota.js stacked column chart
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {boolean} [displayPercentage = true] - Whether to display percentage or value on axis
+   * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+   * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
+   * @param {number} [mainHeight] - Height of the chart. Defaults to value from sotaConfig
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function stackedColumnChart ({
                                dataFile,
                                selector = false,
@@ -2249,6 +2357,18 @@
       });
   }
 
+  /**
+   * Render sota.js custom column chart, using an SVG path as the base
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {string} shapeFile - Relative path to svg shape file, excluding file extension, i.e. "shapes/shapefile"
+   * @param {number} shapeHeight - Height of shape for chart
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function customColumnChart ({
       dataFile,
       selector = false,
@@ -2266,7 +2386,7 @@
 
       const separatorStrokeHeight = sotaConfig.separatorStrokeWidth;
 
-      d3.xml("shapes/" + shapeFile + ".svg").then(shape => {
+      d3.xml(shapeFile + ".svg").then(shape => {
 
           // import shape and make it a definition
 
@@ -2421,6 +2541,18 @@
       });
   }
 
+  /**
+   *
+   * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+   * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+   * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+   * @param {number} [height = 300] - Height of the graph
+   * @param {boolean} [showLegend = true] - Whether or not to show legend
+   * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+   */
   function multiLineGraph ({
                                dataFile,
                                selector = false,
@@ -2611,6 +2743,15 @@
       });
   }
 
+  /**
+   * Render big number with subtitle. Not really a chart, no SVG involved, but using JS helps keep ordering correct
+   * @param {string} title - Title to be rendered in h3 tag
+   * @param {string} number - Number to be rendered in .sota-big
+   * @param {string} subtitle - Subtitle to follow number
+   * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+   * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+   */
+
   function bigNumber ({
                                title, number, subtitle,
                                selector = false,
@@ -2630,7 +2771,7 @@
           .text(number);
 
       container.append("div")
-          .attr("class","subtitle")
+          .attr("class","sota-subtitle")
           .append("span")
           .text(subtitle);
   }

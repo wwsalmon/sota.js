@@ -3,6 +3,20 @@ import {toPercentage} from "../lib/tooltip.js";
 import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
+/**
+ * Render sota.js stacked column chart
+ * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+ * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+ * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+ * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+ * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+ * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+ * @param {boolean} [displayPercentage = true] - Whether to display percentage or value on axis
+ * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+ * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
+ * @param {number} [mainHeight] - Height of the chart. Defaults to value from sotaConfig
+ * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+ */
 export default function ({
                              dataFile,
                              selector = false,

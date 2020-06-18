@@ -3,6 +3,21 @@ import {toPercentage} from "../lib/tooltip.js";
 import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
+/**
+ * Render sota.js stacked bar chart
+ * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+ * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+ * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+ * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+ * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+ * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+ * @param {boolean} [showXAxis = true] - Whether or not to render x axis
+ * @param {("none" | "onBar" | "aboveBar")} [labelStyle = "onBar"] - Style of labels for sub-groups (slices of bars). None hides all labels. onBar displays values on the bars, and hides any that don’t fit. aboveBar draws labels above the bar with pointing lines
+ * @param {("none" | "onBar")} [groupLabelStyle = "none"] - Style of labels for groups. None hides all labels. onBar displays labels above bars
+ * @param {boolean} [showLegend = true] - Whether or not to show legend
+ * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+ */
+
 export default function ({
                              dataFile,
                              selector = false,
@@ -12,10 +27,8 @@ export default function ({
                              inputIsPercentage = false,
                              showXAxis = true,
                              labelStyle = "onBar", // "none" | "onBar" | "aboveBar"
-                             groupLabelStyle = "none", // "none" | "onBar" | "left"
+                             groupLabelStyle = "none", // "none" | "onBar"
                              showLegend = true,
-                             prop5 = "value5",
-                             prop6 = "value6",
                              margin = sotaConfig.margin
                          }) {
 

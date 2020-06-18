@@ -1,5 +1,13 @@
 import * as d3 from "d3";
-import {containerSetup} from "../lib/sotaChartHelpers.js";
+
+/**
+ * Render big number with subtitle. Not really a chart, no SVG involved, but using JS helps keep ordering correct
+ * @param {string} title - Title to be rendered in h3 tag
+ * @param {string} number - Number to be rendered in .sota-big
+ * @param {string} subtitle - Subtitle to follow number
+ * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+ * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+ */
 
 export default function ({
                              title, number, subtitle,
@@ -20,7 +28,7 @@ export default function ({
         .text(number);
 
     container.append("div")
-        .attr("class","subtitle")
+        .attr("class","sota-subtitle")
         .append("span")
         .text(subtitle);
 }

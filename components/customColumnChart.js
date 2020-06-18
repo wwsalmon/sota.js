@@ -3,6 +3,18 @@ import {bindTooltip, toPercentage} from "../lib/tooltip.js";
 import {containerSetup, processData, chartRendered, uuidv4} from "../lib/sotaChartHelpers.js";
 import sotaConfig from "../lib/sotaConfig.js";
 
+/**
+ * Render sota.js custom column chart, using an SVG path as the base
+ * @param {string} dataFile - Relative path to csv data file, excluding file extension, i.e. "data/datafile"
+ * @param {string} [selector] - Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector."
+ * @param {string} [section] - Either this or selector param is required. Slug for section to add .sota-module container and chart to
+ * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
+ * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
+ * @param {string} shapeFile - Relative path to svg shape file, excluding file extension, i.e. "shapes/shapefile"
+ * @param {number} shapeHeight - Height of shape for chart
+ * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+ * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+ */
 export default function ({
     dataFile,
     selector = false,
@@ -25,7 +37,7 @@ export default function ({
     const lineColor = sotaConfig.lineColor;
     const coeffLabelBelow = 3;
 
-    d3.xml("shapes/" + shapeFile + ".svg").then(shape => {
+    d3.xml(shapeFile + ".svg").then(shape => {
 
         // import shape and make it a definition
 
