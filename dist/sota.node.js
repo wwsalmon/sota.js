@@ -2,9 +2,70 @@
 
 var d3 = require('d3');
 
+/**
+ * Function that generates an array of hex codes interpolating between start and end hex codes
+ * @param {string} start - 6-digit hex code for starting color, including "#" at beginning
+ * @param {string} [end=#ffffff] - 6-digit hex code for ending color, including "#" at beginning
+ * @param {number} [steps=8] - Number of steps, equal to the length of the returned array
+ * @param {boolean} [includeLast=false] - Whether or not to include the given end value in the final array
+ */
+
+function colorInterpolate(start,end="#ffffff",steps=8, includeLast=false){
+
+    const startHex = start.substr(1);
+    const startR = parseInt("0x" + startHex.substr(0,2));
+    const startG = parseInt("0x" + startHex.substr(2,2));
+    const startB = parseInt("0x" + startHex.substr(4,2));
+    
+    const endHex = end.substr(1);
+    const endR = parseInt("0x" + endHex.substr(0,2));
+    const endG = parseInt("0x" + endHex.substr(2,2));
+    const endB = parseInt("0x" + endHex.substr(4,2));
+
+    const diffR = endR - startR;
+    const diffG = endG - startG;
+    const diffB = endB - startB;
+
+    const calcSteps = includeLast ? steps : steps + 1;
+    
+    const incR = diffR / calcSteps;
+    const incG = diffG / calcSteps;
+    const incB = diffB / calcSteps;
+
+    let colorsArray = [start];
+    
+    for (let i = 1; i < steps - 1; i++){
+        const newR = startR + incR * i;
+        const newG = startG + incG * i;
+        const newB = startB + incB * i;
+
+        const newHexString = "#" + Math.round(newR).toString(16) + Math.round(newG).toString(16) + Math.round(newB).toString(16);
+
+        colorsArray.push(newHexString);
+    }
+
+    let lastColor;
+
+    if (includeLast){
+        lastColor = end;
+    } else {
+        const newR = startR + incR * steps;
+        const newG = startG + incG * steps;
+        const newB = startB + incB * steps;
+        lastColor = "#" + Math.round(newR).toString(16) + Math.round(newG).toString(16) + Math.round(newB).toString(16);
+    }
+
+    colorsArray.push(lastColor);
+
+    return colorsArray;
+}
+
 var sotaConfig = {
     numberFont: "Montserrat",
     labelFont: "Lora",
+    sections: [
+        {slug: "default", name: "Default", colors: colorInterpolate("#000000")}
+    ],
     separatorStrokeWidth: 1,
     barHeight: 32,
     barMargin: 16,
@@ -92,7 +153,8 @@ function processData(data, inputIsPercentage, totalResp = null){
 
 function chartRendered(thisModule){
     const chartRendered = new Event("sotaChartRendered");
-    thisModule.closest(".sota-section-inner").dispatchEvent(chartRendered);
+    const container = thisModule.closest(".sota-section-inner");
+    if (container !== null) container.dispatchEvent(chartRendered);
 }
 
 function barChart ({
@@ -2250,26 +2312,36 @@ function multiLineGraph ({
     });
 }
 
-function setColors(colorsArray){
+function setColors(sotaConfig){
     let colorStyle = "";
 
-    for (const section in colorsArray){
-        colorStyle += `#sota-section-${section}{
-            background-color: ${colorsArray[section][0]};
-            color: ${colorsArray[section][0]};
+    for (const section of sotaConfig.sections){
+        const sectionSlug = section.slug;
+        colorStyle += `
+        #sota-section-${sectionSlug}{
+            background-color: ${section.colors[0]};
+            color: ${section.colors[0]};
         }
-        #sota-section-${section} .sota-gen-bar, .sota-section-${section} .sota-gen-bar{
-            fill: ${colorsArray[section][3]};
+        #sota-section-${sectionSlug} .sota-gen-bar, .sota-section-${sectionSlug} .sota-gen-bar{
+            fill: ${section.colors[3]};
+        }      
+        #sota-navbar #sota-navbar-item-${sectionSlug}:hover, #sota-navbar #sota-navbar-item-${sectionSlug}.selected{
+            background-color: ${section.colors[0]};            
+        }
+        @media (max-width: 1400px){
+            #sota-navbar #sota-navbar-item-${sectionSlug}{
+                background-color: ${section.colors[0]};            
+            }        
         }
         `;
 
-        for (const i in colorsArray[section]){
+        for (const i in section.colors){
         colorStyle+= `
-        #sota-section-${section} .sota-fill-${+i+1}, .sota-section-${section} .sota-fill-${+i+1}{
-            fill: ${colorsArray[section][i]};
+        #sota-section-${sectionSlug} .sota-fill-${+i+1}, .sota-section-${sectionSlug} .sota-fill-${+i+1}{
+            fill: ${section.colors[i]};
         }
-        #sota-section-${section} .sota-stroke-${+i+1}, .sota-section-${section} .sota-stroke-${+i+1}{
-            stroke: ${colorsArray[section][i]};
+        #sota-section-${sectionSlug} .sota-stroke-${+i+1}, .sota-section-${sectionSlug} .sota-stroke-${+i+1}{
+            stroke: ${section.colors[i]};
         }
         `;
         }
@@ -2472,68 +2544,86 @@ function setStyles(thisSotaConfig = sotaConfig){
 .sota-section-inner:not(.hide) .loading{
     display: none;
 }
+
+#sota-navbar ~ .sota-section:before{
+    content: "";
+    z-index: 4;
+    position: sticky;
+    top: 64px;
+    width: 100%;
+    height: 8px;
+    background-color: inherit;
+    display: block;
+}
+
+#sota-navbar{
+    color: #fff;
+}
+
+#sota-navbar .sz-navbar-item a, #sota-navbar .sz-navbar-item span{
+    font-family: ${numberFont};
+    line-height: 64px;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    height: 64px;
+    padding: 0 8px;
+    display: block;
+}
+
+#sota-navbar .sota-navbar-logo, #sota-navbar .sota-navbar-logo a{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+#sota-navbar .sota-navbar-logo img{
+    height: 50%;
+}
+
+@media (max-width: 1400px){
+    #sota-navbar .sz-navbar-items{
+        background-color: #000;
+        z-index: 4;
+        height: 100vh;
+        box-sizing: border-box;
+        justify-content: flex-start;
+    }
+
+    #sota-navbar div.sz-navbar-item{
+        width: 100%;
+        margin-bottom: 0;
+    }
+    
+    #sota-navbar .sz-navbar-inner > .sota-navbar-text{
+        display: none;
+    }
+}
+
+@media (min-width: 1400px){
+    #sota-navbar .sz-navbar-items{
+        margin-left: auto;
+    }
+
+    #sota-navbar .sz-navbar-item.sota-navbar-text{
+        display: none;
+    }
+    
+    #sota-navbar .sota-navbar-logo{
+        margin-right: 24px;
+    }
+}
+
+#sota-navbar .sota-navbar-text span{
+    font-family: ${labelFont};
+    font-weight: 700;
+}
+
     `;
 
     document.head.appendChild(document.createElement('style')).textContent = styleSheet;
     console.log("styles set");
-}
-
-/**
- * Function that generates an array of hex codes interpolating between start and end hex codes
- * @param {string} start - 6-digit hex code for starting color, including "#" at beginning
- * @param {string} [end=#ffffff] - 6-digit hex code for ending color, including "#" at beginning
- * @param {number} [steps=8] - Number of steps, equal to the length of the returned array
- * @param {boolean} [includeLast=false] - Whether or not to include the given end value in the final array
- */
-
-function colorInterpolate(start,end="#ffffff",steps=8, includeLast=false){
-
-    const startHex = start.substr(1);
-    const startR = parseInt("0x" + startHex.substr(0,2));
-    const startG = parseInt("0x" + startHex.substr(2,2));
-    const startB = parseInt("0x" + startHex.substr(4,2));
-    
-    const endHex = end.substr(1);
-    const endR = parseInt("0x" + endHex.substr(0,2));
-    const endG = parseInt("0x" + endHex.substr(2,2));
-    const endB = parseInt("0x" + endHex.substr(4,2));
-
-    const diffR = endR - startR;
-    const diffG = endG - startG;
-    const diffB = endB - startB;
-
-    const calcSteps = includeLast ? steps : steps + 1;
-    
-    const incR = diffR / calcSteps;
-    const incG = diffG / calcSteps;
-    const incB = diffB / calcSteps;
-
-    let colorsArray = [start];
-    
-    for (let i = 1; i < steps - 1; i++){
-        const newR = startR + incR * i;
-        const newG = startG + incG * i;
-        const newB = startB + incB * i;
-
-        const newHexString = "#" + Math.round(newR).toString(16) + Math.round(newG).toString(16) + Math.round(newB).toString(16);
-
-        colorsArray.push(newHexString);
-    }
-
-    let lastColor;
-
-    if (includeLast){
-        lastColor = end;
-    } else {
-        const newR = startR + incR * steps;
-        const newG = startG + incG * steps;
-        const newB = startB + incB * steps;
-        lastColor = "#" + Math.round(newR).toString(16) + Math.round(newG).toString(16) + Math.round(newB).toString(16);
-    }
-
-    colorsArray.push(lastColor);
-
-    return colorsArray;
 }
 
 function sotaMasonry(){
@@ -2574,6 +2664,81 @@ function sotaMasonry(){
     });
 }
 
+function sotaNavbar (sotaConfig, text="", logo=false, textLink=false, logoLink = false){
+    const container = document.getElementById("sota-navbar");
+    container.classList.add("sz-navbar");
+
+    let navbarHTML = `
+    <div class="sz-navbar-left sz-navbar-inner">
+      <input type="checkbox" id="sz-navbar-check">
+      <label for="sz-navbar-check" class="sz-navbar-hamburger">☰</label>`;
+
+    if (logo) navbarHTML += logoLink ?
+        `<div class="sota-navbar-logo"><a href="${logoLink}"><img src="${logo}" alt="Navbar logo"></a></div>` :
+        `<div class="sota-navbar-logo"><img src="${logo}" alt="Navbar logo"></div>`;
+
+    navbarHTML += textLink ?
+        `<div class="sota-navbar-text"><span><a href="${textLink}"><${text}</a></span></div>` :
+        `<div class="sota-navbar-text"><span>${text}</span></div>`;
+
+    navbarHTML += "<div class=\"sz-navbar-items\">";
+
+    navbarHTML += textLink ?
+        `<div class="sota-navbar-text sz-navbar-item"><span><a href="${textLink}"><${text}</a></span></div>` :
+        `<div class="sota-navbar-text sz-navbar-item"><span>${text}</span></div>`;
+
+    for (const section of sotaConfig.sections){
+        navbarHTML += `<div class="sz-navbar-item" id="sota-navbar-item-${section.slug}"><a href="#sota-section-${section.slug}">${section.name}</a></div>`;
+    }
+
+    navbarHTML += "</div>";
+
+    container.innerHTML = navbarHTML;
+
+    // color changing on scroll
+
+    const sectionElems = [];
+
+    for (const section of sotaConfig.sections){
+        sectionElems.push(document.getElementById("sota-section-" + section.slug));
+    }
+
+    console.log(sectionElems);
+
+    window.onload = () => {
+        changeColors();
+    };
+
+    window.addEventListener("scroll", () => {
+        changeColors();
+    });
+
+    function changeColors(){
+        if (window.innerWidth > 600){
+            for (const i in sectionElems){
+                const sectionElem = sectionElems[i];
+                const section = sotaConfig.sections[i];
+                const navbarItem = document.getElementById("sota-navbar-item-" + section.slug);
+                if (window.scrollY >= sectionElem.offsetTop && window.scrollY < sectionElem.offsetTop + sectionElem.offsetHeight){
+                    navbarItem.classList.add("selected");
+                } else {
+                    navbarItem.classList.remove("selected");
+                }
+            }
+        }
+    }
+
+    const navbarItems = document.querySelectorAll("#sota-navbar .sz-navbar-item");
+    const navbarCheck = document.getElementById("sz-navbar-check");
+
+    for (let i = 0; i < navbarItems.length; i++){
+        navbarItems[i].addEventListener("click", () => {
+            changeColors();
+            navbarCheck.checked = false;
+        });
+    }
+}
+
 let sota = {};
 
 sota.barChart = barChart;
@@ -2591,6 +2756,7 @@ sota.setStyles = setStyles;
 sota.sotaConfig = sotaConfig;
 sota.colorInterpolate = colorInterpolate;
 sota.sotaMasonry = sotaMasonry;
+sota.sotaNavbar = sotaNavbar;
 
 sota.setParam = function(prop, value){
     this.sotaConfig[prop] = value;
