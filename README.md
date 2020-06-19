@@ -109,6 +109,9 @@ In your app, you can now use the functions of the `sota` object just as you woul
 <dt><a href="#columnChart">columnChart(dataFile, [selector], [section], [title], [subtitle], [inputIsPercentage], [displayPercentage], [totalResp], [maxVal], [minVal], [mainHeight], [showLegend], [margin])</a></dt>
 <dd><p>Render sota.js column chart</p>
 </dd>
+<dt><a href="#contentModule">contentModule(title, content, subtitle, [selector], [section])</a></dt>
+<dd><p>Render big number with subtitle. Not really a chart, no SVG involved, but using JS helps keep ordering correct</p>
+</dd>
 <dt><a href="#customBarChart">customBarChart(dataFile, [selector], [section], [title], [subtitle], shapeFile, shapeWidth, [inputIsPercentage], [margin])</a></dt>
 <dd><p>Render sota.js custom bar chart, using an SVG path as the base</p>
 </dd>
@@ -212,6 +215,21 @@ Render sota.js column chart
 | [mainHeight] | <code>number</code> |  | Height of the chart. Defaults to value from sotaConfig |
 | [showLegend] | <code>boolean</code> | <code>false</code> | Whether to show legend or bottom text labels |
 | [margin] | <code>Object</code> |  | Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig |
+
+<a name="contentModule"></a>
+
+## contentModule(title, content, subtitle, [selector], [section])
+Render big number with subtitle. Not really a chart, no SVG involved, but using JS helps keep ordering correct
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| title | <code>string</code> | Title to be rendered in h3 tag |
+| content | <code>string</code> | HTML conetnt to be rendered beneath subtitle |
+| subtitle | <code>string</code> | Subtitle to follow number |
+| [selector] | <code>string</code> | Either this or section param is required. Query selector for container div to render chart in, i.e. "#selector." |
+| [section] | <code>string</code> | Either this or selector param is required. Slug for section to add .sota-module container and chart to |
 
 <a name="customBarChart"></a>
 
