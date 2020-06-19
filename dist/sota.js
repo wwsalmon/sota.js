@@ -16,6 +16,17 @@
       const axisStrokeWidth = sotaConfig.separatorStrokeWidth;
       const axisStrokeColor = sotaConfig.lineColor;
       const axisTextMargin = 4;
+
+      const numberFontQuery = "family=" + numberFont.replace(" ", "+") + ":wght@400;700";
+      const labelFontQuery = "family=" + labelFont.replace(" ", "+") + ":wght@400;700";
+      const fontString = "https://fonts.googleapis.com/css2?" + numberFontQuery + "&" + labelFontQuery;
+
+      let fontLink = document.createElement("link");
+      fontLink.rel = "stylesheet";
+      fontLink.href = fontString;
+      
+      document.head.appendChild(fontLink);
+
       let styleSheet = `
 .sota-section {
 	padding: 48px 0;
@@ -44,7 +55,7 @@
     position: relative;
 	max-width: ${mainWidth}px;
 	box-sizing: border-box;
-	font-family: "Montserrat", Arial, sans-serif;
+	font-family: ${numberFont}, Arial, sans-serif;
 	width: 100%;
 	padding: 48px 24px;
 	margin: 0 auto;
@@ -139,7 +150,7 @@
 }
 
 .sota-num-label, .sota-num-axis .tick text{
-    font-family: "Montserrat", sans-serif;
+    font-family: ${numberFont}, sans-serif;
     font-size: 14px;
     fill: ${sotaConfig.labelColor};
 }
