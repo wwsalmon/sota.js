@@ -11,25 +11,31 @@ import {containerSetup, chartRendered} from "../lib/sotaChartHelpers.js";
  * @param {string} [title] - Title to be rendered in h3 tag. Only rendered if section param is used and not selector
  * @param {string} [subtitle] - Subtitle to be rendered in .sota-subtitle div. Only rendered if section param is used and not selector
  * @param {boolean} [inputIsPercentage = false] - Whether or not input data is in percentages
+ * @param {boolean} [displayPercentage = true] - Whether to display percentage or value on axis
+ * @param {(number|boolean)} [maxVal] - By default, either 100 for percentages or max of data for non-percentages is used as scale maximum value. If maxVal is set to true, max of dataset is used for percentages instead of 100. If a number is specified, that number is used as the max.
+ * @param {(number|boolean)} [minVal] - By default, either 0 for percentages or min of data for non-percentages is used as scale minimum value. If minVal is set to true, min of dataset is used for percentages instead of 0. If a number is specified, that number is used as the min.
  * @param {number} [height = 300] - Height of the graph
  * @param {boolean} [showLegend = true] - Whether or not to show legend
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
  */
 function multiLineGraph({
-                             dataFile,
-                             selector = false,
-                             title = false,
-                             subtitle = false,
-                             section = false,
+                            dataFile,
+                            selector = false,
+                            title = false,
+                            subtitle = false,
+                            section = false,
+                            minVal,
+                            maxVal,
                             height = 300,
-    showLegend = true,
-                             inputIsPercentage = false,
-                             margin = {
-                                 "top": 20,
-                                 "bottom": 20,
-                                 "left": 24,
-                                 "right": 0
-                             }
+                            showLegend = true,
+                            inputIsPercentage = false,
+                            displayPercentage = true,
+                            margin = {
+                                "top": 20,
+                                "bottom": 20,
+                                "left": 24,
+                                "right": 0
+                            }
                          }) {
 
     const lineColor = "#bbb";
@@ -52,44 +58,69 @@ function multiLineGraph({
     d3.csv(dataFile + ".csv").then(data => {
         // DATA PROCESSING
 
-        const valueLabels = data.columns.slice(1);
+        const subGroups = data.columns.slice(1);
         const groupLabels = d3.map(data, d => d.group).keys()
 
+        let stackedData = [];
+        let maxVals = [];
+        let minVals = [];
+        let maxPerc = [];
+        let minPerc = [];
+
+        if (inputIsPercentage){
+            for (const group of data){
+                let thisData = [];
+                for (const subGroup in group){
+                    if (subGroup === "group") continue;
+                    thisData.push(+group[subGroup]);
+                }
+                maxVals.push(d3.max(thisData, d => d[0]));
+                minVals.push(d3.min(thisData, d => d[0]));
+                stackedData.push(thisData);
+            }
+        }
+        else{
+            for (const group of data){
+                const total = d3.sum(subGroups, subGroup => +group[subGroup]);
+                const thisData = [];
+                for (const subGroup in group){
+                    if (subGroup === "group") continue;
+                    const thisPercentage = +group[subGroup] / total * 100;
+                    thisData.push([thisPercentage, +group[subGroup]]);
+                }
+                maxVals.push(d3.max(thisData, d => d[1]));
+                minVals.push(d3.min(thisData, d => d[1]));
+                maxPerc.push(d3.max(thisData, d => d[0]));
+                minPerc.push(d3.min(thisData, d => d[0]));
+                stackedData.push(thisData);
+            }
+        }
+
+        if (minVal == null) { // default setting
+            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(minVals);
+        }
+        else if (minVal === true) { // specified minVal
+            minVal = d3.min(minPerc);
+        }
+        else if (isNaN(minVal) || minVal === "") throw "invalid minVal for graph on " + selector;
+        // else custom val
+
+        if (maxVal == null) { // default setting
+            maxVal = (inputIsPercentage || displayPercentage) ? 100 : d3.max(maxVals);
+        }
+        else if (maxVal === true) { // specified maxVal
+            maxVal = d3.max(maxPerc);
+        }
+        else if (isNaN(maxVal) || maxVal === "") throw "invalid maxVal for graph on " + selector;
+        // else custom val
+
         const x = d3.scaleBand()
-            .domain(valueLabels)
+            .domain(subGroups)
             .range([0, mainWidth]);
 
         const y = d3.scaleLinear()
-            .domain([0, 50]) // for now, hardcode displayPercentage
+            .domain([minVal, maxVal]) // for now, hardcode displayPercentage
             .range([mainHeight,0]);
-
-        // arrays of values and percentages
-
-        var stackedData = [];
-
-        // can be written more efficiently but bleh
-
-        if (inputIsPercentage){
-            data.forEach(d => {
-                let thisData = [];
-                for (let valueLabel of valueLabels) {
-                    thisData.push(+d[valueLabel]);
-                }
-                stackedData.push(thisData);
-            })
-        }
-        else{
-            data.forEach(d => {
-                let total = d3.sum(valueLabels, k => +d[k]);
-                let thisData = [];
-                let thisValues = [];
-                for (let valueLabel of valueLabels) {
-                    let thisPercentage = +d[valueLabel] / total * 100;
-                    thisData.push([thisPercentage, +d[valueLabel]]);
-                }
-                stackedData.push(thisData);
-            });
-        }
 
         const fillClassNames = d3.scaleOrdinal()
             .domain(groupLabels)
@@ -179,7 +210,7 @@ function multiLineGraph({
             .style("transform","translateY(" + mainHeight + "px)");
 
         mainChart.append("g")
-            .attr("class", "sota-gen-axis sota-gen-YAxis sota-num-axis")
+            .attr("class", "sota-gen-axis sota-gen-yAxis sota-num-axis")
             .call(d3.axisLeft(y).tickSize(-tickSize))
 
         const chartGroups = mainChart.selectAll(".sota-multiLineGraph-group")
@@ -192,7 +223,7 @@ function multiLineGraph({
             .join("path")
             .attr("class", "sota-multiLineGraph-path")
             .attr("d", d3.line()
-                .x((d, i) => x(valueLabels[i]) + x.bandwidth() / 2)
+                .x((d, i) => x(subGroups[i]) + x.bandwidth() / 2)
                 .y(d => y(d[0])))
             .attr("fill","none")
             .style("stroke-width",lineWidth);
@@ -203,7 +234,7 @@ function multiLineGraph({
             .attr("height", height + legendHeight + "px")
             .style("margin-left", -overflowOffset + "px");
 
-        mainChart.attr("transform", `translate(${margin.left} ${margin.top + legendHeight})`)
+        mainChart.attr("transform", `translate(${margin.left + overflowOffset} ${margin.top + legendHeight})`)
             .attr("width", mainWidth);
 
         chartRendered(container.node());

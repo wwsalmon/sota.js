@@ -25,7 +25,7 @@ window.onload = () => {
         displayPercentage: true
     });
 
-    sota.multiLineGraph({section: "sotajs", title: "Multilinegraph", dataFile: "data/gpaXincome"});
+    sota.multiLineGraph({section: "sotajs", title: "Multilinegraph", dataFile: "data/gpaXincome", maxVal: 30});
 
     sota.barChart({
         selector: "#module-general-ethnicity-d3",
