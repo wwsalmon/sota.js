@@ -228,7 +228,7 @@ function pieChart({
                 }
             })
 
-        const height = 2 * pieRad + legendHeight + margin.top + margin.bottom;
+        const height = 2 * pieRad * 0.8 + legendHeight + margin.top + margin.bottom;
 
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height)

@@ -228,8 +228,6 @@ function multiLineGraph({
             .attr("fill","none")
             .style("stroke-width",lineWidth);
 
-        height = mainHeight + legendHeight;
-
         svg.style("width", width + 2 * overflowOffset + "px")
             .attr("height", height + legendHeight + "px")
             .style("margin-left", -overflowOffset + "px");

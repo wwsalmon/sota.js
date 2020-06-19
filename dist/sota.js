@@ -95,8 +95,8 @@
     }
 
     .sota-section-inner:before{
-        width: 33.3%;
-        left: 33.3%;
+        width: calc(33.3% - 6px);
+        left: calc(33.3% - 6px);
         border-left: 1px solid rgba(0,0,0,0.1);
     }
 }
@@ -116,6 +116,11 @@
     font-size: 20px;
     line-height: 1.4;
     font-family: ${labelFont};
+}
+
+.sota-module hr{
+    opacity: 0.5;
+    margin: 48px 0;
 }
 
 .sota-module img{
@@ -623,7 +628,8 @@
           const dataset = (displayPercentage || inputIsPercentage) ? percentages : values;
 
           if (minVal == null) { // default setting
-              minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
+              // minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
+              minVal = 0;
           }
           else if (minVal === true) { // specified minVal
               minVal = d3.min(dataset);
@@ -955,7 +961,7 @@
                   }
               });
 
-          const height = 2 * pieRad + legendHeight + margin.top + margin.bottom;
+          const height = 2 * pieRad * 0.8 + legendHeight + margin.top + margin.bottom;
 
           svg.style("width", width + 2 * overflowOffset + "px")
               .attr("height", height)
@@ -2814,8 +2820,6 @@
                   .y(d => y(d[0])))
               .attr("fill","none")
               .style("stroke-width",lineWidth);
-
-          height = mainHeight + legendHeight;
 
           svg.style("width", width + 2 * overflowOffset + "px")
               .attr("height", height + legendHeight + "px")

@@ -57,7 +57,8 @@ function barChart({
         const dataset = (displayPercentage || inputIsPercentage) ? percentages : values;
 
         if (minVal == null) { // default setting
-            minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
+            // minVal = (inputIsPercentage || displayPercentage) ? 0 : d3.min(dataset);
+            minVal = 0;
         }
         else if (minVal === true) { // specified minVal
             minVal = d3.min(dataset);
