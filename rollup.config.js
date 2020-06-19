@@ -16,15 +16,26 @@ export default [
     },
     {
         input: 'index.js',
-        output: {
-            name: "sota",
-            file: 'dist/sota.min.js',
-            format: 'umd',
-            indent: false,
-            globals: {
-                d3: 'd3'
+        output: [
+            {
+                name: "sota",
+                file: 'dist/sota.min.js',
+                format: 'umd',
+                indent: false,
+                globals: {
+                    d3: 'd3'
+                }
+            },
+            {
+                name: "sota",
+                file: 'demo/sota.min.js',
+                format: 'umd',
+                indent: false,
+                globals: {
+                    d3: 'd3'
+                }
             }
-        },
+        ],
 
         external: [ 'd3' ],
 

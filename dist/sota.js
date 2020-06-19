@@ -203,15 +203,15 @@
 	font-family: ${labelFont}, serif
 }
 
-.sota-section-inner.hide .module{
+.sota-section-inner.sota-hide .sota-module{
     border-bottom: none;
 }
 
-.sota-section-inner.hide .module > *{
+.sota-section-inner.sota-hide .sota-module > *{
     visibility: hidden;
 }
 
-.sota-section-inner:not(.hide) .loading{
+.sota-section-inner:not(.sota-hide) .sota-loading{
     display: none;
 }
 
@@ -2878,7 +2878,7 @@
 
           const loading = document.createElement("p");
           loading.innerHTML = "Loading...";
-          loading.classList.add("loading");
+          loading.classList.add("sota-loading");
 
           e.prepend(loading);
 
@@ -2886,7 +2886,7 @@
               count++;
 
               if (count === total) {
-                  e.classList.remove("hide");
+                  e.classList.remove("sota-hide");
 
                   const msnry = new Masonry(e, {
                       itemSelector: ".sota-module",
@@ -3002,7 +3002,7 @@
 
           if (section.blurb !== undefined) container.append("p").text(section.blurb);
 
-          container.append("div").attr("class", "sota-section-inner");
+          container.append("div").attr("class", "sota-section-inner sota-hide");
       }
   }
 
