@@ -1,35 +1,100 @@
 # sota.js
 
-Charting library for *The Phillipian*'s [annual State of the Academy survey project](http://pdf.phillipian.net/2019/05102019.pdf) by Samson Zhang EDE CXLII (@wwsalmon) and Anthony Kim Digital Editor CXLII,CXLIII (@createandbuild). Built on d3. Currently WIP.
+Charting library for *The Phillipian*'s [annual State of the Academy survey project](https://sota.phillipian.net) by
+Samson Zhang EDE CXLII (@wwsalmon) and Anthony Kim Digital Editor CXLII,CXLIII (@createandbuild). Built on d3. Currently
+WIP.
 
-# Installation
+# Setup
 
-## Using browser/plain JS:
+## Using plain JS (recommended for now):
 
-1. Download or use a cdn to include d3 in your project before sota.js:
+1. Include d3.js and masonry.js (to use createSections, section selectors, and sotaMasonry), as well as
+`dist/sota.min.js`, in your `<head>`:
 
-<script src="PATH/TO/d3.min.v5.js"></script>
+    ```
+    <script src="PATH/TO/d3.min.v5.js"></script>
+    <script src="PATH/TO/masonry.pkgd.min.js"></script>
+    <script src="PATH/TO/sota.min.js"></script>
+    ```
 
-2. Download `dist/sota.min.js` (eventually this will be in releases...) and include it in your project:
+    Or, using CDNs:
 
-<script src="PATH/TO/sota.min.js"></script>
+    ```
+    <script src="https://unpkg.com/d3@5.16.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="PATH/TO/sota.min.js"></script>
+    ```
 
-3. In your app or index js, you can now access the `sota` object with functions like `sota.barChart()`.
+2. In your app or index js, configure `sotaConfig` and call setup functions like `setColors` and `setStyles`, and
+    `createSections` and `sotaNavbar` if desired. As an example, here is a snippet from `demo/index.js`:
+
+    ```
+    // required for graphs to look okay -- specify at minimum a slug and array of colors
+    sota.sotaConfig.sections = [
+    {"slug": "sotajs", "name": "sota.js", "colors": sota.colorInterpolate("#222222")},
+    {"slug": "politics", "name": "Politics & Worldview", "blurb": "test blurb", "colors":
+    sota.colorInterpolate("#660066", "#dac7d8", 5, true)},
+    {"slug": "wellness", "name": "Health & Wellness", "colors": sota.colorInterpolate("#6cb643", "#cae3cb", 5, true)},
+    {"slug": "discipline", "name": "Discipline", "colors": sota.colorInterpolate("#b43432", "#f0d1ca", 5, true)}
+    ]
+
+    // required for graphs to look okay -- call functions to inject color, style CSS based on sotaConfig
+    sota.setColors(sota.sotaConfig);
+    sota.setStyles(sota.sotaConfig);
+
+    // required only if you want to generate default layout containers. Can also specify directly through HTML and use
+    selectors for graphs
+    sota.createSections(sota.sotaConfig);
+
+    // optional, render navbar based on sotaConfig.sections
+    // make sure you call createSections first!
+    sota.sotaNavbar(sota.sotaConfig, "sota.js Demo", "szlogo.png", false, "https://www.samsonzhang.com/");
+    ```
+
+    See [usage](#Usage) for specifics on these functions.
+
+3. After calling setup functions, call all the chart-rendering functions you want inside `window.onload` (to ensure
+    that these functions can find containers and selectors being dynamically created). After all your chart-rendering
+    functions, call `sotaMasonry` to arrange the layout.
+
+    See [usage](#Usage) for specifics on these functions, as well as each of the chart-rendering functions.
+
+    ```
+    // render graphs inside window.onload so they will be able to find parent containers dynamically created above
+    window.onload = () => {
+
+    sota.barChart({title: "What does a graph look like?", subtitle: "Here's a bar chart", section: "sotajs",
+    dataFile: "data/ethnicity", totalResp: 1052, maxVal: true, displayPercentage: true});
+
+    sota.multiLineGraph({section: "sotajs", title: "Multilinegraph", dataFile: "data/gpaXincome", maxVal: 30});
+
+    ...
+
+    sota.stackedColumnChart({ section: "politics", title: "Reverse Racism Percentage by Gender",
+    subtitle: "Do you believe that reverse racism exists?", dataFile: "data/reverse-racism-gender",
+    totalResp: 1032 });
+
+    // after everything has loaded, use Masonry to fix up layout
+    sota.sotaMasonry();
+    }
+    ```
+
+    If you're not using `sota-section` parent containers or if you're using selectors that are hard-coded rather than
+    dynamically created, you can forego `window.onload` and `sotaMasonry`.
 
 ## Using npm:
+
+**I haven't tested using npm and believe there are some problems with dependencies, so I would advise against using
+npm for now.**
 
 Run:
 
 npm i sota.js
 
-d3 is a dependency, so you don't have to worry about it separately.
+d3 and masonry are dependencies, so you don't have to worry about them separately.
 
-Then, in your app or index js:
+In your app, you can now use the functions of the `sota` object just as you would in plain js.
 
-import sota from "sota.js"
-
-And now you have access to the `sota` object with functions like `sota.barChart()`.
-
-# Usage
+<a name="Usage"></a>
 
 {{>main}}
