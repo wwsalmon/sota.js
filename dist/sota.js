@@ -1380,6 +1380,7 @@
                   .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-text-label sota-heavy-label")
                   .text(d => d)
                   .attr("alignment-baseline", "bottom")
+                  .attr("dominant-baseline", "bottom")
                   .attr("x", 0)
                   .attr("y", d => y(d));
           }
@@ -1512,7 +1513,7 @@
       margin = sotaConfig.margin
   }) {
       const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
-          selector, section, title, subtitle, margin, overflowOffset);
+          selector, section, title, subtitle, margin, 0);
 
       const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
       const labelLeft = sotaConfig.labelLeft;
@@ -1640,7 +1641,7 @@
                   .attr("class", "sota-customBarChart-label-aboveBar-line")
                   .attr("points", (d, i) => {
                       let x1 = x(prevValues[i]) + x(d.value) / 2;
-                      let y1 = scaledHeight - labelBelow;
+                      let y1 = scaledHeight / 2;
                       let x2 = x1;
                       let y2 = scaledHeight + (labelHeights[i] + 1) * labelBelow;
                       let x3 = labelRightBounds[i][0] + labelRightBounds[i][1];
@@ -2444,6 +2445,8 @@
           selector, section, title, subtitle, margin, 0);
 
       const separatorStrokeHeight = sotaConfig.separatorStrokeWidth;
+      const labelBelow = sotaConfig.labelBelow;
+      const lineColor = sotaConfig.lineColor;
 
       d3.xml(shapeFile + ".svg").then(shape => {
 
@@ -2522,71 +2525,30 @@
 
               // draw labels - horizontal lines to the left and right from the center of the rectangle
 
-              // var labelRightBounds = [];
-              //
-              // mainChart.selectAll(".sota-customColumnChart-label-aboveBar-text")
-              //     .data(data)
-              //     .join("text")
-              //     .attr("class", "sota-customColumnChart-label-aboveBar-text")
-              //     .text((d,i) => `${d.label}: ${toPercentage(percentages[i])}`)
-              //     .attr("x", (d,i) => x(prevValues[i]) + x(d.value) / 2 + labelLeft)
-              //     .attr("y", function (d) {
-              //         labelRightBounds.push([this.getBBox().x, this.getBBox().width]);  //fix
-              //         return scaledHeight + 3 * labelBelow;
-              //     })
-              //     .attr("alignment-baseline", "top")
-              //
-              // let labelHeights = []
-              //
-              // function getLabelHeight(i) {
-              //     if (i == labelRightBounds.length - 1) {
-              //         labelHeights[i] = coeffLabelBelow;
-              //         return coeffLabelBelow;
-              //     }
-              //     else if (labelRightBounds[i][0] + labelRightBounds[i][1] + 2 * labelLeft > labelRightBounds[i + 1][0]) {
-              //         labelRightBounds[i + 1][0] = labelRightBounds[i][0] + labelRightBounds[i][1] + 2 * labelLeft;
-              //         let nextHeight = getLabelHeight(i + 1);
-              //         let thisHeight = nextHeight + 1;
-              //         labelHeights[i] = thisHeight;
-              //         return thisHeight;
-              //     }
-              //     else {
-              //         getLabelHeight(i + 1);
-              //         labelHeights[i] = coeffLabelBelow;
-              //         return coeffLabelBelow;
-              //     }
-              // }
-              //
-              // getLabelHeight(0);
-              //
-              // mainChart.selectAll(".sota-customColumnChart-label-aboveBar-line")
-              //     .data(data)
-              //     .join("polyline")
-              //     .attr("class", "sota-customColumnChart-label-aboveBar-line")
-              //     .attr("points", (d, i) => {
-              //         let x1 = x(prevValues[i]) + x(d.value) / 2;
-              //         let y1 = scaledHeight - labelBelow;
-              //         let x2 = x1;
-              //         let y2 = scaledHeight + (labelHeights[i] + 1) * labelBelow;
-              //         let x3 = labelRightBounds[i][0] + labelRightBounds[i][1];
-              //         let y3 = y2;
-              //         return `${x1},${y1} ${x2},${y2} ${x3},${y3}`;
-              //     })
-              //     .attr("stroke-height", separatorStrokeHeight)
-              //     .attr("stroke", lineColor)
-              //     .attr("fill", "none")
-              //
-              // mainChart.selectAll(".sota-customColumnChart-label-aboveBar-text")
-              //     .data(data)
-              //     .join("text")
-              //     .attr("x", (d, i) => labelRightBounds[i][0])
-              //     .attr("y", (d, i) => scaledHeight + labelHeights[i] * labelBelow);
-              //
-              // let labelsHeight = d3.max(labelHeights) * labelBelow + 20;
-              //
-              // let height = scaledHeight + margin.top + margin.bottom + labelsHeight;
-              //
-              // svg.attr("height", height);
+              mainChart.selectAll(".sota-customColumnChart-label-line")
+                  .data(data)
+                  .join("polyline")
+                  .attr("class", "sota-customColumnChart-label-line")
+                  .attr("points", (d, i) => {
+                      const x1 = scaledWidth / 2;
+                      const y1 = (y(prevValues[i]) + y(d.value)) / 2;
+                      const x2 = mainWidth;
+                      const y2 = y1;
+                      return `${x1},${y1} ${x2},${y2}`;
+                  })
+                  .attr("stroke-width", separatorStrokeHeight)
+                  .attr("stroke", lineColor)
+                  .attr("fill", "none");
+
+              mainChart.selectAll(".sota-customColumnChart-label-text")
+                  .data(data)
+                  .join("text")
+                  .html((d,i) => `<tspan class="sota-text-label sota-heavy-label">${d.label}:</tspan><tspan class="sota-num-label"> ${toPercentage(percentages[i])}</tspan>`)
+                  .attr("text-anchor", "end")
+                  .attr("alignment-baseline", "bottom")
+                  .attr("dominant-baseline", "bottom")
+                  .attr("x", mainWidth)
+                  .attr("y", (d,i) => (y(prevValues[i]) + y(d.value)) / 2 - labelBelow);
 
               const height = shapeHeight + margin.top + margin.bottom;
               svg.attr("height", height);
@@ -2594,9 +2556,8 @@
               mainChart.attr("transform",`translate(${margin.left} ${margin.top})`)
                   .attr("width",width - margin.left - margin.right);
 
+              chartRendered(container.node());
           });
-
-          chartRendered(container.node());
       });
   }
 

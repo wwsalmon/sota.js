@@ -60,6 +60,12 @@ window.onload = () => {
 
     sota.bigNumber({section: "charts", number: "7.1 hours", title: "Big Number", subtitle: "Average amount of sleep"})
 
+    sota.customColumnChart({section: "charts", title: "Custom Column Chart", subtitle: "Icon from FontAwesome",
+        dataFile: "data/gallery-customCol", shapeFile: "shapes/atom", shapeHeight: 250})
+
+    sota.customBarChart({section: "charts", title: "Custom Bar Chart", subtitle: "Icon from FontAwesome",
+        dataFile: "data/gallery-customBar", shapeFile: "shapes/fish"})
+
     // after everything has loaded, use Masonry to fix up layout
     sota.sotaMasonry();
 }

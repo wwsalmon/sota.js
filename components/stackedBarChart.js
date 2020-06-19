@@ -271,6 +271,7 @@ function stackedBarChart({
                 .attr("class", "sota-stackedBarChart-groupLabel-onBar sota-text-label sota-heavy-label")
                 .text(d => d)
                 .attr("alignment-baseline", "bottom")
+                .attr("dominant-baseline", "bottom")
                 .attr("x", 0)
                 .attr("y", d => y(d))
         }

@@ -27,7 +27,7 @@ function customBarChart({
     margin = sotaConfig.margin
 }) {
     const {container, svg, tooltip, width, mainWidth, mainChart} = containerSetup(
-        selector, section, title, subtitle, margin, overflowOffset);
+        selector, section, title, subtitle, margin, 0);
 
     const separatorStrokeWidth = sotaConfig.separatorStrokeWidth;
     const hoverOpacity = 0.8;
@@ -156,7 +156,7 @@ function customBarChart({
                 .attr("class", "sota-customBarChart-label-aboveBar-line")
                 .attr("points", (d, i) => {
                     let x1 = x(prevValues[i]) + x(d.value) / 2;
-                    let y1 = scaledHeight - labelBelow;
+                    let y1 = scaledHeight / 2;
                     let x2 = x1;
                     let y2 = scaledHeight + (labelHeights[i] + 1) * labelBelow;
                     let x3 = labelRightBounds[i][0] + labelRightBounds[i][1];
