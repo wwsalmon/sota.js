@@ -30,6 +30,13 @@ window.onload = () => {
     sota.stackedBarChart({selector: "#graph-demo-stack", dataFile: "data/community-stacked", showLegend: false,
         labelStyle: "aboveBar"});
 
+    sota.contentModule({section: "charts", title: "Content Module",
+        subtitle: "This module was generated using sota.contentModule",
+        content: `<p>Demo data from <a href='https://sota.phillipian.net/'>State of the Academy 2020</a>.
+        See all code and data files in the <a href="https://github.com/wwsalmon/sota.js">GitHub repo</a>.
+        </p>
+    `});
+
     sota.barChart({section: "charts", dataFile: "data/gallery-class", title: "Bar Chart",
         subtitle: "What class are you in?"});
 
