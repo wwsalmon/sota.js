@@ -2,7 +2,7 @@
 sota.sotaConfig.sections = [
     {"slug": "sotajs", "name": "sota.js", "colors": sota.colorInterpolate("#000000")},
     {"slug": "charts", "name": "Chart Gallery", "blurb": "Gallery of all the charts you can make with sota.js",
-        "colors": sota.colorInterpolate("#2B193D", "#ffffff", 5, true)}
+        "colors": sota.colorInterpolate("#2B193D", "#ffffff", 8, true)}
 ]
 
 // optional styling configuration
@@ -27,7 +27,31 @@ window.onload = () => {
 
     sota.pieChart({selector: "#graph-demo-pie", dataFile: "data/community"});
 
-    sota.stackedBarChart({selector: "#graph-demo-stack", dataFile: "data/community-stacked", showLegend: false, labelStyle: "aboveBar"});
+    sota.stackedBarChart({selector: "#graph-demo-stack", dataFile: "data/community-stacked", showLegend: false,
+        labelStyle: "aboveBar"});
+
+    sota.barChart({section: "charts", dataFile: "data/gallery-class", title: "Bar Chart",
+        subtitle: "What class are you in?"});
+
+    sota.pieChart({section: "charts", dataFile: "data/community", title: "Pie Chart",
+        subtitle: "Distribution of students by home community type"});
+
+    sota.stackedBarChart({section: "charts", dataFile: "data/gallery-stacked", groupLabelStyle: "onBar",
+        title: "Stacked Bar Chart", subtitle: "Perceived socioeconomic class by net income"})
+
+    sota.columnChart({section: "charts", dataFile: "data/gallery-column", title: "Column Chart",
+        subtitle: "Top 5 news sources", maxVal: 40});
+
+    sota.stackedColumnChart({section: "charts", dataFile: "data/gallery-stackedCol", title: "Stacked Column Chart",
+        subtitle: "Do you think attending Andover affects your chances of attending a selective college?"});
+
+    sota.multiLineGraph({section: "charts", dataFile: "data/gallery-multiline", title: "Multi Line Graph",
+        subtitle: "GPA x Gender Identity", maxVal: 30});
+
+    sota.lineGraph({section: "charts", dataFile: "data/gallery-line", title: "Line Graph",
+        subtitle: "Approval of sex education at Andover over time", inputIsPercentage: true});
+
+    sota.bigNumber({section: "charts", number: "7.1 hours", title: "Big Number", subtitle: "Average amount of sleep"})
 
     // after everything has loaded, use Masonry to fix up layout
     sota.sotaMasonry();
