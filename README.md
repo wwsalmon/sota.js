@@ -1,8 +1,7 @@
 # sota.js
 
 Charting library for *The Phillipian*'s [annual State of the Academy survey project](https://sota.phillipian.net) by
-Samson Zhang EDE CXLII (@wwsalmon) and Anthony Kim Digital Editor CXLII,CXLIII (@createandbuild). Built on d3. Currently
-WIP.
+Samson Zhang EDE CXLII (@wwsalmon) and Anthony Kim Digital Editor CXLII,CXLIII (@createandbuild). Built on d3.
 
 # Setup
 
