@@ -34,7 +34,7 @@ window.onload = () => {
     sota.pieChart({selector: "#graph-demo-pie", dataFile: "data/community"});
 
     sota.stackedBarChart({selector: "#graph-demo-stack", dataFile: "data/community-stacked", showLegend: false,
-        labelStyle: "aboveBar"});
+        labelStyle: "aboveBar", customColors: ["#574AE2", "#222A68", "#654597"]});
 
     sota.contentModule({section: "charts", title: "Content Module",
         subtitle: "This module was generated using sota.contentModule",

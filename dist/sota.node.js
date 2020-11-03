@@ -1139,6 +1139,7 @@ function lineGraph({
  * @param {("none" | "onBar")} [groupLabelStyle = "none"] - Style of labels for groups. None hides all labels. onBar displays labels above bars
  * @param {boolean} [showLegend = true] - Whether or not to show legend
  * @param {{top: number, left: number, bottom: number, right: number}} [margin] - Object containing top, left, bottom, right margins for chart. Defaults to values from sotaConfig
+ * @param {string[]} [customColors] - Array of custom color strings to use instead of theme colors. Must have exactly as many colors as value groups in data
  */
 function stackedBarChart({
                              dataFile,
@@ -1151,7 +1152,8 @@ function stackedBarChart({
                              labelStyle = "onBar", // "none" | "onBar" | "aboveBar"
                              groupLabelStyle = "none", // "none" | "onBar"
                              showLegend = true,
-                             margin = sotaConfig.margin
+                             margin = sotaConfig.margin,
+                             customColors = false,
                          }) {
 
     const hoverOpacity = 0.8;
@@ -1176,15 +1178,15 @@ function stackedBarChart({
         selector, section, title, subtitle, margin, overflowOffset);
 
     d3.csv(dataFile + ".csv").then(data => {
-        
+
         // define styling variables here
 
-        var barspace = barHeight + barMargin;
-        var mainHeight = data.length * barspace;
+        let barspace = barHeight + barMargin;
+        let mainHeight = data.length * barspace;
 
-        var marginBefore = 0;
+        let marginBefore = 0;
 
-        if (groupLabelStyle == "onBar"){
+        if (groupLabelStyle == "onBar") {
             barspace += data.length * groupLabelMargin;
             mainHeight += data.length * groupLabelMargin;
             marginBefore = groupLabelMargin;
@@ -1195,23 +1197,41 @@ function stackedBarChart({
         const valueLabels = data.columns.slice(1);
         const groupLabels = d3.map(data, d => d.group).keys();
 
+        // custom colors if specified
+
+        const customColorClass = uuidv4();
+
+        if (customColors) {
+            if (customColors.length !== valueLabels.length) {
+                throw "Invalid custom colors array. Custom colors array must have exactly as many elements as value groups in the data.";
+            }
+
+            let colorStyleString = "";
+
+            for (let i in customColors) {
+                colorStyleString += `.sota-fill-${customColorClass}-${+i + 1} { fill: ${customColors[i]} }`;
+            }
+
+            container.append("style")
+                .html(colorStyleString);
+        }
+
         // arrays of values and percentages
 
-        var stackedData = [];
+        let stackedData = [];
 
-        if (inputIsPercentage){
+        if (inputIsPercentage) {
             data.forEach(d => {
                 let prevPercentage = 0;
                 let thisData = [];
                 for (let valueLabel of valueLabels) {
                     let thisPercentage = +d[valueLabel];
-                    thisData.push([thisPercentage,prevPercentage]);
+                    thisData.push([thisPercentage, prevPercentage]);
                     prevPercentage += thisPercentage;
                 }
                 stackedData.push(thisData);
             });
-        }
-        else {
+        } else {
             data.forEach(d => {
                 let prevPercentage = 0;
                 let total = d3.sum(valueLabels, k => +d[k]);
@@ -1227,16 +1247,16 @@ function stackedBarChart({
 
         const y = d3.scaleBand()
             .domain(groupLabels)
-            .range([0,mainHeight])
+            .range([0, mainHeight])
             .padding([0.2]);
-        
+
         const x = d3.scaleLinear()
             .domain([0, 100])
             .range([0, mainWidth]);
 
         const classNames = d3.scaleOrdinal()
             .domain(valueLabels)
-            .range(d3.map(valueLabels, (d, i) => "sota-fill-" + (valueLabels.length > 3 ? (i + 1) : (2 * i + 1))).keys());
+            .range(d3.map(valueLabels, (d, i) => "sota-fill-" + (customColors ? customColorClass + "-" : "") + ((valueLabels.length > 3 || customColors) ? (i + 1) : (2 * i + 1))).keys());
 
         if (showXAxis) {
             mainChart.append("g")
@@ -1251,26 +1271,26 @@ function stackedBarChart({
 
         var legendHeight = 0;
 
-        if (showLegend){
+        if (showLegend) {
             let valueLabelWidths = [];
 
             const legend = svg.append("g")
                 .lower()
-                .attr("class","sota-gen-legend")
+                .attr("class", "sota-gen-legend")
                 .attr("transform", `translate(0 ${margin.top})`);
 
             legend.selectAll("nothing")
                 .data(valueLabels)
                 .enter()
                 .append("text")
-                .attr("class","sota-gen-legend-text")
+                .attr("class", "sota-gen-legend-text")
                 .text(d => d)
-                .attr("x", function(){
+                .attr("x", function () {
                     valueLabelWidths.push(this.getBBox().width);
                 })
                 .remove();
 
-            if (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight > mainWidth){
+            if (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight > mainWidth) {
                 // vertical legends
                 let legendLeft = width + overflowOffset - d3.max(valueLabelWidths) - swatchWidth - swatchBetween;
 
@@ -1278,10 +1298,10 @@ function stackedBarChart({
                     .data(valueLabels)
                     .join("rect")
                     .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
-                    .attr("x",legendLeft)
+                    .attr("x", legendLeft)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i)
-                    .attr("width",swatchWidth)
-                    .attr("height",swatchHeight);
+                    .attr("width", swatchWidth)
+                    .attr("height", swatchHeight);
 
                 legend.selectAll(".sota-gen-legend-text")
                     .data(valueLabels)
@@ -1291,18 +1311,17 @@ function stackedBarChart({
                     .attr("x", legendLeft + swatchWidth + swatchBetween)
                     .attr("y", (d, i) => (swatchHeight + swatchBelowBetween) * i + swatchHeight / 2)
                     .attr("alignment-baseline", "central")
-.attr("dominant-baseline", "central");
+                    .attr("dominant-baseline", "central");
 
                 legendHeight = valueLabels.length * swatchHeight + (valueLabels.length - 1) * swatchBelowBetween + swatchBelow;
-            }
-            else {
+            } else {
                 let legendLeft = width + overflowOffset - (d3.sum(valueLabelWidths, d => d) + valueLabels.length * (swatchWidth + swatchBetween) + (valueLabels.length - 1) * swatchRight);
 
                 legend.selectAll(".sota-gen-legend-swatch")
                     .data(valueLabels)
                     .join("rect")
                     .attr("class", d => "sota-gen-legend-swatch " + classNames(d))
-                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0,i), d => d))
+                    .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", 0)
                     .attr("width", swatchWidth)
                     .attr("height", swatchHeight);
@@ -1315,7 +1334,7 @@ function stackedBarChart({
                     .attr("x", (d, i) => legendLeft + i * (swatchWidth + swatchBetween + swatchRight) + swatchWidth + swatchBetween + d3.sum(valueLabelWidths.slice(0, i), d => d))
                     .attr("y", swatchHeight / 2)
                     .attr("alignment-baseline", "central")
-.attr("dominant-baseline", "central");
+                    .attr("dominant-baseline", "central");
 
                 legendHeight = swatchHeight + swatchBelow;
             }
@@ -1327,9 +1346,9 @@ function stackedBarChart({
         const chartGroups = mainChart.selectAll(".sota-stackedBarChart-group")
             .data(stackedData)
             .join("g")
-            .attr("class","sota-stackedBarChart-group")
-            .attr("transform",(d, i) => "translate(0 " + (y(groupLabels[i]) + marginBefore - barMargin) + ")");
-            
+            .attr("class", "sota-stackedBarChart-group")
+            .attr("transform", (d, i) => "translate(0 " + (y(groupLabels[i]) + marginBefore - barMargin) + ")");
+
         chartGroups.selectAll(".sota-stackedBarChart-bar")
             .data(d => d)
             .join("rect")
@@ -1367,22 +1386,21 @@ function stackedBarChart({
             .data(d => d)
             .join("rect")
             .attr("class", "sota-stackedBarChart-separator")
-            .attr("fill","white")
+            .attr("fill", "white")
             .attr("x", d => x(d[1]) + x(d[0]))
             .attr("y", 0)
             .attr("width", d => {
-                if (d[0] > 0){
+                if (d[0] > 0) {
                     return separatorStrokeWidth;
-                }
-                else {
+                } else {
                     return 0;
                 }
             })
             .attr("height", barHeight);
 
         // onBar group label
-            
-        if (groupLabelStyle == "onBar"){
+
+        if (groupLabelStyle == "onBar") {
             mainChart.selectAll(".sota-stackedBarChart-groupLabel-onBar")
                 .data(groupLabels)
                 .join("text")
@@ -1398,28 +1416,28 @@ function stackedBarChart({
 
         // onBar value label
 
-        if (labelStyle == "onBar"){
+        if (labelStyle == "onBar") {
             chartGroups.selectAll(".sota-stackedBarChart-label-onBar")
                 .data(d => d)
                 .join("text")
-                .attr("class","sota-stackedBarChart-label-onBar sota-num-label")
+                .attr("class", "sota-stackedBarChart-label-onBar sota-num-label")
                 .text(d => d3.format(".1f")(d[0]) + "%")
                 .attr("alignment-baseline", "central")
-.attr("dominant-baseline", "central")
+                .attr("dominant-baseline", "central")
                 .attr("text-anchor", "end")
                 .attr("x", d => x(d[1]) + x(d[0]) - labelLeft)
                 .attr("y", barHeight / 2)
-                .style("display", function(d, i){
-                    if (this.getBBox().x < (i > 0 ? x(d[1]) : margin.left)){
+                .style("display", function (d, i) {
+                    if (this.getBBox().x < (i > 0 ? x(d[1]) : margin.left)) {
                         return "none";
                     }
                     return "";
                 });
         }
-         
+
         // aboveBar value label
-        
-        else if (labelStyle == "aboveBar"){
+
+        else if (labelStyle == "aboveBar") {
 
             var labelRightBounds = [];
 
@@ -1429,7 +1447,7 @@ function stackedBarChart({
                 .attr("class", "sota-stackedBarChart-label-aboveBar-text sota-num-label")
                 .text((d, i) => `${valueLabels[i]}: ${d3.format(".1f")(d[0])}%`)
                 .attr("x", d => x(d[1]) + x(d[0]) / 2)
-                .attr("y", function(d){
+                .attr("y", function (d) {
                     labelRightBounds.push([this.getBBox().x, this.getBBox().width]);
                     return -2 * labelBelow;
                 })
@@ -1438,19 +1456,17 @@ function stackedBarChart({
             let labelHeights = [];
 
             function getLabelHeight(i) {
-                if (i == labelRightBounds.length - 1){
+                if (i == labelRightBounds.length - 1) {
                     labelHeights[i] = -2;
                     return -2;
-                }
-                else if (labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft > labelRightBounds[i+1][0]){
+                } else if (labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft > labelRightBounds[i + 1][0]) {
                     labelRightBounds[i + 1][0] = labelRightBounds[i][0] + labelRightBounds[i][1] + labelLeft;
-                    let nextHeight = getLabelHeight(i+1);
+                    let nextHeight = getLabelHeight(i + 1);
                     let thisHeight = nextHeight - 1;
                     labelHeights[i] = thisHeight;
                     return thisHeight;
-                }
-                else {
-                    getLabelHeight(i+1);
+                } else {
+                    getLabelHeight(i + 1);
                     labelHeights[i] = -2;
                     return -2;
                 }
@@ -1491,7 +1507,7 @@ function stackedBarChart({
             .attr("height", height)
             .style("margin-left", -overflowOffset + "px");
 
-        mainChart.attr("transform",`translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
+        mainChart.attr("transform", `translate(${overflowOffset} ${margin.top + legendHeight + labelsHeight})`)
             .attr("width", mainWidth);
 
         chartRendered(container.node());
