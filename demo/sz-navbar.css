@@ -4,7 +4,7 @@
   /* OVERRIDE WITH YOUR OWN HEIGHT */
   background-color: #000;
   /* OVERRIDE WITH YOUR OWN BG COLOR */
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   z-index: 5;

@@ -2,7 +2,13 @@
 sota.sotaConfig.sections = [
     {"slug": "sotajs", "name": "sota.js", "colors": sota.colorInterpolate("#000000")},
     {"slug": "charts", "name": "Chart Gallery", "blurb": "Gallery of all the charts you can make with sota.js",
-        "colors": sota.colorInterpolate("#2B193D", "#ffffff", 8, true)}
+        "colors": sota.colorInterpolate("#2B193D", "#ffffff", 8, true)},
+    {"slug": "content", "name": "Content section", "colors": sota.colorInterpolate("#546e8d"), "content": `
+        <div class="demo-content">
+            <h2>Demo content</h2>
+            <p>This is a demo of a content section. Instead of graphs, you can put raw HTML here and format to your heart's content.</p>
+        </div>
+    `}
 ]
 
 // optional styling configuration

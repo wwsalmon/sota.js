@@ -63,7 +63,7 @@
 	grid-template-columns: minmax(0, 1fr)
 }
 
-.sota-section-inner:before{
+.sota-section-inner:not(.sota-content-section):before{
     pointer-events: none;
     content: "";
     position: absolute;
@@ -73,7 +73,7 @@
     height: calc(100% - 64px);
 }
 
-.sota-section-inner:after{
+.sota-section-inner:not(.sota-content-section):after{
     content: "";
     clear: both;
     display: table;    
@@ -89,7 +89,7 @@
 }
 
 @media (min-width: 800px) {
-    .sota-section-inner:before{
+    .sota-section-inner:not(.sota-content-section):before{
       width: 50%;
       display: block;
         border-right: 1px solid rgba(0,0,0,0.1);
@@ -105,7 +105,7 @@
         width: calc(33% - ${16 + 2 * moduleMargin / 3}px);
     }
 
-    .sota-section-inner:before{
+    .sota-section-inner:not(.sota-content-section):before{
         width: calc(33.3% - 6px);
         left: calc(33.3% - 6px);
         border-left: 1px solid rgba(0,0,0,0.1);
@@ -2875,6 +2875,8 @@
       const sections = document.querySelectorAll(".sota-section-inner");
 
       sections.forEach((e) => {
+          if (e.classList.contains("sota-content-section")) return;
+
           let count = 0;
           const total = e.querySelectorAll(".sota-module svg").length;
 
@@ -3013,7 +3015,11 @@
 
           if (section.blurb !== undefined) container.append("p").text(section.blurb);
 
-          container.append("div").attr("class", "sota-section-inner sota-hide");
+          const sectionClass = `sota-section-inner ${section.content ? "sota-content-section" : "sota-hide"}`;
+
+          const sectionInner = container.append("div").attr("class", sectionClass);
+
+          if (section.content) sectionInner.node().innerHTML = section.content;
       }
   }
 
