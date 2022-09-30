@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/wwsalmon/sota.js#readme",
   "dependencies": {
-    "d3": "^5.16.0",
+    "d3": "^7.6.1",
     "masonry-layout": "^4.2.2"
   },
   "devDependencies": {
